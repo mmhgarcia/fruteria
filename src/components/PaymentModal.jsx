@@ -1,0 +1,49 @@
+import { useState } from 'react'
+import './PaymentModal.css'
+
+const paymentOptions = [
+  { id: 'efectivo', label: 'Efectivo', icon: '💵' },
+  { id: 'tarjeta', label: 'Tarjeta', icon: '💳' },
+  { id: 'transfer', label: 'Transferencia', icon: '📱' },
+  { id: 'qr', label: 'QR / Yape', icon: '📲' },
+]
+
+function PaymentModal({ totals, onClose, onConfirm }) {
+  const [method, setMethod] = useState('efectivo')
+
+  return (
+    <div className="modal-overlay active" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-product">
+          <div className="modal-icon">💰</div>
+          <div className="modal-name">Confirmar Pago</div>
+          <div className="modal-price">
+            Total: ${totals.totalUSD.toFixed(2)} / Bs {totals.totalBS.toFixed(2)}
+          </div>
+        </div>
+        <div className="payment-options">
+          {paymentOptions.map((opt) => (
+            <div
+              key={opt.id}
+              className={`payment-option ${method === opt.id ? 'selected' : ''}`}
+              onClick={() => setMethod(opt.id)}
+            >
+              <div className="pay-icon">{opt.icon}</div>
+              <div className="pay-label">{opt.label}</div>
+            </div>
+          ))}
+        </div>
+        <div className="modal-actions">
+          <button className="btn-cancel" onClick={onClose}>
+            Volver
+          </button>
+          <button className="btn-confirm" onClick={() => onConfirm(method)}>
+            ✅ Confirmar Pago
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default PaymentModal

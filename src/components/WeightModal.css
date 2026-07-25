@@ -1,0 +1,172 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+  padding: 16px;
+}
+
+.modal {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 24px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-product {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.modal-product .modal-icon {
+  font-size: 56px;
+  margin-bottom: 6px;
+}
+
+.modal-product .modal-name {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.modal-product .modal-price {
+  font-size: 15px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.weight-display {
+  background: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 100%);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 16px;
+  border: 2px solid #95d5b2;
+}
+
+.weight-display .weight-label {
+  font-size: 12px;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.weight-display .weight-value {
+  font-size: 52px;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.weight-display .weight-unit {
+  font-size: 20px;
+  color: var(--primary-light);
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.weight-preview {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--primary);
+  font-weight: 600;
+  min-height: 20px;
+}
+
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.numpad button {
+  padding: 18px;
+  border: none;
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.1s;
+  color: var(--text);
+}
+
+.numpad button:hover {
+  background: #e8eaed;
+}
+
+.numpad button:active {
+  transform: scale(0.95);
+  background: var(--primary);
+  color: white;
+}
+
+.numpad .btn-dot {
+  font-size: 28px;
+}
+
+.numpad .btn-clear {
+  background: #fee2e2;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.numpad .btn-clear:hover {
+  background: #fecaca;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.modal-actions .btn-cancel {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.modal-actions .btn-cancel:hover {
+  background: #e8eaed;
+}
+
+.modal-actions .btn-confirm {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+}
+
+.modal-actions .btn-confirm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

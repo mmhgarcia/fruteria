@@ -1,0 +1,35 @@
+.payment-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.payment-option {
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--card);
+}
+
+.payment-option:hover {
+  border-color: var(--primary-light);
+}
+
+.payment-option.selected {
+  border-color: var(--primary);
+  background: rgba(45, 106, 79, 0.06);
+}
+
+.payment-option .pay-icon {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.payment-option .pay-label {
+  font-size: 13px;
+  font-weight: 700;
+}
