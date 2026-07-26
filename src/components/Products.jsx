@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getProducts, addProduct, updateProduct, deleteProduct, seedProducts } from '../utils/db'
+import { getCategories } from '../utils/categories'
 import { defaultProducts } from '../data/products'
 import './Products.css'
 
@@ -17,6 +18,7 @@ const ICONS = [
 
 export default function Products({ onClose }) {
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
   const [form, setForm] = useState(EMPTY_PRODUCT)
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -24,6 +26,7 @@ export default function Products({ onClose }) {
 
   useEffect(() => {
     loadProducts()
+    loadCategories()
   }, [])
 
   async function loadProducts() {
@@ -34,6 +37,15 @@ export default function Products({ onClose }) {
       alert('Error al cargar productos: ' + error.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadCategories() {
+    try {
+      const list = await getCategories()
+      setCategories(list.sort((a, b) => a.name.localeCompare(b.name)))
+    } catch (error) {
+      alert('Error al cargar categorías: ' + error.message)
     }
   }
 
@@ -194,9 +206,12 @@ export default function Products({ onClose }) {
 
               <div className="products-form-row">
                 <select name="group" value={form.group} onChange={handleChange}>
-                  <option value="frutas">Frutas</option>
-                  <option value="verduras">Verduras</option>
-                  <option value="ofertas">Ofertas</option>
+                  <option value="">Sin categoría</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.icon} {cat.name}
+                    </option>
+                  ))}
                 </select>
 
                 <select name="um" value={form.um} onChange={handleChange}>
