@@ -20,13 +20,30 @@ function openDB() {
 
 export async function seedProducts(defaultProducts) {
   const existing = await getProducts()
-  if (existing.length > 0) return
+  const existingNames = new Set(existing.map((p) => p.name.toLowerCase()))
+  const missing = defaultProducts.filter((p) => !existingNames.has(p.name.toLowerCase()))
+
+  if (missing.length === 0) {
+    console.log('seedProducts: todos los productos de ejemplo ya existen')
+    return existing
+  }
+
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
     const store = tx.objectStore(STORE_NAME)
-    defaultProducts.forEach((product) => store.add(product))
-    tx.oncomplete = () => resolve()
+    const added = []
+
+    missing.forEach((product) => {
+      const { id, ...productWithoutId } = product
+      const request = store.add(productWithoutId)
+      request.onsuccess = () => added.push({ ...productWithoutId, id: request.result })
+      request.onerror = () => {
+        console.error('Error adding product:', product, request.error)
+      }
+    })
+
+    tx.oncomplete = () => resolve([...existing, ...added])
     tx.onerror = () => reject(tx.error)
   })
 }

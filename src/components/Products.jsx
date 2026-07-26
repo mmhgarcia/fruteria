@@ -98,13 +98,20 @@ export default function Products({ onClose }) {
   }
 
   const handleImportData = async () => {
-    if (!confirm('¿Importar productos de ejemplo? Esto no sobrescribirá los existentes.')) return
+    if (!confirm('¿Importar productos de ejemplo? Esto solo añade los que no existen.')) return
     setLoading(true)
     try {
-      await seedProducts(defaultProducts)
-      const list = await getProducts()
-      setProducts(list.sort((a, b) => a.name.localeCompare(b.name)))
+      const before = await getProducts()
+      const result = await seedProducts(defaultProducts)
+      const after = await getProducts()
+      setProducts(after.sort((a, b) => a.name.localeCompare(b.name)))
+      const added = after.length - before.length
+      const message = added === 0
+        ? 'Todos los productos de ejemplo ya estaban registrados.'
+        : `Se importaron ${added} productos de ejemplo.`
+      alert(message)
     } catch (error) {
+      console.error('Error al importar productos:', error)
       alert('Error al importar productos: ' + error.message)
     } finally {
       setLoading(false)
