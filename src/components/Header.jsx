@@ -9,6 +9,7 @@ function Header({
   onTasaChange,
   searchTerm,
   onSearchChange,
+  onMenuToggle,
 }) {
   const [listening, setListening] = useState(false)
 
@@ -43,6 +44,13 @@ function Header({
   return (
     <header className="header">
       <div className="header-top">
+        <button
+          className="menu-btn"
+          onClick={onMenuToggle}
+          aria-label="Abrir menú"
+        >
+          ☰
+        </button>
         <button
           className={`mic-btn ${listening ? 'listening' : ''}`}
           onClick={toggleMic}

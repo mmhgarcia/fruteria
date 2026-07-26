@@ -7,6 +7,7 @@ import Ticket from './components/Ticket'
 import WeightModal from './components/WeightModal'
 import PaymentModal from './components/PaymentModal'
 import TicketPreview from './components/TicketPreview'
+import SideMenu from './components/SideMenu'
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [paymentOpen, setPaymentOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const filteredProducts = useMemo(() => {
     let result = products
@@ -89,6 +91,13 @@ function App() {
 
   return (
     <div className="app">
+      <SideMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onOpen={() => setIsMenuOpen(true)}
+        currentFilter={currentFilter}
+        onFilterChange={setCurrentFilter}
+      />
       <Header
         cartCount={totals.count}
         totalUSD={totals.totalUSD}
@@ -97,6 +106,7 @@ function App() {
         onTasaChange={setTasa}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
+        onMenuToggle={() => setIsMenuOpen(true)}
       />
       <main className="main">
         <ProductGrid
