@@ -10,6 +10,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
     { id: 'separator', label: '', icon: '', type: 'separator' },
     { id: 'categorias', label: 'Categorías', icon: '📂' },
     { id: 'productos', label: 'Productos', icon: '📦' },
+    { id: 'tasabcv', label: 'Tasa BCV', icon: '💱' },
     { id: 'config', label: 'Configuración', icon: '⚙️' },
     { id: 'history', label: 'Historial', icon: '📜' },
   ]

@@ -1,0 +1,227 @@
+.tasa-modal {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.tasa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border, #dee2e6);
+}
+
+.tasa-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2b9348;
+  text-transform: uppercase;
+}
+
+.tasa-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f8f9fa;
+  color: #666;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tasa-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tasa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tasa-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tasa-field {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tasa-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.tasa-field input {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border, #dee2e6);
+  font-size: 1rem;
+  background: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+}
+
+.tasa-field input:focus {
+  outline: none;
+  border-color: var(--primary, #2b9348);
+  box-shadow: 0 0 0 3px rgba(43, 147, 72, 0.12);
+}
+
+.tasa-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.tasa-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: #e9ecef;
+  color: #444;
+  transition: background 0.2s;
+}
+
+.tasa-btn-primary {
+  background: var(--primary, #2b9348);
+  color: #fff;
+}
+
+.tasa-btn-primary:hover {
+  background: var(--primary-dark, #1f6f36);
+}
+
+.tasa-message {
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.tasa-list-container {
+  border: 1px solid var(--border, #dee2e6);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.tasa-list-header {
+  text-align: center;
+  background: var(--primary, #2b9348);
+  color: #fff;
+  padding: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.tasa-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tasa-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border, #dee2e6);
+  gap: 12px;
+}
+
+.tasa-item:last-child {
+  border-bottom: none;
+}
+
+.tasa-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.tasa-item-info strong {
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.tasa-item-info span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.tasa-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tasa-item-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #dee2e6);
+  background: #f8f9fa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.tasa-item-btn:hover {
+  background: #e9ecef;
+}
+
+.tasa-empty {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .tasa-modal {
+    border-radius: 20px;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    max-height: 85vh;
+  }
+}

@@ -12,6 +12,7 @@ import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
 import Products from './components/Products'
 import Categories from './components/Categories'
+import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import './App.css'
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const [tasaBcvOpen, setTasaBcvOpen] = useState(false)
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
@@ -149,6 +151,8 @@ function App() {
             setProductsOpen(true)
           } else if (filter === 'categorias') {
             setCategoriesOpen(true)
+          } else if (filter === 'tasabcv') {
+            setTasaBcvOpen(true)
           } else {
             setCurrentFilter(filter)
           }
@@ -236,6 +240,13 @@ function App() {
             setCategoriesOpen(false)
             loadCategories()
           }}
+        />
+      )}
+
+      {tasaBcvOpen && (
+        <TasaBcv
+          onClose={() => setTasaBcvOpen(false)}
+          onTasaChange={setTasa}
         />
       )}
     </div>
