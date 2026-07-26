@@ -26,19 +26,21 @@ function App() {
   const [loadingProducts, setLoadingProducts] = useState(true)
 
   useEffect(() => {
-    async function initProducts() {
-      try {
-        await seedProducts(defaultProducts)
-        const list = await getProducts()
-        setProducts(list)
-      } catch (error) {
-        console.error('Error inicializando productos:', error)
-      } finally {
-        setLoadingProducts(false)
-      }
-    }
-    initProducts()
+    loadProducts()
   }, [])
+
+  async function loadProducts() {
+    try {
+      setLoadingProducts(true)
+      await seedProducts(defaultProducts)
+      const list = await getProducts()
+      setProducts(list)
+    } catch (error) {
+      console.error('Error inicializando productos:', error)
+    } finally {
+      setLoadingProducts(false)
+    }
+  }
 
   const filteredProducts = useMemo(() => {
     let result = products
@@ -187,9 +189,28 @@ function App() {
         />
       )}
 
-      {productsOpen && <Products onClose={() => setProductsOpen(false)} />}
+      {productsOpen && (
+        <Products
+          onClose={() => {
+            setProductsOpen(false)
+            loadProducts()
+          }}
+        />
+      )}
     </div>
   )
+
+  async function loadProducts() {
+    try {
+      setLoadingProducts(true)
+      const list = await getProducts()
+      setProducts(list)
+    } catch (error) {
+      console.error('Error recargando productos:', error)
+    } finally {
+      setLoadingProducts(false)
+    }
+  }
 }
 
 export default App
