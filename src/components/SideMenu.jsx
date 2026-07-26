@@ -16,13 +16,13 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
   const menuRef = useRef(null)
   const edgeRef = useRef(null)
   const [dragX, setDragX] = useState(0)
+  const [menuWidth, setMenuWidth] = useState(0)
   const startX = useRef(0)
   const isDragging = useRef(false)
-  const menuWidth = useRef(0)
 
   useEffect(() => {
     if (menuRef.current) {
-      menuWidth.current = menuRef.current.offsetWidth
+      setMenuWidth(menuRef.current.offsetWidth)
     }
   }, [])
 
@@ -48,14 +48,14 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
     if (!isDragging.current) return
     const delta = clientX - startX.current
     if (delta < 0) return
-    setDragX(Math.min(delta, menuWidth.current))
+    setDragX(Math.min(delta, menuWidth))
   }
 
   const endDrag = () => {
     if (!isDragging.current) return
     isDragging.current = false
     menuRef.current?.style.removeProperty('transition')
-    if (dragX > menuWidth.current * 0.4) {
+    if (dragX > menuWidth * 0.4) {
       onOpen()
     }
     setDragX(0)
@@ -65,7 +65,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
   const onTouchMove = (e) => moveDrag(e.touches[0].clientX)
   const onTouchEnd = endDrag
 
-  const translate = isOpen ? 0 : -menuWidth.current + dragX
+  const translate = isOpen ? 0 : dragX - menuWidth
 
   return (
     <>
@@ -84,7 +84,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
 
       <aside
         ref={menuRef}
-        className="side-menu"
+        className={`side-menu ${menuWidth === 0 ? 'hidden' : ''} ${!isOpen && dragX === 0 ? 'closed' : ''}`}
         style={{ transform: `translateX(${translate}px)` }}
       >
         <div className="side-menu-header">

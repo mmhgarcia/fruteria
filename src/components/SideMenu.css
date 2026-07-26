@@ -38,6 +38,19 @@
   will-change: transform;
 }
 
+.side-menu.hidden {
+  transform: translateX(-100%) !important;
+  pointer-events: none;
+}
+
+.side-menu.closed {
+  pointer-events: none;
+}
+
+.side-menu.closed * {
+  pointer-events: none;
+}
+
 .side-menu-header {
   display: flex;
   align-items: center;
