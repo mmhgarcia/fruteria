@@ -114,6 +114,28 @@
   font-variant-numeric: tabular-nums;
 }
 
+.cart-badge {
+  background: #39ff14;
+  color: #000;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
+  min-width: 22px;
+  text-align: center;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s;
+}
+
+.cart-badge:active {
+  transform: scale(0.92);
+}
+
 .tasa-input {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);

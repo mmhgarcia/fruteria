@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import CartModal from './CartModal'
 import './Header.css'
 
 function Header({
@@ -10,8 +11,12 @@ function Header({
   searchTerm,
   onSearchChange,
   onMenuToggle,
+  cart,
+  totals,
+  onRemoveItem,
 }) {
   const [listening, setListening] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
 
   const handleTasaChange = (e) => {
     const value = parseFloat(e.target.value)
@@ -42,37 +47,42 @@ function Header({
   }
 
   return (
-    <header className="header">
-      <div className="header-top">
-        <button
-          className="menu-btn"
-          onClick={onMenuToggle}
-          aria-label="Abrir menú"
-        >
-          ☰
-        </button>
-        <button
-          className={`mic-btn ${listening ? 'listening' : ''}`}
-          onClick={toggleMic}
-          aria-label="Buscar por voz"
-        >
-          🎤
-        </button>
-        <input
-          type="text"
-          className="search-box"
-          placeholder="Ej: 2 manzanas / ¿quedan plátanos?"
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
-      </div>
-      <div className="header-stats">
-        <div className="stat-group">
-          <span className="icon">🛒</span>
-          <span>
-            Items: <span className="value">{cartCount}</span>
-          </span>
+    <>
+      <header className="header">
+        <div className="header-top">
+          <button
+            className="menu-btn"
+            onClick={onMenuToggle}
+            aria-label="Abrir menú"
+          >
+            ☰
+          </button>
+          <button
+            className={`mic-btn ${listening ? 'listening' : ''}`}
+            onClick={toggleMic}
+            aria-label="Buscar por voz"
+          >
+            🎤
+          </button>
+          <input
+            type="text"
+            className="search-box"
+            placeholder="Ej: 2 manzanas / ¿quedan plátanos?"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
         </div>
+        <div className="header-stats">
+          <div className="stat-group">
+            <span className="icon">🛒</span>
+            <button
+              className="cart-badge"
+              onClick={() => setCartOpen(true)}
+              aria-label={`Abrir carrito con ${cartCount} items`}
+            >
+              {cartCount}
+            </button>
+          </div>
         <div className="stat-group">
           <span className="icon">💰</span>
           <span>Tasa $:</span>
@@ -97,7 +107,19 @@ function Header({
           </span>
         </div>
       </div>
-    </header>
+      </header>
+
+      {cartOpen && (
+        <CartModal
+          cart={cart}
+          totals={{ totalUSD, totalBS }}
+          onClose={() => setCartOpen(false)}
+          onRemoveItem={(idx) => {
+            onRemoveItem(idx)
+          }}
+        />
+      )}
+    </>
   )
 }
 

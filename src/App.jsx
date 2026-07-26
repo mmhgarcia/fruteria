@@ -136,6 +136,9 @@ function App() {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onMenuToggle={() => setIsMenuOpen(true)}
+        cart={cart}
+        totals={totals}
+        onRemoveItem={removeItem}
       />
       <main className="main">
         {loadingProducts ? (
