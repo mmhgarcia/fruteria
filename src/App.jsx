@@ -34,7 +34,7 @@ function App() {
       setLoadingProducts(true)
       await seedProducts(defaultProducts)
       const list = await getProducts()
-      setProducts(list)
+      setProducts(list.sort((a, b) => a.name.localeCompare(b.name)))
     } catch (error) {
       console.error('Error inicializando productos:', error)
     } finally {
