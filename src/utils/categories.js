@@ -1,6 +1,6 @@
 const DB_NAME = 'fruteria-db'
 const DB_VERSION = 2
-const STORE_NAME = 'products'
+const STORE_NAME = 'categories'
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -12,46 +12,13 @@ function openDB() {
     request.onupgradeneeded = (event) => {
       const db = event.target.result
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains('categories')) {
-        db.createObjectStore('categories', { keyPath: 'id' })
+        db.createObjectStore(STORE_NAME, { keyPath: 'id' })
       }
     }
   })
 }
 
-export async function seedProducts(defaultProducts) {
-  const existing = await getProducts()
-  const existingNames = new Set(existing.map((p) => p.name.toLowerCase()))
-  const missing = defaultProducts.filter((p) => !existingNames.has(p.name.toLowerCase()))
-
-  if (missing.length === 0) {
-    console.log('seedProducts: todos los productos de ejemplo ya existen')
-    return existing
-  }
-
-  const db = await openDB()
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite')
-    const store = tx.objectStore(STORE_NAME)
-    const added = []
-
-    missing.forEach((product) => {
-      const { id, ...productWithoutId } = product
-      const request = store.add(productWithoutId)
-      request.onsuccess = () => added.push({ ...productWithoutId, id: request.result })
-      request.onerror = () => {
-        console.error('Error adding product:', product, request.error)
-      }
-    })
-
-    tx.oncomplete = () => resolve([...existing, ...added])
-    tx.onerror = () => reject(tx.error)
-  })
-}
-
-export async function getProducts() {
+export async function getCategories() {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
@@ -62,29 +29,29 @@ export async function getProducts() {
   })
 }
 
-export async function addProduct(product) {
+export async function addCategory(category) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
     const store = tx.objectStore(STORE_NAME)
-    const request = store.add(product)
+    const request = store.add(category)
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
 }
 
-export async function updateProduct(product) {
+export async function updateCategory(category) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
     const store = tx.objectStore(STORE_NAME)
-    const request = store.put(product)
+    const request = store.put(category)
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
 }
 
-export async function deleteProduct(id) {
+export async function deleteCategory(id) {
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
@@ -92,5 +59,31 @@ export async function deleteProduct(id) {
     const request = store.delete(id)
     request.onsuccess = () => resolve()
     request.onerror = () => reject(request.error)
+  })
+}
+
+export async function seedCategories(defaultCategories) {
+  const existing = await getCategories()
+  const existingIds = new Set(existing.map((c) => c.id))
+  const missing = defaultCategories.filter((c) => !existingIds.has(c.id))
+
+  if (missing.length === 0) return existing
+
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    const added = []
+
+    missing.forEach((category) => {
+      const request = store.put(category)
+      request.onsuccess = () => added.push(category)
+      request.onerror = () => {
+        console.error('Error adding category:', category, request.error)
+      }
+    })
+
+    tx.oncomplete = () => resolve([...existing, ...added])
+    tx.onerror = () => reject(tx.error)
   })
 }

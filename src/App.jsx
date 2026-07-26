@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { defaultProducts } from './data/products'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { getProducts, seedProducts } from './utils/db'
+import { getCategories, seedCategories } from './utils/categories'
 import Header from './components/Header'
 import ProductGrid from './components/ProductGrid'
 import Ticket from './components/Ticket'
@@ -10,6 +11,7 @@ import PaymentModal from './components/PaymentModal'
 import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
 import Products from './components/Products'
+import Categories from './components/Categories'
 import './App.css'
 
 function App() {
@@ -22,11 +24,15 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
+  const [categoriesOpen, setCategoriesOpen] = useState(false)
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
+  const [loadingCategories, setLoadingCategories] = useState(true)
 
   useEffect(() => {
     loadProducts()
+    loadCategories()
   }, [])
 
   async function loadProducts() {
@@ -39,6 +45,23 @@ function App() {
       console.error('Error inicializando productos:', error)
     } finally {
       setLoadingProducts(false)
+    }
+  }
+
+  async function loadCategories() {
+    try {
+      setLoadingCategories(true)
+      await seedCategories([
+        { id: 'frutas', name: 'Frutas', icon: '🍊' },
+        { id: 'verduras', name: 'Verduras', icon: '🥬' },
+        { id: 'ofertas', name: 'Ofertas', icon: '🏷️' },
+      ])
+      const list = await getCategories()
+      setCategories(list.sort((a, b) => a.name.localeCompare(b.name)))
+    } catch (error) {
+      console.error('Error inicializando categorías:', error)
+    } finally {
+      setLoadingCategories(false)
     }
   }
 
@@ -118,9 +141,12 @@ function App() {
         onClose={() => setIsMenuOpen(false)}
         onOpen={() => setIsMenuOpen(true)}
         currentFilter={currentFilter}
+        categories={categories}
         onFilterChange={(filter) => {
           if (filter === 'productos') {
             setProductsOpen(true)
+          } else if (filter === 'categorias') {
+            setCategoriesOpen(true)
           } else {
             setCurrentFilter(filter)
           }
@@ -151,6 +177,7 @@ function App() {
             onFilterChange={setCurrentFilter}
             onSelectProduct={setSelectedProduct}
             tasa={tasa}
+            categories={categories}
           />
         )}
         <Ticket
@@ -197,6 +224,15 @@ function App() {
           onClose={() => {
             setProductsOpen(false)
             loadProducts()
+          }}
+        />
+      )}
+
+      {categoriesOpen && (
+        <Categories
+          onClose={() => {
+            setCategoriesOpen(false)
+            loadCategories()
           }}
         />
       )}

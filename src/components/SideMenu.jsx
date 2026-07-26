@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-const MENU_OPTIONS = [
-  { id: 'todos', label: 'Todos los productos', icon: '🍎' },
-  { id: 'frutas', label: 'Frutas', icon: '🍊' },
-  { id: 'verduras', label: 'Verduras', icon: '🥬' },
-  { id: 'ofertas', label: 'Ofertas', icon: '🏷️' },
-  { id: 'separator', label: '', icon: '', type: 'separator' },
-  { id: 'productos', label: 'Productos', icon: '📦' },
-  { id: 'config', label: 'Configuración', icon: '⚙️' },
-  { id: 'history', label: 'Historial', icon: '📜' },
-]
-
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, categories = [] }) {
+  const MENU_OPTIONS = [
+    { id: 'todos', label: 'Todos los productos', icon: '🍎' },
+    ...categories
+      .map((c) => ({ id: c.id, label: c.name, icon: c.icon }))
+      .sort((a, b) => a.label.localeCompare(b.label)),
+    { id: 'separator', label: '', icon: '', type: 'separator' },
+    { id: 'categorias', label: 'Categorías', icon: '📂' },
+    { id: 'productos', label: 'Productos', icon: '📦' },
+    { id: 'config', label: 'Configuración', icon: '⚙️' },
+    { id: 'history', label: 'Historial', icon: '📜' },
+  ]
   const menuRef = useRef(null)
   const edgeRef = useRef(null)
   const [dragX, setDragX] = useState(0)

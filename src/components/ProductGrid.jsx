@@ -1,13 +1,6 @@
 import ProductCard from './ProductCard'
 import './ProductGrid.css'
 
-const filters = [
-  { id: 'todos', label: '🍎 Todos' },
-  { id: 'frutas', label: '🍊 Frutas' },
-  { id: 'verduras', label: '🥬 Verduras' },
-  { id: 'ofertas', label: '🔥 Ofertas' },
-]
-
 function ProductGrid({
   products,
   cart,
@@ -15,7 +8,15 @@ function ProductGrid({
   onFilterChange,
   onSelectProduct,
   tasa,
+  categories = [],
 }) {
+  const filters = [
+    { id: 'todos', label: '🍎 Todos' },
+    ...categories
+      .map((c) => ({ id: c.id, label: `${c.icon} ${c.name}` }))
+      .sort((a, b) => a.label.localeCompare(b.label)),
+  ]
+
   return (
     <section className="left-panel">
       <div className="filter-bar">
