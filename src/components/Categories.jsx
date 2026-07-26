@@ -3,15 +3,16 @@ import { getCategories, addCategory, updateCategory, deleteCategory, seedCategor
 import './Products.css'
 
 const DEFAULT_CATEGORIES = [
-  { name: 'Frutas', icon: '🍊', id: 'frutas' },
-  { name: 'Verduras', icon: '🥬', id: 'verduras' },
-  { name: 'Ofertas', icon: '🏷️', id: 'ofertas' },
+  { name: 'Frutas', icon: '🍊', id: 'frutas', order: 1 },
+  { name: 'Verduras', icon: '🥬', id: 'verduras', order: 2 },
+  { name: 'Ofertas', icon: '🏷️', id: 'ofertas', order: 3 },
 ]
 
 const EMPTY_CATEGORY = {
   name: '',
   icon: '🍊',
   id: '',
+  order: 0,
 }
 
 const ICONS = ['🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '🍈', '🍋', '🥑', '🥬', '🍅', '🧅', '🥕', '🥒', '🥔', '🫑', '🧄', '🏷️', '📦', '📂']
@@ -32,7 +33,9 @@ export default function Categories({ onClose }) {
       setLoading(true)
       await seedCategories(DEFAULT_CATEGORIES)
       const list = await getCategories()
-      setCategories(list.sort((a, b) => a.name.localeCompare(b.name)))
+      setCategories(
+        list.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
+      )
     } catch (error) {
       alert('Error al cargar categorías: ' + error.message)
     } finally {
@@ -42,7 +45,10 @@ export default function Categories({ onClose }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === 'order' ? parseInt(value, 10) || 0 : value,
+    }))
   }
 
   const handleSubmit = async (e) => {
@@ -50,6 +56,7 @@ export default function Categories({ onClose }) {
     const category = {
       ...form,
       id: form.id.trim().toLowerCase().replace(/\s+/g, '-'),
+      order: Number(form.order) || 0,
     }
 
     if (!category.id) {
@@ -82,6 +89,7 @@ export default function Categories({ onClose }) {
       name: category.name,
       icon: category.icon,
       id: category.id,
+      order: category.order ?? 0,
     })
     setEditingId(category.id)
     setShowForm(true)
@@ -139,7 +147,7 @@ export default function Categories({ onClose }) {
                   <span className="products-item-avatar">{category.icon}</span>
                   <div className="products-item-info">
                     <strong>{category.name}</strong>
-                    <span>ID: {category.id}</span>
+                    <span>ID: {category.id} · Orden: {category.order ?? 0}</span>
                   </div>
                   <button
                     className="products-item-delete"
@@ -180,6 +188,15 @@ export default function Categories({ onClose }) {
                 value={form.id}
                 onChange={handleChange}
                 disabled={!!editingId}
+                required
+              />
+
+              <input
+                name="order"
+                type="number"
+                placeholder="Orden en el POS"
+                value={form.order}
+                onChange={handleChange}
                 required
               />
 

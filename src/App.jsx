@@ -52,12 +52,14 @@ function App() {
     try {
       setLoadingCategories(true)
       await seedCategories([
-        { id: 'frutas', name: 'Frutas', icon: '🍊' },
-        { id: 'verduras', name: 'Verduras', icon: '🥬' },
-        { id: 'ofertas', name: 'Ofertas', icon: '🏷️' },
+        { id: 'frutas', name: 'Frutas', icon: '🍊', order: 1 },
+        { id: 'verduras', name: 'Verduras', icon: '🥬', order: 2 },
+        { id: 'ofertas', name: 'Ofertas', icon: '🏷️', order: 3 },
       ])
       const list = await getCategories()
-      setCategories(list.sort((a, b) => a.name.localeCompare(b.name)))
+      setCategories(
+        list.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
+      )
     } catch (error) {
       console.error('Error inicializando categorías:', error)
     } finally {

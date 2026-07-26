@@ -13,8 +13,8 @@ function ProductGrid({
   const filters = [
     { id: 'todos', label: '🍎 Todos' },
     ...categories
-      .map((c) => ({ id: c.id, label: `${c.icon} ${c.name}` }))
-      .sort((a, b) => a.label.localeCompare(b.label)),
+      .map((c) => ({ id: c.id, label: `${c.icon} ${c.name}`, order: c.order ?? Infinity }))
+      .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label)),
   ]
 
   return (

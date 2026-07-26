@@ -74,7 +74,7 @@ function Header({
         </div>
         <div className="header-stats">
           <div className="stat-group">
-            <span className="icon">�</span>
+
             <span>Tasa $:</span>
             <input
               type="number"

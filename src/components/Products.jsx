@@ -43,7 +43,9 @@ export default function Products({ onClose }) {
   async function loadCategories() {
     try {
       const list = await getCategories()
-      setCategories(list.sort((a, b) => a.name.localeCompare(b.name)))
+      setCategories(
+        list.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
+      )
     } catch (error) {
       alert('Error al cargar categorías: ' + error.message)
     }
