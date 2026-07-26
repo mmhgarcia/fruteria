@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getProducts, addProduct, updateProduct, deleteProduct } from '../utils/db'
+import { getProducts, addProduct, updateProduct, deleteProduct, seedProducts } from '../utils/db'
+import { defaultProducts } from '../data/products'
 import './Products.css'
 
 const EMPTY_PRODUCT = {
@@ -96,6 +97,16 @@ export default function Products({ onClose }) {
     setShowForm(true)
   }
 
+  const handleImportData = async () => {
+    if (!confirm('¿Importar productos de ejemplo? Esto no sobrescribirá los existentes.')) return
+    try {
+      await seedProducts(defaultProducts)
+      await loadProducts()
+    } catch (error) {
+      alert('Error al importar productos: ' + error.message)
+    }
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="products-modal" onClick={(e) => e.stopPropagation()}>
@@ -110,37 +121,47 @@ export default function Products({ onClose }) {
           {loading ? (
             <p className="products-empty">Cargando...</p>
           ) : products.length === 0 ? (
-            <p className="products-empty">No hay productos registrados.</p>
+            <div className="products-empty">
+              <p>No hay productos registrados.</p>
+              <button className="products-import-btn" onClick={handleImportData}>
+                📥 Importar data
+              </button>
+            </div>
           ) : (
-            <ul className="products-list">
-              {products.map((product) => (
-                <li
-                  key={product.id}
-                  className="products-item"
-                  onClick={() => handleEdit(product)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <span className="products-item-avatar">{product.icon}</span>
-                  <div className="products-item-info">
-                    <strong>{product.name}</strong>
-                    <span>
-                      {product.um} · ${product.price.toFixed(2)}
-                    </span>
-                  </div>
-                  <button
-                    className="products-item-delete"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDelete(product.id)
-                    }}
-                    aria-label="Eliminar producto"
+            <>
+              <ul className="products-list">
+                {products.map((product) => (
+                  <li
+                    key={product.id}
+                    className="products-item"
+                    onClick={() => handleEdit(product)}
+                    role="button"
+                    tabIndex={0}
                   >
-                    🗑️
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    <span className="products-item-avatar">{product.icon}</span>
+                    <div className="products-item-info">
+                      <strong>{product.name}</strong>
+                      <span>
+                        {product.um} · ${product.price.toFixed(2)}
+                      </span>
+                    </div>
+                    <button
+                      className="products-item-delete"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDelete(product.id)
+                      }}
+                      aria-label="Eliminar producto"
+                    >
+                      🗑️
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button className="products-import-text-btn" onClick={handleImportData}>
+                📥 Importar data de ejemplo
+              </button>
+            </>
           )}
         </div>
 
