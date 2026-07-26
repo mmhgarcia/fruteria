@@ -18,6 +18,7 @@ export default function Products({ onClose }) {
   const [products, setProducts] = useState([])
   const [form, setForm] = useState(EMPTY_PRODUCT)
   const [editingId, setEditingId] = useState(null)
+  const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function Products({ onClose }) {
       price: product.price.toString(),
     })
     setEditingId(product.id)
+    setShowForm(true)
   }
 
   const handleDelete = async (id) => {
@@ -85,6 +87,13 @@ export default function Products({ onClose }) {
   const handleCancel = () => {
     setForm(EMPTY_PRODUCT)
     setEditingId(null)
+    setShowForm(false)
+  }
+
+  const handleAdd = () => {
+    setForm(EMPTY_PRODUCT)
+    setEditingId(null)
+    setShowForm(true)
   }
 
   return (
@@ -97,96 +106,106 @@ export default function Products({ onClose }) {
           </button>
         </div>
 
-        <form className="products-form" onSubmit={handleSubmit}>
-          <input
-            name="name"
-            type="text"
-            placeholder="Nombre del producto"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-
-          <select name="group" value={form.group} onChange={handleChange}>
-            <option value="frutas">Frutas</option>
-            <option value="verduras">Verduras</option>
-            <option value="ofertas">Ofertas</option>
-          </select>
-
-          <select name="um" value={form.um} onChange={handleChange}>
-            <option value="kg">kg</option>
-            <option value="unidad">unidad</option>
-          </select>
-
-          <input
-            name="price"
-            type="number"
-            step="0.01"
-            placeholder="Precio ($)"
-            value={form.price}
-            onChange={handleChange}
-            required
-          />
-
-          <div className="products-icons">
-            {ICONS.map((icon) => (
-              <button
-                key={icon}
-                type="button"
-                className={`products-icon ${form.icon === icon ? 'selected' : ''}`}
-                onClick={() => setForm((prev) => ({ ...prev, icon }))}
-              >
-                {icon}
-              </button>
-            ))}
-          </div>
-
-          <div className="products-actions">
-            <button type="submit" className="products-btn products-btn-primary">
-              {editingId ? 'Actualizar' : 'Añadir'}
-            </button>
-            {editingId && (
-              <button type="button" className="products-btn" onClick={handleCancel}>
-                Cancelar
-              </button>
-            )}
-          </div>
-        </form>
-
-        {loading ? (
-          <p className="products-empty">Cargando...</p>
-        ) : products.length === 0 ? (
-          <p className="products-empty">No hay productos registrados.</p>
-        ) : (
-          <ul className="products-list">
-            {products.map((product) => (
-              <li
-                key={product.id}
-                className="products-item"
-                onClick={() => handleEdit(product)}
-                role="button"
-                tabIndex={0}
-              >
-                <span className="products-item-avatar">{product.icon}</span>
-                <div className="products-item-info">
-                  <strong>{product.name}</strong>
-                  <span>
-                    {product.um} · ${product.price.toFixed(2)}
-                  </span>
-                </div>
-                <button
-                  className="products-item-delete"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleDelete(product.id)
-                  }}
-                  aria-label="Eliminar producto"
+        <div className="products-body">
+          {loading ? (
+            <p className="products-empty">Cargando...</p>
+          ) : products.length === 0 ? (
+            <p className="products-empty">No hay productos registrados.</p>
+          ) : (
+            <ul className="products-list">
+              {products.map((product) => (
+                <li
+                  key={product.id}
+                  className="products-item"
+                  onClick={() => handleEdit(product)}
+                  role="button"
+                  tabIndex={0}
                 >
-                  🗑️
+                  <span className="products-item-avatar">{product.icon}</span>
+                  <div className="products-item-info">
+                    <strong>{product.name}</strong>
+                    <span>
+                      {product.um} · ${product.price.toFixed(2)}
+                    </span>
+                  </div>
+                  <button
+                    className="products-item-delete"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDelete(product.id)
+                    }}
+                    aria-label="Eliminar producto"
+                  >
+                    🗑️
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <button className="products-fab" onClick={handleAdd} aria-label="Añadir producto">
+          +
+        </button>
+
+        {showForm && (
+          <div className="products-form-panel">
+            <form className="products-form" onSubmit={handleSubmit}>
+              <input
+                name="name"
+                type="text"
+                placeholder="Nombre del producto"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+
+              <div className="products-form-row">
+                <select name="group" value={form.group} onChange={handleChange}>
+                  <option value="frutas">Frutas</option>
+                  <option value="verduras">Verduras</option>
+                  <option value="ofertas">Ofertas</option>
+                </select>
+
+                <select name="um" value={form.um} onChange={handleChange}>
+                  <option value="kg">kg</option>
+                  <option value="unidad">unidad</option>
+                </select>
+
+                <input
+                  name="price"
+                  type="number"
+                  step="0.01"
+                  placeholder="Precio ($)"
+                  value={form.price}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="products-icons">
+                {ICONS.map((icon) => (
+                  <button
+                    key={icon}
+                    type="button"
+                    className={`products-icon ${form.icon === icon ? 'selected' : ''}`}
+                    onClick={() => setForm((prev) => ({ ...prev, icon }))}
+                  >
+                    {icon}
+                  </button>
+                ))}
+              </div>
+
+              <div className="products-actions">
+                <button type="submit" className="products-btn products-btn-primary">
+                  {editingId ? 'Actualizar' : 'Añadir'}
                 </button>
-              </li>
-            ))}
-          </ul>
+                <button type="button" className="products-btn" onClick={handleCancel}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
         )}
       </div>
     </div>
