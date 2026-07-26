@@ -74,6 +74,17 @@ function Header({
         </div>
         <div className="header-stats">
           <div className="stat-group">
+            <span className="icon">�</span>
+            <span>Tasa $:</span>
+            <input
+              type="number"
+              className="tasa-input"
+              value={tasa.toFixed(2)}
+              step="0.01"
+              onChange={handleTasaChange}
+            />
+          </div>
+          <div className="stat-group">
             <span className="icon">🛒</span>
             <button
               className="cart-badge"
@@ -83,18 +94,7 @@ function Header({
               {cartCount}
             </button>
           </div>
-        <div className="stat-group">
-          <span className="icon">💰</span>
-          <span>Tasa $:</span>
-          <input
-            type="number"
-            className="tasa-input"
-            value={tasa.toFixed(2)}
-            step="0.01"
-            onChange={handleTasaChange}
-          />
         </div>
-      </div>
       </header>
 
       {cartOpen && (
