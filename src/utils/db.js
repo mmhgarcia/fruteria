@@ -18,6 +18,19 @@ function openDB() {
   })
 }
 
+export async function seedProducts(defaultProducts) {
+  const existing = await getProducts()
+  if (existing.length > 0) return
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    defaultProducts.forEach((product) => store.add(product))
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
 export async function getProducts() {
   const db = await openDB()
   return new Promise((resolve, reject) => {

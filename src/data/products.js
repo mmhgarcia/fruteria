@@ -1,4 +1,4 @@
-export const products = [
+export const defaultProducts = [
   { id: 'A', name: 'Manzana', icon: '🍎', group: 'frutas', um: 'kg', price: 2.50 },
   { id: 'B', name: 'Plátano', icon: '🍌', group: 'frutas', um: 'kg', price: 1.80 },
   { id: 'C', name: 'Naranja', icon: '🍊', group: 'frutas', um: 'kg', price: 2.20 },

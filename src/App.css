@@ -11,6 +11,14 @@
   overflow: hidden;
 }
 
+.products-loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary, #666);
+}
+
 @media (max-width: 768px) {
   .main {
     flex-direction: column;

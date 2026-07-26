@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react'
-import { products } from './data/products'
+import { useState, useMemo, useEffect } from 'react'
+import { defaultProducts } from './data/products'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import { getProducts, seedProducts } from './utils/db'
 import Header from './components/Header'
 import ProductGrid from './components/ProductGrid'
 import Ticket from './components/Ticket'
@@ -21,6 +22,23 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
+  const [products, setProducts] = useState([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+
+  useEffect(() => {
+    async function initProducts() {
+      try {
+        await seedProducts(defaultProducts)
+        const list = await getProducts()
+        setProducts(list)
+      } catch (error) {
+        console.error('Error inicializando productos:', error)
+      } finally {
+        setLoadingProducts(false)
+      }
+    }
+    initProducts()
+  }, [])
 
   const filteredProducts = useMemo(() => {
     let result = products
@@ -32,7 +50,7 @@ function App() {
       result = result.filter((p) => p.name.toLowerCase().includes(term))
     }
     return result
-  }, [currentFilter, searchTerm])
+  }, [currentFilter, searchTerm, products])
 
   const totals = useMemo(() => {
     const totalUSD = cart.reduce((sum, item) => sum + item.totalUSD, 0)
@@ -118,14 +136,18 @@ function App() {
         onMenuToggle={() => setIsMenuOpen(true)}
       />
       <main className="main">
-        <ProductGrid
-          products={filteredProducts}
-          cart={cart}
-          currentFilter={currentFilter}
-          onFilterChange={setCurrentFilter}
-          onSelectProduct={setSelectedProduct}
-          tasa={tasa}
-        />
+        {loadingProducts ? (
+          <div className="products-loading">Cargando productos...</div>
+        ) : (
+          <ProductGrid
+            products={filteredProducts}
+            cart={cart}
+            currentFilter={currentFilter}
+            onFilterChange={setCurrentFilter}
+            onSelectProduct={setSelectedProduct}
+            tasa={tasa}
+          />
+        )}
         <Ticket
           cart={cart}
           totals={totals}
