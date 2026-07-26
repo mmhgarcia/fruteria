@@ -27,7 +27,7 @@ export default function Products({ onClose }) {
   async function loadProducts() {
     try {
       const list = await getProducts()
-      setProducts(list)
+      setProducts(list.sort((a, b) => a.name.localeCompare(b.name)))
     } catch (error) {
       alert('Error al cargar productos: ' + error.message)
     } finally {
@@ -160,18 +160,30 @@ export default function Products({ onClose }) {
         ) : (
           <ul className="products-list">
             {products.map((product) => (
-              <li key={product.id} className="products-item">
-                <span className="products-item-icon">{product.icon}</span>
+              <li
+                key={product.id}
+                className="products-item"
+                onClick={() => handleEdit(product)}
+                role="button"
+                tabIndex={0}
+              >
+                <span className="products-item-avatar">{product.icon}</span>
                 <div className="products-item-info">
                   <strong>{product.name}</strong>
                   <span>
-                    {product.group} · {product.um} · ${product.price.toFixed(2)}
+                    {product.um} · ${product.price.toFixed(2)}
                   </span>
                 </div>
-                <div className="products-item-actions">
-                  <button onClick={() => handleEdit(product)}>✏️</button>
-                  <button onClick={() => handleDelete(product.id)}>🗑️</button>
-                </div>
+                <button
+                  className="products-item-delete"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleDelete(product.id)
+                  }}
+                  aria-label="Eliminar producto"
+                >
+                  🗑️
+                </button>
               </li>
             ))}
           </ul>
