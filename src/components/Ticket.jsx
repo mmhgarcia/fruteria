@@ -14,10 +14,6 @@ function Ticket({
   return (
     <aside className="right-panel">
       <div className="ticket-footer">
-        <div className="summary-row">
-          <span>Items</span>
-          <span>{cart.length}</span>
-        </div>
         <div className="summary-row total">
           <span>TOTAL $</span>
           <span>{totals.totalUSD.toFixed(2)}</span>
