@@ -6,6 +6,8 @@ const MENU_OPTIONS = [
   { id: 'frutas', label: 'Frutas', icon: '🍊' },
   { id: 'verduras', label: 'Verduras', icon: '🥬' },
   { id: 'ofertas', label: 'Ofertas', icon: '🏷️' },
+  { id: 'separator', label: '', icon: '', type: 'separator' },
+  { id: 'productos', label: 'Productos', icon: '📦' },
   { id: 'config', label: 'Configuración', icon: '⚙️' },
   { id: 'history', label: 'Historial', icon: '📜' },
 ]
@@ -27,10 +29,12 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
   const handleOptionClick = (id) => {
     if (id === 'config' || id === 'history') {
       alert(`Sección "${MENU_OPTIONS.find((o) => o.id === id)?.label}" próximamente`)
-    } else {
+    } else if (id !== 'separator') {
       onFilterChange(id)
     }
-    onClose()
+    if (id !== 'separator') {
+      onClose()
+    }
   }
 
   const startDrag = (clientX) => {
@@ -91,16 +95,20 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
         </div>
 
         <nav className="side-menu-nav">
-          {MENU_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              className={`side-menu-option ${currentFilter === option.id ? 'active' : ''}`}
-              onClick={() => handleOptionClick(option.id)}
-            >
-              <span className="side-menu-icon">{option.icon}</span>
-              <span className="side-menu-label">{option.label}</span>
-            </button>
-          ))}
+          {MENU_OPTIONS.map((option) =>
+            option.type === 'separator' ? (
+              <hr key={option.id} className="side-menu-separator" />
+            ) : (
+              <button
+                key={option.id}
+                className={`side-menu-option ${currentFilter === option.id ? 'active' : ''}`}
+                onClick={() => handleOptionClick(option.id)}
+              >
+                <span className="side-menu-icon">{option.icon}</span>
+                <span className="side-menu-label">{option.label}</span>
+              </button>
+            )
+          )}
         </nav>
 
         <div className="side-menu-footer">

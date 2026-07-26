@@ -122,3 +122,9 @@
   text-align: center;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+.side-menu-separator {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 8px 12px;
+}
