@@ -95,18 +95,6 @@ function Header({
           />
         </div>
       </div>
-      <div className="header-stats" style={{ marginTop: 6 }}>
-        <div className="stat-group">
-          <span>
-            Total $: <span className="value">{totalUSD.toFixed(2)}</span>
-          </span>
-        </div>
-        <div className="stat-group">
-          <span>
-            Total Bs: <span className="value">{totalBS.toFixed(2)}</span>
-          </span>
-        </div>
-      </div>
       </header>
 
       {cartOpen && (
