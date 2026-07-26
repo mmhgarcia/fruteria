@@ -13,6 +13,7 @@ import SideMenu from './components/SideMenu'
 import Products from './components/Products'
 import Categories from './components/Categories'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
+import BackupModal from './components/BackupModal'
 import './App.css'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
   const [productsOpen, setProductsOpen] = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
   const [tasaBcvOpen, setTasaBcvOpen] = useState(false)
+  const [backupOpen, setBackupOpen] = useState(false)
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
@@ -153,6 +155,8 @@ function App() {
             setCategoriesOpen(true)
           } else if (filter === 'tasabcv') {
             setTasaBcvOpen(true)
+          } else if (filter === 'backup') {
+            setBackupOpen(true)
           } else {
             setCurrentFilter(filter)
           }
@@ -247,6 +251,17 @@ function App() {
         <TasaBcv
           onClose={() => setTasaBcvOpen(false)}
           onTasaChange={setTasa}
+        />
+      )}
+
+      {backupOpen && (
+        <BackupModal
+          onClose={() => setBackupOpen(false)}
+          onImportComplete={() => {
+            loadProducts()
+            loadCategories()
+            window.location.reload()
+          }}
         />
       )}
     </div>

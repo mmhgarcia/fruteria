@@ -11,6 +11,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
     { id: 'categorias', label: 'Categorías', icon: '📂' },
     { id: 'productos', label: 'Productos', icon: '📦' },
     { id: 'tasabcv', label: 'Tasa BCV', icon: '💱' },
+    { id: 'backup', label: 'Backup', icon: '💾' },
     { id: 'config', label: 'Configuración', icon: '⚙️' },
     { id: 'history', label: 'Historial', icon: '📜' },
   ]
