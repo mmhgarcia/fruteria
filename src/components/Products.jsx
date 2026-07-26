@@ -153,7 +153,7 @@ export default function Products({ onClose }) {
                     <div className="products-item-info">
                       <strong>{product.name}</strong>
                       <span>
-                        {product.um} · ${product.price.toFixed(2)}
+                        {product.group} · {product.um} · ${product.price.toFixed(2)}
                       </span>
                     </div>
                     <button
