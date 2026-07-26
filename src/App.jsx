@@ -8,6 +8,7 @@ import WeightModal from './components/WeightModal'
 import PaymentModal from './components/PaymentModal'
 import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
+import Products from './components/Products'
 import './App.css'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
   const [paymentOpen, setPaymentOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [productsOpen, setProductsOpen] = useState(false)
 
   const filteredProducts = useMemo(() => {
     let result = products
@@ -96,7 +98,14 @@ function App() {
         onClose={() => setIsMenuOpen(false)}
         onOpen={() => setIsMenuOpen(true)}
         currentFilter={currentFilter}
-        onFilterChange={setCurrentFilter}
+        onFilterChange={(filter) => {
+          if (filter === 'productos') {
+            setProductsOpen(true)
+          } else {
+            setCurrentFilter(filter)
+          }
+          setIsMenuOpen(false)
+        }}
       />
       <Header
         cartCount={totals.count}
@@ -155,6 +164,8 @@ function App() {
           onClose={() => setPreviewOpen(false)}
         />
       )}
+
+      {productsOpen && <Products onClose={() => setProductsOpen(false)} />}
     </div>
   )
 }

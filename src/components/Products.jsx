@@ -1,0 +1,182 @@
+import { useEffect, useState } from 'react'
+import { getProducts, addProduct, updateProduct, deleteProduct } from '../utils/db'
+import './Products.css'
+
+const EMPTY_PRODUCT = {
+  name: '',
+  icon: '🍎',
+  group: 'frutas',
+  um: 'kg',
+  price: '',
+}
+
+const ICONS = [
+  '🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '🍈', '🍋', '🥑', '🥬', '🍅', '🧅', '🥕', '🥒', '🥔', '🫑', '🧄', '🏷️', '📦'
+]
+
+export default function Products({ onClose }) {
+  const [products, setProducts] = useState([])
+  const [form, setForm] = useState(EMPTY_PRODUCT)
+  const [editingId, setEditingId] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadProducts()
+  }, [])
+
+  async function loadProducts() {
+    try {
+      const list = await getProducts()
+      setProducts(list)
+    } catch (error) {
+      alert('Error al cargar productos: ' + error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const product = {
+      ...form,
+      price: parseFloat(form.price) || 0,
+    }
+
+    try {
+      if (editingId) {
+        await updateProduct({ ...product, id: editingId })
+      } else {
+        await addProduct(product)
+      }
+      await loadProducts()
+      setForm(EMPTY_PRODUCT)
+      setEditingId(null)
+    } catch (error) {
+      alert('Error al guardar producto: ' + error.message)
+    }
+  }
+
+  const handleEdit = (product) => {
+    setForm({
+      name: product.name,
+      icon: product.icon,
+      group: product.group,
+      um: product.um,
+      price: product.price.toString(),
+    })
+    setEditingId(product.id)
+  }
+
+  const handleDelete = async (id) => {
+    if (!confirm('¿Eliminar este producto?')) return
+    try {
+      await deleteProduct(id)
+      await loadProducts()
+    } catch (error) {
+      alert('Error al eliminar producto: ' + error.message)
+    }
+  }
+
+  const handleCancel = () => {
+    setForm(EMPTY_PRODUCT)
+    setEditingId(null)
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="products-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="products-header">
+          <h2>Gestión de productos</h2>
+          <button className="products-close" onClick={onClose} aria-label="Cerrar">
+            ✕
+          </button>
+        </div>
+
+        <form className="products-form" onSubmit={handleSubmit}>
+          <input
+            name="name"
+            type="text"
+            placeholder="Nombre del producto"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+
+          <select name="group" value={form.group} onChange={handleChange}>
+            <option value="frutas">Frutas</option>
+            <option value="verduras">Verduras</option>
+            <option value="ofertas">Ofertas</option>
+          </select>
+
+          <select name="um" value={form.um} onChange={handleChange}>
+            <option value="kg">kg</option>
+            <option value="unidad">unidad</option>
+          </select>
+
+          <input
+            name="price"
+            type="number"
+            step="0.01"
+            placeholder="Precio ($)"
+            value={form.price}
+            onChange={handleChange}
+            required
+          />
+
+          <div className="products-icons">
+            {ICONS.map((icon) => (
+              <button
+                key={icon}
+                type="button"
+                className={`products-icon ${form.icon === icon ? 'selected' : ''}`}
+                onClick={() => setForm((prev) => ({ ...prev, icon }))}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
+
+          <div className="products-actions">
+            <button type="submit" className="products-btn products-btn-primary">
+              {editingId ? 'Actualizar' : 'Añadir'}
+            </button>
+            {editingId && (
+              <button type="button" className="products-btn" onClick={handleCancel}>
+                Cancelar
+              </button>
+            )}
+          </div>
+        </form>
+
+        {loading ? (
+          <p className="products-empty">Cargando...</p>
+        ) : products.length === 0 ? (
+          <p className="products-empty">No hay productos registrados.</p>
+        ) : (
+          <ul className="products-list">
+            {products.map((product) => (
+              <li key={product.id} className="products-item">
+                <span className="products-item-icon">{product.icon}</span>
+                <div className="products-item-info">
+                  <strong>{product.name}</strong>
+                  <span>
+                    {product.group} · {product.um} · ${product.price.toFixed(2)}
+                  </span>
+                </div>
+                <div className="products-item-actions">
+                  <button onClick={() => handleEdit(product)}>✏️</button>
+                  <button onClick={() => handleDelete(product.id)}>🗑️</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  )
+}
