@@ -13,24 +13,6 @@ function Ticket({
 
   return (
     <aside className="right-panel">
-      <div className="ticket-header">
-        <h2>🧾 Ticket</h2>
-        <span className="items-count">
-          {cart.length} item{cart.length !== 1 ? 's' : ''}
-        </span>
-      </div>
-      <div className="ticket-items collapsed">
-        {!hasItems ? (
-          <div className="ticket-empty collapsed">
-            <div className="empty-icon">🛒</div>
-            <p>Toca un producto para agregarlo</p>
-          </div>
-        ) : (
-          <div className="ticket-items-count">
-            {cart.length} producto{cart.length !== 1 ? 's' : ''} en el carrito
-          </div>
-        )}
-      </div>
       <div className="ticket-footer">
         <div className="summary-row">
           <span>Items</span>
