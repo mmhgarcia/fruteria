@@ -83,17 +83,31 @@
   width: 16px;
   text-align: center;
   color: var(--text-secondary, #6b7280);
+  flex-shrink: 0;
+}
+
+.sales-report-day-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .sales-report-day-date {
-  flex: 1;
   font-weight: 600;
+}
+
+.sales-report-day-tasa {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #6b7280);
 }
 
 .sales-report-day-total {
   font-weight: 700;
   color: var(--accent-color, #16a34a);
   white-space: nowrap;
+  text-align: right;
 }
 
 .sales-report-day-body {

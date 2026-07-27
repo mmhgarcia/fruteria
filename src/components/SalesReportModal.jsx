@@ -29,11 +29,12 @@ export default function SalesReportModal({ onClose }) {
     for (const sale of sales) {
       const day = sale.date.slice(0, 10)
       if (!days.has(day)) {
-        days.set(day, { products: new Map(), totalUSD: 0, totalBS: 0 })
+        days.set(day, { products: new Map(), totalUSD: 0, totalBS: 0, tasas: new Set() })
       }
       const dayData = days.get(day)
       dayData.totalUSD += sale.totalUSD
       dayData.totalBS += sale.totalBS
+      dayData.tasas.add(sale.tasa)
 
       for (const item of sale.items) {
         const key = `${item.id}-${item.name}-${item.um}-${item.price}`
@@ -54,14 +55,18 @@ export default function SalesReportModal({ onClose }) {
       }
     }
 
-    return Array.from(days.entries()).map(([date, data]) => ({
-      date,
-      totalUSD: data.totalUSD,
-      totalBS: data.totalBS,
-      products: Array.from(data.products.values()).sort((a, b) =>
-        a.name.localeCompare(b.name)
-      ),
-    }))
+    return Array.from(days.entries()).map(([date, data]) => {
+      const tasas = Array.from(data.tasas).sort((a, b) => a - b)
+      return {
+        date,
+        totalUSD: data.totalUSD,
+        totalBS: data.totalBS,
+        tasaLabel: formatTasas(tasas),
+        products: Array.from(data.products.values()).sort((a, b) =>
+          a.name.localeCompare(b.name)
+        ),
+      }
+    })
   }, [sales])
 
   const grandTotal = useMemo(() => {
@@ -124,7 +129,10 @@ export default function SalesReportModal({ onClose }) {
                 <span className="sales-report-day-toggle">
                   {expandedDays.has(day.date) ? '▼' : '▶'}
                 </span>
-                <span className="sales-report-day-date">{formatDate(day.date)}</span>
+                <span className="sales-report-day-info">
+                  <span className="sales-report-day-date">{formatDate(day.date)}</span>
+                  <span className="sales-report-day-tasa">{day.tasaLabel}</span>
+                </span>
                 <span className="sales-report-day-total">
                   ${day.totalUSD.toFixed(2)} / Bs {day.totalBS.toFixed(2)}
                 </span>
@@ -169,4 +177,10 @@ export default function SalesReportModal({ onClose }) {
 function formatDate(dateString) {
   const [year, month, day] = dateString.split('-')
   return `${day}/${month}/${year}`
+}
+
+function formatTasas(tasas) {
+  if (tasas.length === 0) return ''
+  if (tasas.length === 1) return `Tasa: ${tasas[0].toFixed(2)}`
+  return `Tasa: ${tasas[0].toFixed(2)} - ${tasas[tasas.length - 1].toFixed(2)}`
 }
