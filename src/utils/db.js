@@ -1,7 +1,8 @@
 const DB_NAME = 'fruteria-db'
-const DB_VERSION = 3
+const DB_VERSION = 4
 const STORE_NAME = 'products'
 const TASA_STORE_NAME = 'historico_tasas'
+const SALES_STORE_NAME = 'sales'
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -20,6 +21,9 @@ function openDB() {
       }
       if (!db.objectStoreNames.contains(TASA_STORE_NAME)) {
         db.createObjectStore(TASA_STORE_NAME, { keyPath: 'id', autoIncrement: true })
+      }
+      if (!db.objectStoreNames.contains(SALES_STORE_NAME)) {
+        db.createObjectStore(SALES_STORE_NAME, { keyPath: 'id', autoIncrement: true })
       }
     }
   })
@@ -93,6 +97,65 @@ export async function deleteProduct(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
     const store = tx.objectStore(STORE_NAME)
+    const request = store.delete(id)
+    request.onsuccess = () => resolve()
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function addSale(sale) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SALES_STORE_NAME, 'readwrite')
+    const store = tx.objectStore(SALES_STORE_NAME)
+    const request = store.add(sale)
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function getSales() {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SALES_STORE_NAME, 'readonly')
+    const store = tx.objectStore(SALES_STORE_NAME)
+    const request = store.getAll()
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function getSalesByDateRange(start, end) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SALES_STORE_NAME, 'readonly')
+    const store = tx.objectStore(SALES_STORE_NAME)
+    const request = store.openCursor()
+    const sales = []
+
+    request.onsuccess = (event) => {
+      const cursor = event.target.result
+      if (!cursor) {
+        resolve(sales)
+        return
+      }
+      const sale = cursor.value
+      const saleDate = new Date(sale.date)
+      if (saleDate >= start && saleDate <= end) {
+        sales.push(sale)
+      }
+      cursor.continue()
+    }
+
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteSale(id) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SALES_STORE_NAME, 'readwrite')
+    const store = tx.objectStore(SALES_STORE_NAME)
     const request = store.delete(id)
     request.onsuccess = () => resolve()
     request.onerror = () => reject(request.error)

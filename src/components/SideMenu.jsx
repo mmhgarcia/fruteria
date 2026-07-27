@@ -13,7 +13,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
     { id: 'tasabcv', label: 'Tasa BCV', icon: '💱' },
     { id: 'backup', label: 'Backup', icon: '💾' },
     { id: 'config', label: 'Configuración', icon: '⚙️' },
-    { id: 'history', label: 'Historial', icon: '📜' },
+    { id: 'sales-report', label: 'Resumen Ventas', icon: '📊' },
   ]
   const menuRef = useRef(null)
   const edgeRef = useRef(null)
@@ -29,7 +29,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
   }, [])
 
   const handleOptionClick = (id) => {
-    if (id === 'config' || id === 'history') {
+    if (id === 'config') {
       alert(`Sección "${MENU_OPTIONS.find((o) => o.id === id)?.label}" próximamente`)
     } else if (id !== 'separator') {
       onFilterChange(id)

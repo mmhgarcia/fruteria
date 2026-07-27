@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { defaultProducts } from './data/products'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { getProducts, seedProducts } from './utils/db'
+import { getProducts, seedProducts, addSale } from './utils/db'
 import { getCategories, seedCategories } from './utils/categories'
 import Header from './components/Header'
 import ProductGrid from './components/ProductGrid'
@@ -14,6 +14,7 @@ import Products from './components/Products'
 import Categories from './components/Categories'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import BackupModal from './components/BackupModal'
+import SalesReportModal from './components/SalesReportModal'
 import './App.css'
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
   const [categoriesOpen, setCategoriesOpen] = useState(false)
   const [tasaBcvOpen, setTasaBcvOpen] = useState(false)
   const [backupOpen, setBackupOpen] = useState(false)
+  const [salesReportOpen, setSalesReportOpen] = useState(false)
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
@@ -126,13 +128,39 @@ function App() {
     }
   }
 
-  const completePayment = (method) => {
+  const completePayment = async (method) => {
     const methodNames = {
       efectivo: 'Efectivo',
       tarjeta: 'Tarjeta',
       transfer: 'Transferencia',
       qr: 'QR/Yape',
     }
+
+    const sale = {
+      date: new Date().toISOString(),
+      method,
+      methodName: methodNames[method],
+      tasa,
+      totalUSD: totals.totalUSD,
+      totalBS: totals.totalBS,
+      items: cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        icon: item.icon,
+        um: item.um,
+        price: item.price,
+        qty: item.qty,
+        totalUSD: item.totalUSD,
+      })),
+    }
+
+    try {
+      const saleId = await addSale(sale)
+      console.log('Venta guardada con id:', saleId, sale)
+    } catch (error) {
+      console.error('Error guardando la venta:', error)
+    }
+
     alert(
       `✅ Pago completado!\n\nTotal: $${totals.totalUSD.toFixed(2)}\nMétodo: ${methodNames[method]}\n\n¡Gracias por su compra!`
     )
@@ -157,6 +185,8 @@ function App() {
             setTasaBcvOpen(true)
           } else if (filter === 'backup') {
             setBackupOpen(true)
+          } else if (filter === 'sales-report') {
+            setSalesReportOpen(true)
           } else {
             setCurrentFilter(filter)
           }
@@ -262,6 +292,12 @@ function App() {
             loadCategories()
             window.location.reload()
           }}
+        />
+      )}
+
+      {salesReportOpen && (
+        <SalesReportModal
+          onClose={() => setSalesReportOpen(false)}
         />
       )}
     </div>
