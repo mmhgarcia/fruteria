@@ -4,7 +4,7 @@ const STORE_NAME = 'products'
 const TASA_STORE_NAME = 'historico_tasas'
 const SALES_STORE_NAME = 'sales'
 
-function openDB() {
+export function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION)
 

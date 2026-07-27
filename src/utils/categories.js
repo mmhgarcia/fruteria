@@ -1,28 +1,6 @@
-const DB_NAME = 'fruteria-db'
-const DB_VERSION = 3
+import { openDB } from './db.js'
+
 const STORE_NAME = 'categories'
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
-
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' })
-      }
-      if (!db.objectStoreNames.contains('historico_tasas')) {
-        db.createObjectStore('historico_tasas', { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains('products')) {
-        db.createObjectStore('products', { keyPath: 'id', autoIncrement: true })
-      }
-    }
-  })
-}
 
 export async function getCategories() {
   const db = await openDB()
