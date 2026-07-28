@@ -75,6 +75,16 @@
   font-weight: 500;
 }
 
+.ticket-preview-payments {
+  margin-bottom: 8px;
+}
+
+.ticket-preview-payments .ticket-preview-line {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+}
+
 .ticket-preview-footer {
   text-align: center;
   margin-top: 20px;

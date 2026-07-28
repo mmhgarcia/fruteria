@@ -14,7 +14,7 @@ import Products from './components/Products'
 import Categories from './components/Categories'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import BackupModal from './components/BackupModal'
-import { formatCurrency } from './utils/format'
+import BackupModal from './components/BackupModal'
 import SalesReportModal from './components/SalesReportModal'
 import SettingsModal from './components/SettingsModal'
 import './App.css'
@@ -27,6 +27,7 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [paymentOpen, setPaymentOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [lastSale, setLastSale] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
@@ -187,19 +188,10 @@ function App() {
       console.error('Error guardando la venta:', error)
     }
 
-    let msg = `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}`
-    const parts = []
-    if (sale.pagomovilMonto > 0) parts.push(`Pago Móvil: Bs ${formatCurrency(sale.pagomovilMonto)}`)
-    if (sale.efectivoBS > 0) parts.push(`Efectivo: Bs ${formatCurrency(sale.efectivoBS)}`)
-    if (sale.puntoMonto > 0) parts.push(`Punto: Bs ${formatCurrency(sale.puntoMonto)}`)
-    if (sale.divisaUSD > 0) parts.push(`Divisa: $${formatCurrency(sale.divisaUSD)}`)
-    if (parts.length > 0) msg += '\n' + parts.join('\n')
-    if (sale.vuelto > 0) msg += `\n\nVuelto: Bs ${formatCurrency(sale.vuelto)}`
-    msg += `\n\n¡Gracias por su compra!`
-
-    alert(msg)
-    setCart([])
+    setLastSale(sale)
     setPaymentOpen(false)
+    setPreviewOpen(true)
+    setCart([])
   }
 
   return (
@@ -291,6 +283,7 @@ function App() {
 
       {previewOpen && (
         <TicketPreview
+          sale={lastSale}
           cart={cart}
           totals={totals}
           tasa={tasa}

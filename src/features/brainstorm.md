@@ -33,9 +33,12 @@ _Estandarizar modelo de base de datos a usar._
 
 _* Cálculo de IGTF (Opcional): Añadir un interruptor en configuración para calcular de forma automática el impuesto del 3% si el negocio es contribuyente especial._
 
-* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/digital el costo reflejado en ambas monedas de forma simultánea.
+_* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/digital el costo reflejado en ambas monedas de forma simultánea._
 
 * Registro del Método de Pago: El ticket final debe plasmar obligatoriamente cómo pagó el cliente (efectivo, pago móvil, etc.) para el cuadre físico.
+
+## 3.1 Atencion simultanea
+
 
 ## 🛡️ 4. Seguridad y Control de Acceso
 
