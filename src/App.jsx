@@ -163,9 +163,9 @@ function App() {
       pagomovilBanco: paymentData.pagomovilBanco || '',
       pagomovilMonto: paymentData.pagomovilMonto || 0,
       efectivoBS: paymentData.efectivoBS || 0,
-      debitoCard: paymentData.debitoCard || '',
-      debitoBanco: paymentData.debitoBanco || '',
-      debitoMonto: paymentData.debitoMonto || 0,
+      puntoCard: paymentData.puntoCard || '',
+      puntoBanco: paymentData.puntoBanco || '',
+      puntoMonto: paymentData.puntoMonto || 0,
       divisaUSD: paymentData.divisaUSD || 0,
       totalPagado: paymentData.totalPagado || 0,
       vuelto: paymentData.vuelto || 0,
@@ -191,7 +191,7 @@ function App() {
     const parts = []
     if (sale.pagomovilMonto > 0) parts.push(`Pago Móvil: Bs ${formatCurrency(sale.pagomovilMonto)}`)
     if (sale.efectivoBS > 0) parts.push(`Efectivo: Bs ${formatCurrency(sale.efectivoBS)}`)
-    if (sale.debitoMonto > 0) parts.push(`Débito: Bs ${formatCurrency(sale.debitoMonto)}`)
+    if (sale.puntoMonto > 0) parts.push(`Punto: Bs ${formatCurrency(sale.puntoMonto)}`)
     if (sale.divisaUSD > 0) parts.push(`Divisa: $${formatCurrency(sale.divisaUSD)}`)
     if (parts.length > 0) msg += '\n' + parts.join('\n')
     if (sale.vuelto > 0) msg += `\n\nVuelto: Bs ${formatCurrency(sale.vuelto)}`
