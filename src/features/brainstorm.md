@@ -39,6 +39,7 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ## 3.1 Atencion simultanea
 
+## 3.2 Acceso al Historico de Ventas
 
 ## 🛡️ 4. Seguridad y Control de Acceso
 

@@ -1,5 +1,5 @@
 const DB_NAME = 'fruteria-db'
-const DB_VERSION = 3
+const DB_VERSION = 4
 const TASA_STORE_NAME = 'historico_tasas'
 
 function openDB() {

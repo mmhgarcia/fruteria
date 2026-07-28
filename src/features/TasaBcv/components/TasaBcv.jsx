@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTasas } from '../hooks/useTasas'
+import { formatCurrency } from '../../../utils/format'
 import './TasaBcv.css'
 
 export default function TasaBcv({ onClose, onTasaChange }) {
