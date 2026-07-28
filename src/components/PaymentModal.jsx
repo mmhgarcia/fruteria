@@ -54,11 +54,11 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
   const hasAnyData = totalPagado > 0
 
   return (
-    <div className="modal-overlay active" onClick={onClose}>
+    <div className="modal-overlay active overlay-payment" onClick={onClose}>
       <div className="modal payment-unified" onClick={(e) => e.stopPropagation()}>
         <div className="pu-header">
           <div className="pu-header-title">CONFIRMAR PAGO</div>
-          <div className="pu-divider">--------------------------------------------</div>
+          <hr className="pu-divider" />
           <div className="pu-header-meta">
             <span>FECHA: {fechaStr}</span>
             <span>TASA: {formatCurrency(tasa)}</span>
@@ -66,13 +66,13 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
           <div className="pu-total-ticket">
             MONTO BS: {formatCurrency(totals.totalBS)}
           </div>
-          <div className="pu-divider">--------------------------------------------</div>
+          <hr className="pu-divider" />
         </div>
 
         <div className="pu-body">
           {/* PAGO MOVIL */}
           <div className="pu-section">
-            <div className="pu-divider">--------------------------------------------</div>
+            <hr className="pu-divider" />
             <div className="pu-section-title">PAGO MOVIL:</div>
             <div className="pu-field">
               <label className="pu-label">Referencia:</label>
@@ -110,7 +110,7 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
 
           {/* PUNTO */}
           <div className="pu-section">
-            <div className="pu-divider">--------------------------------------------</div>
+            <hr className="pu-divider" />
             <div className="pu-section-title">PUNTO:</div>
             <div className="pu-field">
               <label className="pu-label">Tarjeta (6 ult. digitos):</label>
@@ -149,7 +149,7 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
 
           {/* DIVISA */}
           <div className="pu-section">
-            <div className="pu-divider">--------------------------------------------</div>
+            <hr className="pu-divider" />
             <div className="pu-section-title">DIVISA:</div>
             <div className="pu-field">
               <label className="pu-label">Monto $:</label>
@@ -167,7 +167,7 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
 
           {/* EFECTIVO */}
           <div className="pu-section">
-            <div className="pu-divider">--------------------------------------------</div>
+            <hr className="pu-divider" />
             <div className="pu-section-title">EFECTIVO:</div>
             <div className="pu-field">
               <label className="pu-label">Monto Bs:</label>
