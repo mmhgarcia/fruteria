@@ -126,6 +126,23 @@
   font-size: 28px;
 }
 
+.numpad .btn-dot:disabled {
+  background: #e8eaed;
+  color: #b0b3b8;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.numpad .btn-dot:disabled:hover {
+  background: #e8eaed;
+}
+
+.numpad .btn-dot:disabled:active {
+  transform: none;
+  background: #e8eaed;
+  color: #b0b3b8;
+}
+
 .numpad .btn-clear {
   background: #fee2e2;
   color: var(--danger);

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, categories = [] }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, categories = [], companyName }) {
   const MENU_OPTIONS = [
     { id: 'todos', label: 'Todos los productos', icon: '🍎' },
     ...categories
@@ -29,9 +29,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
   }, [])
 
   const handleOptionClick = (id) => {
-    if (id === 'config') {
-      alert(`Sección "${MENU_OPTIONS.find((o) => o.id === id)?.label}" próximamente`)
-    } else if (id !== 'separator') {
+    if (id !== 'separator') {
       onFilterChange(id)
     }
     if (id !== 'separator') {
@@ -90,7 +88,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
         style={{ transform: `translateX(${translate}px)` }}
       >
         <div className="side-menu-header">
-          <span className="side-menu-title">Frutería POS</span>
+          <span className="side-menu-title">{companyName || 'Frutería POS'}</span>
           <button className="side-menu-close" onClick={onClose} aria-label="Cerrar menú">
             ✕
           </button>

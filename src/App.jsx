@@ -15,6 +15,7 @@ import Categories from './components/Categories'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import BackupModal from './components/BackupModal'
 import SalesReportModal from './components/SalesReportModal'
+import SettingsModal from './components/SettingsModal'
 import './App.css'
 
 function App() {
@@ -35,11 +36,24 @@ function App() {
   const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
   const [loadingCategories, setLoadingCategories] = useState(true)
+  const [settings, setSettings] = useLocalStorage('fruteria-settings', {
+    companyName: 'Frutería POS',
+    bgColor: '#4a8c5e',
+    textColor: '#ffffff',
+  })
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   useEffect(() => {
     loadProducts()
     loadCategories()
   }, [])
+
+  // Aplica los colores del theme al :root del documento
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--header-bg', settings.bgColor)
+    root.style.setProperty('--header-text', settings.textColor)
+  }, [settings])
 
   async function loadProducts() {
     try {
@@ -176,6 +190,7 @@ function App() {
         onOpen={() => setIsMenuOpen(true)}
         currentFilter={currentFilter}
         categories={categories}
+        companyName={settings.companyName}
         onFilterChange={(filter) => {
           if (filter === 'productos') {
             setProductsOpen(true)
@@ -187,6 +202,8 @@ function App() {
             setBackupOpen(true)
           } else if (filter === 'sales-report') {
             setSalesReportOpen(true)
+          } else if (filter === 'config') {
+            setSettingsOpen(true)
           } else {
             setCurrentFilter(filter)
           }
@@ -198,13 +215,13 @@ function App() {
         totalUSD={totals.totalUSD}
         totalBS={totals.totalBS}
         tasa={tasa}
-        onTasaChange={setTasa}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onMenuToggle={() => setIsMenuOpen(true)}
         cart={cart}
         totals={totals}
         onRemoveItem={removeItem}
+        companyName={settings.companyName}
       />
       <main className="main">
         {loadingProducts ? (
@@ -256,6 +273,7 @@ function App() {
           totals={totals}
           tasa={tasa}
           onClose={() => setPreviewOpen(false)}
+          companyName={settings.companyName}
         />
       )}
 
@@ -298,6 +316,14 @@ function App() {
       {salesReportOpen && (
         <SalesReportModal
           onClose={() => setSalesReportOpen(false)}
+        />
+      )}
+
+      {settingsOpen && (
+        <SettingsModal
+          settings={settings}
+          onSave={setSettings}
+          onClose={() => setSettingsOpen(false)}
         />
       )}
     </div>

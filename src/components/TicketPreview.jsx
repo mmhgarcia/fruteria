@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { formatQty } from '../utils/format'
 import './TicketPreview.css'
 
-function TicketPreview({ cart, totals, tasa, onClose }) {
+function TicketPreview({ cart, totals, tasa, onClose, companyName }) {
   const ticketRef = useRef(null)
 
   const now = new Date()
@@ -34,7 +34,7 @@ function TicketPreview({ cart, totals, tasa, onClose }) {
         <div className="ticket-preview-content" ref={ticketRef}>
           <div className="ticket-preview-header">
             <div className="ticket-preview-logo">🍎</div>
-            <div className="ticket-preview-title">FRUTERÍA POS</div>
+            <div className="ticket-preview-title">{(companyName || 'Frutería POS').toUpperCase()}</div>
             <div className="ticket-preview-meta">Ticket #{ticketNumber}</div>
             <div className="ticket-preview-meta">{fecha} {hora}</div>
             <div className="ticket-preview-rate">Tasa: Bs {tasa.toFixed(2)} x $1</div>

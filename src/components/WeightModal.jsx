@@ -10,12 +10,15 @@ const digits = [
 
 function WeightModal({ product, tasa, onClose, onConfirm }) {
   const [weight, setWeight] = useState('')
+  const isUnit = product.um === 'unidad'
 
   const appendDigit = (digit) => {
     if (digit === 'clear') {
       setWeight('')
       return
     }
+    // Los productos por unidad no admiten fracciones
+    if (digit === '.' && isUnit) return
     if (digit === '.' && weight.includes('.')) return
     if (weight === '' && digit === '.') {
       setWeight('0.')
@@ -60,15 +63,21 @@ function WeightModal({ product, tasa, onClose, onConfirm }) {
           </div>
         </div>
         <div className="numpad">
-          {digits.map((d) => (
-            <button
-              key={d}
-              className={d === 'clear' ? 'btn-clear' : d === '.' ? 'btn-dot' : ''}
-              onClick={() => appendDigit(d)}
-            >
-              {d === 'clear' ? 'BORRAR' : d}
-            </button>
-          ))}
+          {digits.map((d) => {
+            const isDot = d === '.'
+            const dotDisabled = isDot && isUnit
+            return (
+              <button
+                key={d}
+                className={d === 'clear' ? 'btn-clear' : isDot ? 'btn-dot' : ''}
+                onClick={() => appendDigit(d)}
+                disabled={dotDisabled}
+                aria-disabled={dotDisabled || undefined}
+              >
+                {d === 'clear' ? 'BORRAR' : d}
+              </button>
+            )
+          })}
         </div>
         <div className="modal-actions">
           <button className="btn-cancel" onClick={onClose}>
