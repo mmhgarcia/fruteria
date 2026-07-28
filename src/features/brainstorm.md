@@ -23,7 +23,7 @@ _Estandarizar modelo de base de datos a usar._
 
 ## 💳 3. Gestión y Flujo de Cobranza
 
-* Adaptación de Mercado (Pago Móvil): Reemplazar el botón de "QR / Yape" (sistema exclusivo de Perú) por el de "Pago Móvil", el método electrónico estándar en Venezuela.
+~~* Adaptación de Mercado (Pago Móvil): Reemplazar el botón de "QR / Yape" (sistema exclusivo de Perú) por el de "Pago Móvil", el método electrónico estándar en Venezuela.~~
 
 * Efectivo Multimoneda: Permitir que el botón "Efectivo" abra dos campos de texto independientes para registrar cuánto dinero entra en Dólares ($) y cuánto en Bolívares (Bs).
 

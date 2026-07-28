@@ -3,14 +3,14 @@ import { formatCurrency } from '../utils/format'
 import './PaymentModal.css'
 
 const paymentOptions = [
-  { id: 'efectivo', label: 'Efectivo', icon: '💵' },
-  { id: 'tarjeta', label: 'Tarjeta', icon: '💳' },
-  { id: 'transfer', label: 'Transferencia', icon: '📱' },
   { id: 'pagomovil', label: 'Pago Móvil', icon: '📱' },
+  { id: 'divisa', label: 'Divisa', icon: '💵' },
+  { id: 'debito', label: 'Débito', icon: '💳' },
+  { id: 'transfer', label: 'Transferencia', icon: '🏦' },
 ]
 
 function PaymentModal({ totals, onClose, onConfirm }) {
-  const [method, setMethod] = useState('efectivo')
+  const [method, setMethod] = useState('pagomovil')
 
   return (
     <div className="modal-overlay active" onClick={onClose}>

@@ -155,10 +155,10 @@ function App() {
 
   const completePayment = async (method) => {
     const methodNames = {
-      efectivo: 'Efectivo',
-      tarjeta: 'Tarjeta',
-      transfer: 'Transferencia',
       pagomovil: 'Pago Móvil',
+      divisa: 'Divisa',
+      debito: 'Débito',
+      transfer: 'Transferencia',
     }
 
     const sale = {
