@@ -66,6 +66,9 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
           <div className="pu-total-ticket">
             MONTO BS: {formatCurrency(totals.totalBS)}
           </div>
+          <div className="pu-saldo-header">
+            Saldo Bs. {formatCurrency(Math.max(0, saldo))}
+          </div>
           <hr className="pu-divider" />
         </div>
 
