@@ -102,3 +102,26 @@
 .cash-input[type='number'] {
   -moz-appearance: textfield;
 }
+
+.pm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pm-field {
+  width: 100%;
+}
+
+.pm-static {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text, #1f2937);
+  padding: 12px 0;
+}
+
+.pm-static.monto {
+  font-size: 22px;
+  color: var(--primary, #2d6a4f);
+}

@@ -13,10 +13,18 @@ function PaymentModal({ totals, onClose, onConfirm }) {
   const [method, setMethod] = useState('pagomovil')
   const [cashUSD, setCashUSD] = useState('')
   const [cashBS, setCashBS] = useState('')
+  const [referencia, setReferencia] = useState('')
+  const [banco, setBanco] = useState('')
   const isDivisa = method === 'divisa'
+  const isPagoMovil = method === 'pagomovil'
+
+  const today = new Date()
+  const fechaStr = today.toLocaleDateString('es-VE', {
+    day: '2-digit', month: '2-digit', year: 'numeric'
+  })
 
   const handleConfirm = () => {
-    onConfirm(method, cashUSD, cashBS)
+    onConfirm(method, cashUSD, cashBS, referencia, banco)
   }
 
   return (
@@ -38,6 +46,8 @@ function PaymentModal({ totals, onClose, onConfirm }) {
                 setMethod(opt.id)
                 setCashUSD('')
                 setCashBS('')
+                setReferencia('')
+                setBanco('')
               }}
             >
               <div className="pay-icon">{opt.icon}</div>
@@ -77,6 +87,43 @@ function PaymentModal({ totals, onClose, onConfirm }) {
                   onChange={(e) => setCashBS(e.target.value)}
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {isPagoMovil && (
+          <div className="pm-form">
+            <div className="pm-field">
+              <label className="cash-label">Fecha</label>
+              <div className="pm-static">{fechaStr}</div>
+            </div>
+            <div className="pm-field">
+              <label className="cash-label">Referencia</label>
+              <div className="cash-input-wrap">
+                <input
+                  type="text"
+                  className="cash-input"
+                  placeholder="Número de referencia"
+                  value={referencia}
+                  onChange={(e) => setReferencia(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="pm-field">
+              <label className="cash-label">Banco</label>
+              <div className="cash-input-wrap">
+                <input
+                  type="text"
+                  className="cash-input"
+                  placeholder="Nombre del banco"
+                  value={banco}
+                  onChange={(e) => setBanco(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="pm-field">
+              <label className="cash-label">Monto</label>
+              <div className="pm-static monto">Bs {formatCurrency(totals.totalBS)}</div>
             </div>
           </div>
         )}

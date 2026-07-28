@@ -153,7 +153,7 @@ function App() {
     }
   }
 
-  const completePayment = async (method, cashUSD, cashBS) => {
+  const completePayment = async (method, cashUSD, cashBS, referencia, banco) => {
     const methodNames = {
       pagomovil: 'Pago Móvil',
       divisa: 'Divisa',
@@ -170,6 +170,8 @@ function App() {
       totalBS: totals.totalBS,
       cashUSD: method === 'divisa' ? (parseFloat(cashUSD) || 0) : 0,
       cashBS: method === 'divisa' ? (parseFloat(cashBS) || 0) : 0,
+      referencia: method === 'pagomovil' ? referencia : '',
+      banco: method === 'pagomovil' ? banco : '',
       items: cart.map((item) => ({
         id: item.id,
         name: item.name,
@@ -191,6 +193,9 @@ function App() {
     let msg = `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}\nMétodo: ${methodNames[method]}`
     if (method === 'divisa') {
       msg += `\nEfectivo $: ${formatCurrency(sale.cashUSD)}\nEfectivo Bs: ${formatCurrency(sale.cashBS)}`
+    }
+    if (method === 'pagomovil') {
+      msg += `\nRef: ${referencia}\nBanco: ${banco}`
     }
     msg += `\n\n¡Gracias por su compra!`
 
