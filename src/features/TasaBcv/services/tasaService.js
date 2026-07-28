@@ -26,7 +26,7 @@ export async function getTasas() {
     const request = store.getAll()
     request.onsuccess = () => {
       const list = request.result
-      list.sort((a, b) => new Date(b.fecha_tasa) - new Date(a.fecha_tasa))
+      list.sort((a, b) => b.id - a.id)
       resolve(list)
     }
     request.onerror = () => reject(request.error)
