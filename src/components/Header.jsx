@@ -13,6 +13,7 @@ function Header({
   cart,
   totals,
   onRemoveItem,
+  onEditItem,
   companyName,
 }) {
   const [cartOpen, setCartOpen] = useState(false)
@@ -58,6 +59,8 @@ function Header({
           onRemoveItem={(idx) => {
             onRemoveItem(idx)
           }}
+          onEditItem={onEditItem}
+          tasa={tasa}
         />
       )}
     </>

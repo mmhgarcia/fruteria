@@ -112,6 +112,14 @@
 .cart-item-info {
   flex: 1;
   min-width: 0;
+  cursor: pointer;
+  padding: 4px 0;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.cart-item-info:active {
+  background: rgba(45, 106, 79, 0.08);
 }
 
 .cart-item-name {

@@ -135,6 +135,16 @@ function App() {
     setCart((prev) => prev.filter((_, i) => i !== index))
   }
 
+  const editCartItem = (index, newQty) => {
+    setCart((prev) =>
+      prev.map((item, i) =>
+        i === index
+          ? { ...item, qty: newQty, totalUSD: newQty * item.price }
+          : item
+      )
+    )
+  }
+
   const clearCart = () => {
     if (cart.length === 0) return
     if (confirm('¿Vaciar el ticket?')) {
@@ -222,6 +232,7 @@ function App() {
         totals={totals}
         onRemoveItem={removeItem}
         companyName={settings.companyName}
+        onEditItem={editCartItem}
       />
       <main className="main">
         {loadingProducts ? (

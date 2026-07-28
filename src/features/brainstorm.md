@@ -1,24 +1,28 @@
 ¡Excelente idea! Volvamos a la mesa de diseño para consolidar todo lo aprendido en esta gran lluvia de ideas. Aquí tienes el mapa completo de mejoras, observaciones y optimizaciones técnicas estructuradas por pantallas, listas para que planifiques tu hoja de ruta de desarrollo:
 
+
 ## ⚙️ 1. Pantalla Principal y Modales de Carga
 
-* Reorganizar Header
+~~ Reorganizar Header ~~
 
-* Estandarizar modelo de base de datos a usar.
+_Estandarizar modelo de base de datos a usar._
 
-* Modales Diferenciados (Peso vs. Unidad): Mantener la separación actual de vistas para productos pesados (kg) y por unidad.
+~~ Modales Diferenciados (Peso vs. Unidad): Mantener la separación actual de vistas para productos pesados (kg) y por unidad. ~~
 
-* Validación de Botón Decimal: Desactivar o poner en gris el punto (.) en el modal de unidades (ej. la piña) para evitar que el cajero intente marcar fracciones imposibles.
+~~ Validación de Botón Decimal: Desactivar o poner en gris el punto (.) en el modal de unidades (ej. la piña) para evitar que el cajero intente marcar fracciones imposibles. ~~
 
-* Cero Inicial Automático: Si el cajero presiona el punto (.) estando en cero en productos por peso, la app debe autocompletar a 0. para agilizar la carga de gramos (ej. .350 -> 0.350 kg).
+~~ Cero Inicial Automático: Si el cajero presiona el punto (.) estando en cero en productos por peso, la app debe autocompletar a 0. para agilizar la carga de gramos (ej. .350 -> 0.350 kg). ~~
 
-* Subtotal en Tiempo Real: Mostrar abajo del cuadro verde de cantidad el subtotal de la línea antes de agregarla al ticket (ej. 3 un x $3.50 = $10.50).
+~~ Subtotal en Tiempo Real: Mostrar abajo del cuadro verde de cantidad el subtotal de la línea antes de agregarla al ticket (ej. 3 un x $3.50 = $10.50). ~~
 
 ## 🛒 2. Pantalla "Mi Carrito" y "Ticket de Venta"
 
 * Edición Rápida: Permitir que, al tocar la fila de un producto en el carrito, se abra de nuevo su teclado numérico para corregir los kilos o unidades de inmediato, sin tener que borrar el ítem con el ícono de la papelera.
+
 * Homogeneización de Decimales: Unificar el uso de separadores en los totales (usar siempre la coma para decimales en Venezuela, ej. $3,50 y Bs 2.580,97).
+
 * Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/digital el costo reflejado en ambas monedas de forma simultánea.
+
 * Registro del Método de Pago: El ticket final debe plasmar obligatoriamente cómo pagó el cliente (efectivo, pago móvil, etc.) para el cuadre físico.
 
 ## 💳 3. Gestión y Flujo de Cobranza

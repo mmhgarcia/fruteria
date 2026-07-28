@@ -8,8 +8,8 @@ const digits = [
   '.', '0', 'clear'
 ]
 
-function WeightModal({ product, tasa, onClose, onConfirm }) {
-  const [weight, setWeight] = useState('')
+function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
+  const [weight, setWeight] = useState(initialQty ? String(initialQty) : '')
   const isUnit = product.um === 'unidad'
 
   const appendDigit = (digit) => {
@@ -88,7 +88,7 @@ function WeightModal({ product, tasa, onClose, onConfirm }) {
             onClick={handleConfirm}
             disabled={qty <= 0}
           >
-            Agregar al ticket
+            {initialQty ? 'Actualizar' : 'Agregar al ticket'}
           </button>
         </div>
       </div>
