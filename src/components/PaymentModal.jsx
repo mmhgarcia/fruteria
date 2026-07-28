@@ -11,6 +11,13 @@ const paymentOptions = [
 
 function PaymentModal({ totals, onClose, onConfirm }) {
   const [method, setMethod] = useState('pagomovil')
+  const [cashUSD, setCashUSD] = useState('')
+  const [cashBS, setCashBS] = useState('')
+  const isDivisa = method === 'divisa'
+
+  const handleConfirm = () => {
+    onConfirm(method, cashUSD, cashBS)
+  }
 
   return (
     <div className="modal-overlay active" onClick={onClose}>
@@ -27,18 +34,58 @@ function PaymentModal({ totals, onClose, onConfirm }) {
             <div
               key={opt.id}
               className={`payment-option ${method === opt.id ? 'selected' : ''}`}
-              onClick={() => setMethod(opt.id)}
+              onClick={() => {
+                setMethod(opt.id)
+                setCashUSD('')
+                setCashBS('')
+              }}
             >
               <div className="pay-icon">{opt.icon}</div>
               <div className="pay-label">{opt.label}</div>
             </div>
           ))}
         </div>
+
+        {isDivisa && (
+          <div className="cash-fields">
+            <div className="cash-field">
+              <label className="cash-label">Efectivo recibido $</label>
+              <div className="cash-input-wrap">
+                <span className="cash-prefix">$</span>
+                <input
+                  type="number"
+                  className="cash-input"
+                  placeholder="0,00"
+                  min="0"
+                  step="0.01"
+                  value={cashUSD}
+                  onChange={(e) => setCashUSD(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="cash-field">
+              <label className="cash-label">Efectivo recibido Bs</label>
+              <div className="cash-input-wrap">
+                <span className="cash-prefix">Bs</span>
+                <input
+                  type="number"
+                  className="cash-input"
+                  placeholder="0,00"
+                  min="0"
+                  step="0.01"
+                  value={cashBS}
+                  onChange={(e) => setCashBS(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="modal-actions">
           <button className="btn-cancel" onClick={onClose}>
             Volver
           </button>
-          <button className="btn-confirm" onClick={() => onConfirm(method)}>
+          <button className="btn-confirm" onClick={handleConfirm}>
             ✅ Confirmar Pago
           </button>
         </div>

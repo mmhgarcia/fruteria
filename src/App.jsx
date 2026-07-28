@@ -153,7 +153,7 @@ function App() {
     }
   }
 
-  const completePayment = async (method) => {
+  const completePayment = async (method, cashUSD, cashBS) => {
     const methodNames = {
       pagomovil: 'Pago Móvil',
       divisa: 'Divisa',
@@ -168,6 +168,8 @@ function App() {
       tasa,
       totalUSD: totals.totalUSD,
       totalBS: totals.totalBS,
+      cashUSD: method === 'divisa' ? (parseFloat(cashUSD) || 0) : 0,
+      cashBS: method === 'divisa' ? (parseFloat(cashBS) || 0) : 0,
       items: cart.map((item) => ({
         id: item.id,
         name: item.name,
@@ -186,9 +188,13 @@ function App() {
       console.error('Error guardando la venta:', error)
     }
 
-    alert(
-      `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}\nMétodo: ${methodNames[method]}\n\n¡Gracias por su compra!`
-    )
+    let msg = `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}\nMétodo: ${methodNames[method]}`
+    if (method === 'divisa') {
+      msg += `\nEfectivo $: ${formatCurrency(sale.cashUSD)}\nEfectivo Bs: ${formatCurrency(sale.cashBS)}`
+    }
+    msg += `\n\n¡Gracias por su compra!`
+
+    alert(msg)
     setCart([])
     setPaymentOpen(false)
   }

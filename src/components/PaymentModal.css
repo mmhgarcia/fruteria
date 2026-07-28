@@ -33,3 +33,72 @@
   font-size: 13px;
   font-weight: 700;
 }
+
+.cash-fields {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.cash-field {
+  flex: 1;
+}
+
+.cash-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.cash-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--bg, #f8f9fa);
+  border: 2px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.cash-input-wrap:focus-within {
+  border-color: var(--primary, #2d6a4f);
+}
+
+.cash-prefix {
+  padding: 0 0 0 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-light, #6b7280);
+}
+
+.cash-input {
+  width: 100%;
+  padding: 12px 12px 12px 6px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text, #1f2937);
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.cash-input::placeholder {
+  color: #d1d5db;
+  font-weight: 500;
+}
+
+/* Ocultar spin buttons en navegadores webkit */
+.cash-input::-webkit-inner-spin-button,
+.cash-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cash-input[type='number'] {
+  -moz-appearance: textfield;
+}
