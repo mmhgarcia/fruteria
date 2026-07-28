@@ -59,13 +59,13 @@ function CartModal({ cart, totals, onClose, onRemoveItem }) {
               <span>Items</span>
               <span>{cart.length}</span>
             </div>
-            <div className="cart-summary-row total">
-              <span>Total $</span>
-              <span>{totals.totalUSD.toFixed(2)}</span>
-            </div>
             <div className="cart-summary-row total-bs">
               <span>Total Bs</span>
               <span>{totals.totalBS.toFixed(2)}</span>
+            </div>
+            <div className="cart-summary-row total">
+              <span>Total $</span>
+              <span>{totals.totalUSD.toFixed(2)}</span>
             </div>
           </div>
         )}

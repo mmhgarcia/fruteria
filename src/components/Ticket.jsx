@@ -14,13 +14,13 @@ function Ticket({
   return (
     <aside className="right-panel">
       <div className="ticket-footer">
-        <div className="summary-row total">
-          <span>Total $</span>
-          <span>{totals.totalUSD.toFixed(2)}</span>
-        </div>
         <div className="summary-row total-bs">
           <span>Total Bs</span>
           <span>{totals.totalBS.toFixed(2)}</span>
+        </div>
+        <div className="summary-row total">
+          <span>Total $</span>
+          <span>{totals.totalUSD.toFixed(2)}</span>
         </div>
         <div className="action-buttons">
           <button className="action-btn btn-cancel" onClick={onClearCart}>

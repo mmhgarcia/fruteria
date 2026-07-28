@@ -61,13 +61,14 @@
   color: var(--text);
 }
 
-.summary-row.total {
+.summary-row.total-bs {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px dashed var(--border);
+  margin-bottom: 0;
 }
 
-.summary-row.total-bs {
+.summary-row.total {
   margin-bottom: 0;
 }
 

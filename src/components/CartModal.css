@@ -180,13 +180,14 @@
   color: var(--text, #1f2937);
 }
 
-.cart-summary-row.total {
+.cart-summary-row.total-bs {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px dashed var(--border, #e5e7eb);
+  margin-bottom: 0;
 }
 
-.cart-summary-row.total-bs {
+.cart-summary-row.total {
   margin-bottom: 0;
 }
 
