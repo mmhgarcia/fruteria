@@ -158,7 +158,7 @@ function App() {
       efectivo: 'Efectivo',
       tarjeta: 'Tarjeta',
       transfer: 'Transferencia',
-      qr: 'QR/Yape',
+      pagomovil: 'Pago Móvil',
     }
 
     const sale = {

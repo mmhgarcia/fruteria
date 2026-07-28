@@ -6,7 +6,7 @@ const paymentOptions = [
   { id: 'efectivo', label: 'Efectivo', icon: '💵' },
   { id: 'tarjeta', label: 'Tarjeta', icon: '💳' },
   { id: 'transfer', label: 'Transferencia', icon: '📱' },
-  { id: 'qr', label: 'QR / Yape', icon: '📲' },
+  { id: 'pagomovil', label: 'Pago Móvil', icon: '📱' },
 ]
 
 function PaymentModal({ totals, onClose, onConfirm }) {
