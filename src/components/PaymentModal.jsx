@@ -75,7 +75,6 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
         <div className="pu-body">
           {/* PAGO MOVIL */}
           <div className="pu-section">
-            <hr className="pu-divider" />
             <div className="pu-section-title">PAGO MOVIL:</div>
             <div className="pu-field">
               <label className="pu-label">Referencia:</label>
@@ -113,7 +112,6 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
 
           {/* PUNTO */}
           <div className="pu-section">
-            <hr className="pu-divider" />
             <div className="pu-section-title">PUNTO:</div>
             <div className="pu-field">
               <label className="pu-label">Tarjeta (6 ult. digitos):</label>
@@ -152,7 +150,6 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
 
           {/* DIVISA */}
           <div className="pu-section">
-            <hr className="pu-divider" />
             <div className="pu-section-title">DIVISA:</div>
             <div className="pu-field">
               <label className="pu-label">Monto $:</label>
@@ -170,7 +167,6 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
 
           {/* EFECTIVO */}
           <div className="pu-section">
-            <hr className="pu-divider" />
             <div className="pu-section-title">EFECTIVO:</div>
             <div className="pu-field">
               <label className="pu-label">Monto Bs:</label>
