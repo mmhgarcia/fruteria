@@ -25,13 +25,13 @@ _Estandarizar modelo de base de datos a usar._
 
 ~~* Adaptación de Mercado (Pago Móvil): Reemplazar el botón de "QR / Yape" (sistema exclusivo de Perú) por el de "Pago Móvil", el método electrónico estándar en Venezuela.~~
 
-_* Efectivo Multimoneda: Permitir que el botón "Efectivo" abra dos campos de texto independientes para registrar cuánto dinero entra en Dólares ($) y cuánto en Bolívares (Bs)._
+~~_* Efectivo Multimoneda: Permitir que el botón "Efectivo" abra dos campos de texto independientes para registrar cuánto dinero entra en Dólares ($) y cuánto en Bolívares (Bs).~~
 
-* Pagos Mixtos: Modificar el selector para que el cajero pueda abonar montos parciales combinando métodos (ej. paga $5 en efectivo y el resto por Pago Móvil) hasta saldar la cuenta.
+~~* Pagos Mixtos: Modificar el selector para que el cajero pueda abonar montos parciales combinando métodos (ej. paga $5 en efectivo y el resto por Pago Móvil) hasta saldar la cuenta.~~
 
-* Módulo de Vuelto (Cambio): Diseñar la lógica para calcular de forma matemática el vuelto exacto del cliente en la moneda que el comerciante disponga.
+~~* Módulo de Vuelto (Cambio): Diseñar la lógica para calcular de forma matemática el vuelto exacto del cliente en la moneda que el comerciante disponga.~~
 
-* Cálculo de IGTF (Opcional): Añadir un interruptor en configuración para calcular de forma automática el impuesto del 3% si el negocio es contribuyente especial.
+_* Cálculo de IGTF (Opcional): Añadir un interruptor en configuración para calcular de forma automática el impuesto del 3% si el negocio es contribuyente especial._
 
 * Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/digital el costo reflejado en ambas monedas de forma simultánea.
 
