@@ -60,11 +60,11 @@ function CartModal({ cart, totals, onClose, onRemoveItem }) {
               <span>{cart.length}</span>
             </div>
             <div className="cart-summary-row total">
-              <span>TOTAL $</span>
+              <span>Total $</span>
               <span>{totals.totalUSD.toFixed(2)}</span>
             </div>
             <div className="cart-summary-row total-bs">
-              <span>TOTAL Bs</span>
+              <span>Total Bs</span>
               <span>{totals.totalBS.toFixed(2)}</span>
             </div>
           </div>

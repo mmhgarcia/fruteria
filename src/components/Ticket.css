@@ -50,22 +50,25 @@
   justify-content: space-between;
   margin-bottom: 3px;
   font-size: 14px;
+  font-weight: 500;
   color: var(--text-light);
 }
 
-.summary-row.total {
-  font-size: 26px;
-  font-weight: 800;
+.summary-row.total,
+.summary-row.total-bs {
+  font-size: 20px;
+  font-weight: 700;
   color: var(--text);
-  margin-top: 4px;
-  padding-top: 4px;
+}
+
+.summary-row.total {
+  margin-top: 6px;
+  padding-top: 6px;
   border-top: 1px dashed var(--border);
 }
 
 .summary-row.total-bs {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--text-light);
+  margin-bottom: 0;
 }
 
 .action-buttons {
