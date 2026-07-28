@@ -29,7 +29,7 @@ function Header({
             ☰
           </button>
           <span className="header-brand">{companyName || 'Frutería POS'}</span>
-          <div className="header-tasa">Tasa $: {tasa.toFixed(2)}</div>
+          <div className="header-tasa">Tasa: {tasa.toFixed(2)}</div>
         </div>
         <div className="header-bottom">
           <input
