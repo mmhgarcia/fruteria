@@ -4,12 +4,12 @@ import './PaymentModal.css'
 
 const paymentOptions = [
   { id: 'pagomovil', label: 'Pago Móvil', icon: '📱' },
-  { id: 'divisa', label: 'Divisa', icon: '💵' },
+  { id: 'divisa', label: 'Pago Mixto', icon: '💵' },
   { id: 'debito', label: 'Débito', icon: '💳' },
   { id: 'transfer', label: 'Transferencia', icon: '🏦' },
 ]
 
-function PaymentModal({ totals, onClose, onConfirm }) {
+function PaymentModal({ totals, tasa, onClose, onConfirm }) {
   const [method, setMethod] = useState('pagomovil')
   const [cashUSD, setCashUSD] = useState('')
   const [cashBS, setCashBS] = useState('')
@@ -18,13 +18,25 @@ function PaymentModal({ totals, onClose, onConfirm }) {
   const isDivisa = method === 'divisa'
   const isPagoMovil = method === 'pagomovil'
 
+  const usdToBs = (parseFloat(cashUSD) || 0) * tasa
+  const totalPaidBS = usdToBs + (parseFloat(cashBS) || 0)
+  const diferencia = totals.totalBS - totalPaidBS
+
   const today = new Date()
   const fechaStr = today.toLocaleDateString('es-VE', {
     day: '2-digit', month: '2-digit', year: 'numeric'
   })
 
   const handleConfirm = () => {
-    onConfirm(method, cashUSD, cashBS, referencia, banco)
+    if (isDivisa && diferencia > 0) {
+      alert(`Faltan Bs ${formatCurrency(diferencia)} para completar el pago.`)
+      return
+    }
+    let vuelto = 0
+    if (isDivisa && diferencia < 0) {
+      vuelto = Math.abs(diferencia)
+    }
+    onConfirm(method, cashUSD, cashBS, referencia, banco, vuelto)
   }
 
   return (
@@ -57,7 +69,7 @@ function PaymentModal({ totals, onClose, onConfirm }) {
         </div>
 
         {isDivisa && (
-          <div className="cash-fields">
+          <div className="pm-form">
             <div className="cash-field">
               <label className="cash-label">Efectivo recibido $</label>
               <div className="cash-input-wrap">
@@ -88,6 +100,22 @@ function PaymentModal({ totals, onClose, onConfirm }) {
                 />
               </div>
             </div>
+            {(parseFloat(cashUSD) > 0 || parseFloat(cashBS) > 0) && (
+              <div className="pm-diferencia">
+                <div className="pm-diff-row">
+                  <span>$ recibidos en Bs:</span>
+                  <span>Bs {formatCurrency(usdToBs)}</span>
+                </div>
+                <div className="pm-diff-row">
+                  <span>Total recibido:</span>
+                  <span>Bs {formatCurrency(totalPaidBS)}</span>
+                </div>
+                <div className={`pm-diff-row pm-diff-final ${diferencia <= 0 ? 'ok' : 'faltan'}`}>
+                  <span>{diferencia <= 0 ? 'Vuelto:' : 'Faltan:'}</span>
+                  <span>Bs {formatCurrency(Math.abs(diferencia))}</span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

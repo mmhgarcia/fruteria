@@ -153,10 +153,10 @@ function App() {
     }
   }
 
-  const completePayment = async (method, cashUSD, cashBS, referencia, banco) => {
+  const completePayment = async (method, cashUSD, cashBS, referencia, banco, vuelto) => {
     const methodNames = {
       pagomovil: 'Pago Móvil',
-      divisa: 'Divisa',
+      divisa: 'Pago Mixto',
       debito: 'Débito',
       transfer: 'Transferencia',
     }
@@ -170,6 +170,7 @@ function App() {
       totalBS: totals.totalBS,
       cashUSD: method === 'divisa' ? (parseFloat(cashUSD) || 0) : 0,
       cashBS: method === 'divisa' ? (parseFloat(cashBS) || 0) : 0,
+      vuelto: method === 'divisa' ? (vuelto || 0) : 0,
       referencia: method === 'pagomovil' ? referencia : '',
       banco: method === 'pagomovil' ? banco : '',
       items: cart.map((item) => ({
@@ -193,6 +194,9 @@ function App() {
     let msg = `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}\nMétodo: ${methodNames[method]}`
     if (method === 'divisa') {
       msg += `\nEfectivo $: ${formatCurrency(sale.cashUSD)}\nEfectivo Bs: ${formatCurrency(sale.cashBS)}`
+      if (vuelto > 0) {
+        msg += `\nVuelto: Bs ${formatCurrency(vuelto)}`
+      }
     }
     if (method === 'pagomovil') {
       msg += `\nRef: ${referencia}\nBanco: ${banco}`
@@ -285,6 +289,7 @@ function App() {
       {paymentOpen && (
         <PaymentModal
           totals={totals}
+          tasa={tasa}
           onClose={() => setPaymentOpen(false)}
           onConfirm={completePayment}
         />

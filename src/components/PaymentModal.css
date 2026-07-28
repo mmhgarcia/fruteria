@@ -128,3 +128,34 @@
   font-size: 22px;
   color: var(--primary, #2d6a4f);
 }
+
+.pm-diferencia {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border, #e5e7eb);
+}
+
+.pm-diff-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light, #6b7280);
+  margin-bottom: 4px;
+}
+
+.pm-diff-final {
+  font-size: 16px;
+  font-weight: 800;
+  padding-top: 4px;
+  border-top: 1px solid var(--border, #e5e7eb);
+  margin-top: 4px;
+}
+
+.pm-diff-final.ok {
+  color: var(--primary, #2d6a4f);
+}
+
+.pm-diff-final.faltan {
+  color: var(--danger, #e63946);
+}

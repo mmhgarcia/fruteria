@@ -25,7 +25,7 @@ _Estandarizar modelo de base de datos a usar._
 
 ~~* Adaptación de Mercado (Pago Móvil): Reemplazar el botón de "QR / Yape" (sistema exclusivo de Perú) por el de "Pago Móvil", el método electrónico estándar en Venezuela.~~
 
-* Efectivo Multimoneda: Permitir que el botón "Efectivo" abra dos campos de texto independientes para registrar cuánto dinero entra en Dólares ($) y cuánto en Bolívares (Bs).
+_* Efectivo Multimoneda: Permitir que el botón "Efectivo" abra dos campos de texto independientes para registrar cuánto dinero entra en Dólares ($) y cuánto en Bolívares (Bs)._
 
 * Pagos Mixtos: Modificar el selector para que el cajero pueda abonar montos parciales combinando métodos (ej. paga $5 en efectivo y el resto por Pago Móvil) hasta saldar la cuenta.
 
