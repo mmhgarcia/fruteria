@@ -153,26 +153,22 @@ function App() {
     }
   }
 
-  const completePayment = async (method, cashUSD, cashBS, referencia, banco, vuelto) => {
-    const methodNames = {
-      pagomovil: 'Pago Móvil',
-      divisa: 'Pago Mixto',
-      debito: 'Débito',
-      transfer: 'Transferencia',
-    }
-
+  const completePayment = async (paymentData) => {
     const sale = {
       date: new Date().toISOString(),
-      method,
-      methodName: methodNames[method],
       tasa,
       totalUSD: totals.totalUSD,
       totalBS: totals.totalBS,
-      cashUSD: method === 'divisa' ? (parseFloat(cashUSD) || 0) : 0,
-      cashBS: method === 'divisa' ? (parseFloat(cashBS) || 0) : 0,
-      vuelto: method === 'divisa' ? (vuelto || 0) : 0,
-      referencia: method === 'pagomovil' ? referencia : '',
-      banco: method === 'pagomovil' ? banco : '',
+      pagomovilRef: paymentData.pagomovilRef || '',
+      pagomovilBanco: paymentData.pagomovilBanco || '',
+      pagomovilMonto: paymentData.pagomovilMonto || 0,
+      efectivoBS: paymentData.efectivoBS || 0,
+      debitoCard: paymentData.debitoCard || '',
+      debitoBanco: paymentData.debitoBanco || '',
+      debitoMonto: paymentData.debitoMonto || 0,
+      divisaUSD: paymentData.divisaUSD || 0,
+      totalPagado: paymentData.totalPagado || 0,
+      vuelto: paymentData.vuelto || 0,
       items: cart.map((item) => ({
         id: item.id,
         name: item.name,
@@ -191,16 +187,14 @@ function App() {
       console.error('Error guardando la venta:', error)
     }
 
-    let msg = `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}\nMétodo: ${methodNames[method]}`
-    if (method === 'divisa') {
-      msg += `\nEfectivo $: ${formatCurrency(sale.cashUSD)}\nEfectivo Bs: ${formatCurrency(sale.cashBS)}`
-      if (vuelto > 0) {
-        msg += `\nVuelto: Bs ${formatCurrency(vuelto)}`
-      }
-    }
-    if (method === 'pagomovil') {
-      msg += `\nRef: ${referencia}\nBanco: ${banco}`
-    }
+    let msg = `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}`
+    const parts = []
+    if (sale.pagomovilMonto > 0) parts.push(`Pago Móvil: Bs ${formatCurrency(sale.pagomovilMonto)}`)
+    if (sale.efectivoBS > 0) parts.push(`Efectivo: Bs ${formatCurrency(sale.efectivoBS)}`)
+    if (sale.debitoMonto > 0) parts.push(`Débito: Bs ${formatCurrency(sale.debitoMonto)}`)
+    if (sale.divisaUSD > 0) parts.push(`Divisa: $${formatCurrency(sale.divisaUSD)}`)
+    if (parts.length > 0) msg += '\n' + parts.join('\n')
+    if (sale.vuelto > 0) msg += `\n\nVuelto: Bs ${formatCurrency(sale.vuelto)}`
     msg += `\n\n¡Gracias por su compra!`
 
     alert(msg)
