@@ -14,6 +14,7 @@ import Products from './components/Products'
 import Categories from './components/Categories'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import BackupModal from './components/BackupModal'
+import { formatCurrency } from './utils/format'
 import SalesReportModal from './components/SalesReportModal'
 import SettingsModal from './components/SettingsModal'
 import './App.css'
@@ -186,7 +187,7 @@ function App() {
     }
 
     alert(
-      `✅ Pago completado!\n\nTotal: $${totals.totalUSD.toFixed(2)}\nMétodo: ${methodNames[method]}\n\n¡Gracias por su compra!`
+      `✅ Pago completado!\n\nTotal: $${formatCurrency(totals.totalUSD)}\nMétodo: ${methodNames[method]}\n\n¡Gracias por su compra!`
     )
     setCart([])
     setPaymentOpen(false)

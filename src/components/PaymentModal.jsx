@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatCurrency } from '../utils/format'
 import './PaymentModal.css'
 
 const paymentOptions = [
@@ -18,7 +19,7 @@ function PaymentModal({ totals, onClose, onConfirm }) {
           <div className="modal-icon">💰</div>
           <div className="modal-name">Confirmar Pago</div>
           <div className="modal-price">
-            Total: ${totals.totalUSD.toFixed(2)} / Bs {totals.totalBS.toFixed(2)}
+            Total: ${formatCurrency(totals.totalUSD)} / Bs {formatCurrency(totals.totalBS)}
           </div>
         </div>
         <div className="payment-options">

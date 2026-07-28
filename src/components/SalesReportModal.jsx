@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getSales } from '../utils/db'
-import { formatQty } from '../utils/format'
+import { formatQty, formatCurrency } from '../utils/format'
 import './SalesReportModal.css'
 
 export default function SalesReportModal({ onClose }) {
@@ -101,7 +101,7 @@ export default function SalesReportModal({ onClose }) {
           <div className="modal-icon">📊</div>
           <div className="modal-name">Resumen de Ventas</div>
           <div className="modal-price">
-            Total: ${grandTotal.totalUSD.toFixed(2)} / Bs {grandTotal.totalBS.toFixed(2)}
+            Total: ${formatCurrency(grandTotal.totalUSD)} / Bs {formatCurrency(grandTotal.totalBS)}
           </div>
         </div>
 
@@ -134,7 +134,7 @@ export default function SalesReportModal({ onClose }) {
                   <span className="sales-report-day-tasa">{day.tasaLabel}</span>
                 </span>
                 <span className="sales-report-day-total">
-                  ${day.totalUSD.toFixed(2)} / Bs {day.totalBS.toFixed(2)}
+                  {formatCurrency(day.totalUSD)} / Bs {formatCurrency(day.totalBS)}
                 </span>
               </button>
 
@@ -154,7 +154,7 @@ export default function SalesReportModal({ onClose }) {
                         {formatQty(product.qty, product.um)} {product.um}
                       </span>
                       <span className="sales-report-product-total">
-                        ${product.totalUSD.toFixed(2)}
+                        {formatCurrency(product.totalUSD)}
                       </span>
                     </div>
                   ))}
@@ -181,6 +181,6 @@ function formatDate(dateString) {
 
 function formatTasas(tasas) {
   if (tasas.length === 0) return ''
-  if (tasas.length === 1) return `Tasa: ${tasas[0].toFixed(2)}`
-  return `Tasa: ${tasas[0].toFixed(2)} - ${tasas[tasas.length - 1].toFixed(2)}`
+  if (tasas.length === 1) return `Tasa: ${formatCurrency(tasas[0])}`
+  return `Tasa: ${formatCurrency(tasas[0])} - ${formatCurrency(tasas[tasas.length - 1])}`
 }

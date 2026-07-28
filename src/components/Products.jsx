@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getProducts, addProduct, updateProduct, deleteProduct, seedProducts } from '../utils/db'
 import { getCategories } from '../utils/categories'
 import { defaultProducts } from '../data/products'
+import { formatCurrency } from '../utils/format'
 import './Products.css'
 
 const EMPTY_PRODUCT = {
@@ -167,7 +168,7 @@ export default function Products({ onClose }) {
                     <div className="products-item-info">
                       <strong>{product.name}</strong>
                       <span>
-                        {product.group} · {product.um} · ${product.price.toFixed(2)}
+                        {product.group} · {product.um} · ${formatCurrency(product.price)}
                       </span>
                     </div>
                     <button

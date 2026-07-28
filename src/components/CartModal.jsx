@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { formatQty } from '../utils/format'
+import { formatQty, formatCurrency } from '../utils/format'
 import WeightModal from './WeightModal'
 import './CartModal.css'
 
@@ -39,11 +39,11 @@ function CartModal({ cart, totals, onClose, onRemoveItem, onEditItem, tasa }) {
                         {item.icon} {item.name}
                       </div>
                       <div className="cart-item-detail">
-                        {formatQty(item.qty, item.um)} {item.um} × ${item.price.toFixed(2)}
+                        {formatQty(item.qty, item.um)} {item.um} × ${formatCurrency(item.price)}
                       </div>
                     </div>
                     <div className="cart-item-total">
-                      ${item.totalUSD.toFixed(2)}
+                      ${formatCurrency(item.totalUSD)}
                     </div>
                     <button
                       className="cart-item-remove"
@@ -66,11 +66,11 @@ function CartModal({ cart, totals, onClose, onRemoveItem, onEditItem, tasa }) {
               </div>
               <div className="cart-summary-row total-bs">
                 <span>Total Bs</span>
-                <span>{totals.totalBS.toFixed(2)}</span>
+                <span>{formatCurrency(totals.totalBS)}</span>
               </div>
               <div className="cart-summary-row total">
                 <span>Total $</span>
-                <span>{totals.totalUSD.toFixed(2)}</span>
+                <span>{formatCurrency(totals.totalUSD)}</span>
               </div>
             </div>
           )}

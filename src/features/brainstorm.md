@@ -17,7 +17,7 @@ _Estandarizar modelo de base de datos a usar._
 
 ## 🛒 2. Pantalla "Mi Carrito" y "Ticket de Venta"
 
-* Edición Rápida: Permitir que, al tocar la fila de un producto en el carrito, se abra de nuevo su teclado numérico para corregir los kilos o unidades de inmediato, sin tener que borrar el ítem con el ícono de la papelera.
+_* Edición Rápida: Permitir que, al tocar la fila de un producto en el carrito, se abra de nuevo su teclado numérico para corregir los kilos o unidades de inmediato, sin tener que borrar el ítem con el ícono de la papelera._
 
 * Homogeneización de Decimales: Unificar el uso de separadores en los totales (usar siempre la coma para decimales en Venezuela, ej. $3,50 y Bs 2.580,97).
 

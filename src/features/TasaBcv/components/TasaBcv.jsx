@@ -115,7 +115,7 @@ export default function TasaBcv({ onClose, onTasaChange }) {
                   <li key={reg.id} className="tasa-item">
                     <div className="tasa-item-info">
                       <strong>{reg.fecha_tasa}</strong>
-                      <span>Bs. {reg.tasa.toFixed(2)}</span>
+                      <span>Bs. {formatCurrency(reg.tasa)}</span>
                     </div>
                     <div className="tasa-item-actions">
                       <button

@@ -1,4 +1,4 @@
-import { formatQty } from '../utils/format'
+import { formatQty, formatCurrency } from '../utils/format'
 import './ProductCard.css'
 
 function ProductCard({ product, cartItem, tasa, onSelect }) {
@@ -10,8 +10,8 @@ function ProductCard({ product, cartItem, tasa, onSelect }) {
       <div className={`product-badge ${qty > 0 ? '' : 'hidden'}`}>{badgeText}</div>
       <div className="product-img">{product.icon}</div>
       <div className="product-name">{product.name}</div>
-      <div className="product-price-usd">${product.price.toFixed(2)}</div>
-      <div className="product-price-bs">Bs: {(product.price * tasa).toFixed(2)}</div>
+      <div className="product-price-usd">${formatCurrency(product.price)}</div>
+      <div className="product-price-bs">Bs: {formatCurrency(product.price * tasa)}</div>
     </button>
   )
 }

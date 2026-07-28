@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatCurrency } from '../utils/format'
 import './WeightModal.css'
 
 const digits = [
@@ -47,7 +48,7 @@ function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
           <div className="modal-icon">{product.icon}</div>
           <div className="modal-name">{product.name}</div>
           <div className="modal-price">
-            ${product.price.toFixed(2)} / {product.um}
+            ${formatCurrency(product.price)} / {product.um}
           </div>
         </div>
         <div className="weight-display">
@@ -58,7 +59,7 @@ function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
           </div>
           <div className="weight-preview">
             {qty > 0
-              ? `= $${totalUSD.toFixed(2)} • Bs ${totalBS.toFixed(2)}`
+              ? `= $${formatCurrency(totalUSD)} • Bs ${formatCurrency(totalBS)}`
               : ''}
           </div>
         </div>
