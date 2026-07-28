@@ -87,6 +87,11 @@ function TicketPreview({ cart, totals, tasa, onClose, companyName, sale }) {
             <span>Bs {formatCurrency(totalBS)}</span>
           </div>
 
+          <div className="ticket-preview-footer">
+            ¡Gracias por su compra!
+            <br />---
+          </div>
+
           {paymentMethods.length > 0 && (
             <>
               <div className="ticket-preview-divider" />
@@ -100,11 +105,6 @@ function TicketPreview({ cart, totals, tasa, onClose, companyName, sale }) {
               </div>
             </>
           )}
-
-          <div className="ticket-preview-footer">
-            ¡Gracias por su compra!
-            <br />---
-          </div>
         </div>
         <div className="modal-actions" style={{ marginTop: 16 }}>
           <button className="btn-cancel" onClick={onClose}>

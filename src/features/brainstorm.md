@@ -35,7 +35,7 @@ _* Cálculo de IGTF (Opcional): Añadir un interruptor en configuración para ca
 
 _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/digital el costo reflejado en ambas monedas de forma simultánea._
 
-* Registro del Método de Pago: El ticket final debe plasmar obligatoriamente cómo pagó el cliente (efectivo, pago móvil, etc.) para el cuadre físico.
+~~* Registro del Método de Pago: El ticket final debe plasmar obligatoriamente cómo pagó el cliente (efectivo, pago móvil, etc.) para el cuadre físico.~~
 
 ## 3.1 Atencion simultanea
 
