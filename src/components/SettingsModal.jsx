@@ -118,7 +118,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
               )}
             </div>
             <span className="settings-field-desc">
-              Vacío = sin PIN. Protege acceso a Productos, Categorías, Tasa y Ramos
+              Solo para entrar a Configuración.
             </span>
           </label>
 
