@@ -181,3 +181,76 @@
 .settings-select:focus {
   border-color: var(--primary);
 }
+
+/* ── Divisor ── */
+
+.settings-divider {
+  border: none;
+  border-top: 1px solid var(--border, #e5e7eb);
+  margin: 4px 0;
+}
+
+/* ── Sección de Administración ── */
+
+.settings-admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-admin-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-light, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 14px;
+  background: var(--card, #f8f9fa);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  font-family: inherit;
+}
+
+.settings-admin-btn:active {
+  transform: scale(0.98);
+  background: var(--bg, #e8eaed);
+}
+
+.settings-admin-btn-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.settings-admin-btn-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-admin-btn-text strong {
+  font-size: 15px;
+  color: var(--text, #1f2937);
+}
+
+.settings-admin-btn-text span {
+  font-size: 12px;
+  color: var(--text-light, #888);
+}
+
+.settings-admin-btn-arrow {
+  font-size: 22px;
+  color: var(--text-light, #bbb);
+  flex-shrink: 0;
+}

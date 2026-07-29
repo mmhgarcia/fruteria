@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { getRamos } from '../utils/ramos'
 import RamoSelector from './RamoSelector'
+import TasaBcv from '../features/TasaBcv/components/TasaBcv'
+import RamosComerciales from './RamosComerciales'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -14,12 +16,21 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose }) {
+export default function SettingsModal({ settings, onSave, onClose, onTasaChange }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
   const [ramoId, setRamoId] = useState(settings.ramoId || '')
   const [ramos, setRamos] = useState([])
+  const [showTasa, setShowTasa] = useState(false)
+  const [showRamos, setShowRamos] = useState(false)
+
+  const closeRamos = () => {
+    setShowRamos(false)
+    getRamos()
+      .then((list) => setRamos(list.sort((a, b) => a.name.localeCompare(b.name))))
+      .catch(console.error)
+  }
 
   useEffect(() => {
     getRamos()
@@ -142,6 +153,36 @@ export default function SettingsModal({ settings, onSave, onClose }) {
               <span>💱 36,50</span>
             </div>
           </div>
+
+          <hr className="settings-divider" />
+
+          <div className="settings-admin-section">
+            <h3 className="settings-admin-title">Administración</h3>
+
+            <button
+              className="settings-admin-btn"
+              onClick={() => setShowTasa(true)}
+            >
+              <span className="settings-admin-btn-icon">💱</span>
+              <div className="settings-admin-btn-text">
+                <strong>Tasa BCV</strong>
+                <span>Registrar y gestionar tasas de cambio</span>
+              </div>
+              <span className="settings-admin-btn-arrow">›</span>
+            </button>
+
+            <button
+              className="settings-admin-btn"
+              onClick={() => setShowRamos(true)}
+            >
+              <span className="settings-admin-btn-icon">🏪</span>
+              <div className="settings-admin-btn-text">
+                <strong>Ramos Comerciales</strong>
+                <span>Crear y gestionar ramos del negocio</span>
+              </div>
+              <span className="settings-admin-btn-arrow">›</span>
+            </button>
+          </div>
         </div>
 
         <div className="modal-actions">
@@ -153,6 +194,19 @@ export default function SettingsModal({ settings, onSave, onClose }) {
           </button>
         </div>
       </div>
+
+      {showTasa && (
+        <TasaBcv
+          onClose={() => setShowTasa(false)}
+          onTasaChange={onTasaChange}
+        />
+      )}
+
+      {showRamos && (
+        <RamosComerciales
+          onClose={closeRamos}
+        />
+      )}
     </div>
   )
 }
