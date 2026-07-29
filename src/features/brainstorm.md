@@ -59,7 +59,7 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 * Barra de Búsqueda: Añadir un buscador con filtro de texto en la parte superior de "Gestión de Productos" para agilizar la navegación cuando la lista supere los 100 ítems.
 
-* Ordenamiento Amigable: Sustituir el campo de texto numérico de Orden: 1 en las categorías por un sistema de arrastrar y soltar (Drag and Drop) o flechas simples (▲ / ▼).
+~~* Ordenamiento Amigable: Sustituir el campo de texto numérico de Orden: 1 en las categorías por un sistema de arrastrar y soltar (Drag and Drop) o flechas simples (▲ / ▼).~~
 
 ## 📊 6. Administración y Analítica (Cierre de Caja)
 

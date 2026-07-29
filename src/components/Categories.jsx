@@ -56,7 +56,6 @@ export default function Categories({ onClose }) {
     const category = {
       ...form,
       id: form.id.trim().toLowerCase().replace(/\s+/g, '-'),
-      order: Number(form.order) || 0,
     }
 
     if (!category.id) {
@@ -66,6 +65,7 @@ export default function Categories({ onClose }) {
 
     try {
       if (editingId) {
+        category.order = Number(form.order) || 0
         await updateCategory({ ...category, id: editingId })
       } else {
         const existing = await getCategories()
@@ -73,6 +73,7 @@ export default function Categories({ onClose }) {
           alert('Ya existe una categoría con ese identificador.')
           return
         }
+        category.order = existing.length + 1
         await addCategory(category)
       }
       await loadCategories()
@@ -81,6 +82,36 @@ export default function Categories({ onClose }) {
       setShowForm(false)
     } catch (error) {
       alert('Error al guardar categoría: ' + error.message)
+    }
+  }
+
+  const moveUp = async (index) => {
+    if (index === 0) return
+    const reordered = [...categories]
+    const temp = reordered[index]
+    reordered[index] = reordered[index - 1]
+    reordered[index - 1] = temp
+    await persistOrder(reordered)
+  }
+
+  const moveDown = async (index) => {
+    if (index === categories.length - 1) return
+    const reordered = [...categories]
+    const temp = reordered[index]
+    reordered[index] = reordered[index + 1]
+    reordered[index + 1] = temp
+    await persistOrder(reordered)
+  }
+
+  async function persistOrder(reordered) {
+    const withOrder = reordered.map((cat, i) => ({ ...cat, order: i + 1 }))
+    try {
+      for (const cat of withOrder) {
+        await updateCategory(cat)
+      }
+      setCategories(withOrder)
+    } catch (error) {
+      alert('Error al reordenar: ' + error.message)
     }
   }
 
@@ -135,19 +166,43 @@ export default function Categories({ onClose }) {
               <p>No hay categorías registradas.</p>
             </div>
           ) : (
-            <ul className="products-list">
-              {categories.map((category) => (
+            <ul className="products-list categories-list">
+              {categories.map((category, index) => (
                 <li
                   key={category.id}
                   className="products-item"
-                  onClick={() => handleEdit(category)}
-                  role="button"
-                  tabIndex={0}
                 >
-                  <span className="products-item-avatar">{category.icon}</span>
-                  <div className="products-item-info">
-                    <strong>{category.name}</strong>
-                    <span>ID: {category.id} · Orden: {category.order ?? 0}</span>
+                  <div className="categories-order-group">
+                    <button
+                      className="categories-order-btn"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        moveUp(index)
+                      }}
+                      disabled={index === 0}
+                      aria-label="Subir"
+                    >
+                      ▲
+                    </button>
+                    <span className="categories-order-num">{index + 1}</span>
+                    <button
+                      className="categories-order-btn"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        moveDown(index)
+                      }}
+                      disabled={index === categories.length - 1}
+                      aria-label="Bajar"
+                    >
+                      ▼
+                    </button>
+                  </div>
+                  <div className="products-item-info" onClick={() => handleEdit(category)} role="button" tabIndex={0}>
+                    <span className="products-item-avatar">{category.icon}</span>
+                    <div>
+                      <strong>{category.name}</strong>
+                      <span>ID: {category.id}</span>
+                    </div>
                   </div>
                   <button
                     className="products-item-delete"
@@ -188,15 +243,6 @@ export default function Categories({ onClose }) {
                 value={form.id}
                 onChange={handleChange}
                 disabled={!!editingId}
-                required
-              />
-
-              <input
-                name="order"
-                type="number"
-                placeholder="Orden en el POS"
-                value={form.order}
-                onChange={handleChange}
                 required
               />
 

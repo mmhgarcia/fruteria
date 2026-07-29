@@ -284,3 +284,60 @@
 .products-btn:active {
   transform: scale(0.98);
 }
+
+/* ── Ordenamiento de categorías con flechas ── */
+
+.categories-list .products-item {
+  padding: 8px 12px;
+}
+
+.categories-order-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.categories-order-btn {
+  width: 32px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #888);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  transition: all 0.12s ease;
+  padding: 0;
+}
+
+.categories-order-btn:active:not(:disabled) {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--primary, #2d6a4f);
+}
+
+.categories-order-btn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.categories-order-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary, #888);
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+}
+
+.categories-list .products-item-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+}
