@@ -12,6 +12,7 @@ import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
 import Products from './components/Products'
 import Categories from './components/Categories'
+import RamosComerciales from './components/RamosComerciales'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import BackupModal from './components/BackupModal'
 import SalesReportModal from './components/SalesReportModal'
@@ -30,6 +31,7 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const [ramosOpen, setRamosOpen] = useState(false)
   const [tasaBcvOpen, setTasaBcvOpen] = useState(false)
   const [backupOpen, setBackupOpen] = useState(false)
   const [salesReportOpen, setSalesReportOpen] = useState(false)
@@ -207,6 +209,8 @@ function App() {
             setProductsOpen(true)
           } else if (filter === 'categorias') {
             setCategoriesOpen(true)
+          } else if (filter === 'ramos') {
+            setRamosOpen(true)
           } else if (filter === 'tasabcv') {
             setTasaBcvOpen(true)
           } else if (filter === 'backup') {
@@ -306,6 +310,12 @@ function App() {
             setCategoriesOpen(false)
             loadCategories()
           }}
+        />
+      )}
+
+      {ramosOpen && (
+        <RamosComerciales
+          onClose={() => setRamosOpen(false)}
         />
       )}
 

@@ -1,7 +1,7 @@
 const DB_NAME = 'fruteria-db'
-const DB_VERSION = 3
+const DB_VERSION = 5
 
-const STORES = ['products', 'categories', 'historico_tasas']
+const STORES = ['products', 'categories', 'historico_tasas', 'sales', 'ramos']
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -20,6 +20,12 @@ function openDB() {
       }
       if (!db.objectStoreNames.contains('historico_tasas')) {
         db.createObjectStore('historico_tasas', { keyPath: 'id', autoIncrement: true })
+      }
+      if (!db.objectStoreNames.contains('sales')) {
+        db.createObjectStore('sales', { keyPath: 'id', autoIncrement: true })
+      }
+      if (!db.objectStoreNames.contains('ramos')) {
+        db.createObjectStore('ramos', { keyPath: 'id' })
       }
     }
   })

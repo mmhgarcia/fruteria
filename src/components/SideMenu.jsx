@@ -9,6 +9,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
       .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label)),
     { id: 'separator', label: '', icon: '', type: 'separator' },
     { id: 'categorias', label: 'Categorías', icon: '📂' },
+    { id: 'ramos', label: 'Ramos Comerciales', icon: '🏪' },
     { id: 'productos', label: 'Productos', icon: '📦' },
     { id: 'tasabcv', label: 'Tasa BCV', icon: '💱' },
     { id: 'backup', label: 'Backup', icon: '💾' },

@@ -403,3 +403,23 @@
   line-height: 1;
   touch-action: none;
 }
+
+/* ── Toggle activo/inactivo para Ramos Comerciales ── */
+
+.ramos-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 1rem;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ramos-toggle input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--primary, #2d6a4f);
+  cursor: pointer;
+}

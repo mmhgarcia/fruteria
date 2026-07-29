@@ -43,6 +43,8 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ## 3.2 Acceso al Historico de Ventas
 
+* Desarrollar
+
 ## 🛡️ 4. Seguridad y Control de Acceso
 
 * PIN de Administrador Diario: Crear un cuadro flotante con teclado numérico integrado (estilo pantalla de bloqueo) para restringir el acceso a menús delicados.
@@ -54,6 +56,8 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 ~~* Confirmación de Tasa Segura: Al cambiar la tasa del dólar, mostrar un modal de confirmación rápida (ej. ¿Confirmar nueva tasa a Bs 737,42?) para evitar errores tipográficos que alteren el valor de todo el inventario por accidente. ~~
 
 ## 📂 5. Gestión de Productos y Categorías
+
+~~* Definicion de Ramos Comerciales en el cual va a ser utilizado el POS (CRUD implementado con nombre, identificador y flag activo/inactivo) ~~
 
 * Expansión de Iconografía: Agregar íconos o emojis de proteínas (🥩, 🍗, 🐟, 🥓) y lácteos/quesos (🧀) para poder mudar el POS al ramo de carnicería y charcutería.
 

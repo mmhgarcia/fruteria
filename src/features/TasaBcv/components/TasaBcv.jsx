@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useTasas } from '../hooks/useTasas'
 import { formatCurrency } from '../../../utils/format'
 import './TasaBcv.css'
@@ -10,6 +10,7 @@ export default function TasaBcv({ onClose, onTasaChange }) {
     fecha_tasa: new Date().toISOString().split('T')[0],
     tasa: '',
   })
+  const tasaRef = useRef(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -18,7 +19,11 @@ export default function TasaBcv({ onClose, onTasaChange }) {
     const tasaValue = parseFloat(formData.tasa)
     const action = editandoId ? 'actualizar' : 'registrar'
 
-    if (!window.confirm(`¿Confirmar nueva tasa a Bs ${formatCurrency(tasaValue)}?`)) return
+    if (!window.confirm(`¿Confirmar nueva tasa a Bs ${formatCurrency(tasaValue)}?`)) {
+      setFormData((prev) => ({ ...prev, tasa: '' }))
+      tasaRef.current?.focus()
+      return
+    }
 
     const data = {
       fecha_tasa: formData.fecha_tasa,
@@ -84,8 +89,7 @@ export default function TasaBcv({ onClose, onTasaChange }) {
               </div>
               <div className="tasa-field">
                 <label>Valor tasa (Bs.)</label>
-                <input
-                  type="number"
+                <input                  ref={tasaRef}                  type="number"
                   step="0.01"
                   placeholder="0.00"
                   value={formData.tasa}
