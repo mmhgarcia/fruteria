@@ -10,8 +10,20 @@
     <link rel="mask-icon" href="/mask-icon.svg" color="#2d6a4f" />
     <link rel="manifest" href="/manifest.json" />
     <title>Frutería POS</title>
-    <script type="module" crossorigin src="/assets/index-CQxIO-YG.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BGdZrQqL.css">
+    <script>
+      document.addEventListener('contextmenu', (e) => e.preventDefault())
+      document.addEventListener('keydown', (e) => {
+        if (
+          e.key === 'F12' ||
+          (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
+          (e.ctrlKey && e.key.toUpperCase() === 'U')
+        ) {
+          e.preventDefault()
+        }
+      })
+    </script>
+    <script type="module" crossorigin src="/assets/index-B6eomx0b.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BKNU1jg4.css">
   <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body>
     <div id="root"></div>
