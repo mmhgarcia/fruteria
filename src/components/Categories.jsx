@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { getCategories, addCategory, updateCategory, deleteCategory, seedCategories } from '../utils/categories'
 import './Products.css'
 
@@ -23,6 +23,10 @@ export default function Categories({ onClose }) {
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [dragIndex, setDragIndex] = useState(null)
+  const [overIndex, setOverIndex] = useState(null)
+  const listRef = useRef(null)
+  const touchDragRef = useRef(null)
 
   useEffect(() => {
     loadCategories()
@@ -85,25 +89,98 @@ export default function Categories({ onClose }) {
     }
   }
 
-  const moveUp = async (index) => {
-    if (index === 0) return
-    const reordered = [...categories]
-    const temp = reordered[index]
-    reordered[index] = reordered[index - 1]
-    reordered[index - 1] = temp
-    await persistOrder(reordered)
+  /* ── Drag & Drop (HTML5 + Touch) ── */
+
+  const handleDragStart = (index) => (e) => {
+    setDragIndex(index)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', index)
+    // Small delay so the browser shows the drag feedback
+    setTimeout(() => e.target.classList.add('dragging'), 0)
   }
 
-  const moveDown = async (index) => {
-    if (index === categories.length - 1) return
-    const reordered = [...categories]
-    const temp = reordered[index]
-    reordered[index] = reordered[index + 1]
-    reordered[index + 1] = temp
-    await persistOrder(reordered)
+  const handleDragOver = (index) => (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    if (dragIndex !== null && dragIndex !== index) {
+      setOverIndex(index)
+    }
   }
 
-  async function persistOrder(reordered) {
+  const handleDragLeave = () => {
+    setOverIndex(null)
+  }
+
+  const handleDrop = (index) => async (e) => {
+    e.preventDefault()
+    e.target.classList.remove('dragging')
+    if (dragIndex === null || dragIndex === index) {
+      setDragIndex(null)
+      setOverIndex(null)
+      return
+    }
+    await swapAndPersist(dragIndex, index)
+    setDragIndex(null)
+    setOverIndex(null)
+  }
+
+  const handleDragEnd = (e) => {
+    e.target.classList.remove('dragging')
+    setDragIndex(null)
+    setOverIndex(null)
+  }
+
+  /* ── Touch Drag & Drop ── */
+
+  const handleTouchStart = (index) => (e) => {
+    const touch = e.touches[0]
+    touchDragRef.current = {
+      index,
+      startY: touch.clientY,
+      moved: false,
+    }
+  }
+
+  const handleTouchMove = (e) => {
+    if (!touchDragRef.current) return
+    const touch = e.touches[0]
+    const dy = touch.clientY - touchDragRef.current.startY
+    if (Math.abs(dy) > 10) {
+      touchDragRef.current.moved = true
+      e.preventDefault() // prevent scroll while dragging
+
+      // Calculate target index based on touch position
+      if (listRef.current) {
+        const items = listRef.current.querySelectorAll('.products-item')
+        let targetIdx = touchDragRef.current.index
+        for (let i = 0; i < items.length; i++) {
+          const rect = items[i].getBoundingClientRect()
+          const midY = rect.top + rect.height / 2
+          if (touch.clientY < midY) {
+            targetIdx = i
+            break
+          }
+          targetIdx = i
+        }
+        setOverIndex(targetIdx)
+      }
+    }
+  }
+
+  const handleTouchEnd = async () => {
+    const ref = touchDragRef.current
+    if (!ref) return
+    if (ref.moved && overIndex !== null && overIndex !== ref.index) {
+      await swapAndPersist(ref.index, overIndex)
+    }
+    touchDragRef.current = null
+    setOverIndex(null)
+  }
+
+  async function swapAndPersist(fromIdx, toIdx) {
+    const reordered = [...categories]
+    const [moved] = reordered.splice(fromIdx, 1)
+    reordered.splice(toIdx, 0, moved)
     const withOrder = reordered.map((cat, i) => ({ ...cat, order: i + 1 }))
     try {
       for (const cat of withOrder) {
@@ -113,6 +190,16 @@ export default function Categories({ onClose }) {
     } catch (error) {
       alert('Error al reordenar: ' + error.message)
     }
+  }
+
+  const moveUp = async (index) => {
+    if (index === 0) return
+    await swapAndPersist(index, index - 1)
+  }
+
+  const moveDown = async (index) => {
+    if (index === categories.length - 1) return
+    await swapAndPersist(index, index + 1)
   }
 
   const handleEdit = (category) => {
@@ -166,11 +253,20 @@ export default function Categories({ onClose }) {
               <p>No hay categorías registradas.</p>
             </div>
           ) : (
-            <ul className="products-list categories-list">
+            <ul className="products-list categories-list" ref={listRef}>
               {categories.map((category, index) => (
                 <li
                   key={category.id}
-                  className="products-item"
+                  className={`products-item${overIndex === index ? ' drag-over' : ''}${dragIndex === index ? ' dragging' : ''}`}
+                  draggable
+                  onDragStart={handleDragStart(index)}
+                  onDragOver={handleDragOver(index)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop(index)}
+                  onDragEnd={handleDragEnd}
+                  onTouchStart={handleTouchStart(index)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 >
                   <div className="categories-order-group">
                     <button
@@ -184,7 +280,6 @@ export default function Categories({ onClose }) {
                     >
                       ▲
                     </button>
-                    <span className="categories-order-num">{index + 1}</span>
                     <button
                       className="categories-order-btn"
                       onClick={(e) => {
@@ -197,7 +292,8 @@ export default function Categories({ onClose }) {
                       ▼
                     </button>
                   </div>
-                  <div className="products-item-info" onClick={() => handleEdit(category)} role="button" tabIndex={0}>
+                  <div className="categories-item-content" onClick={() => handleEdit(category)} role="button" tabIndex={0}>
+                    <span className="categories-drag-handle" aria-label="Arrastrar">⠿</span>
                     <span className="products-item-avatar">{category.icon}</span>
                     <div>
                       <strong>{category.name}</strong>

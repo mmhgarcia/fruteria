@@ -285,10 +285,26 @@
   transform: scale(0.98);
 }
 
-/* ── Ordenamiento de categorías con flechas ── */
+/* ── Ordenamiento de categorías: flechas + drag & drop ── */
 
 .categories-list .products-item {
   padding: 8px 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.categories-list .products-item.dragging {
+  opacity: 0.4;
+  transform: scale(0.96);
+}
+
+.categories-list .products-item.drag-over {
+  border-radius: 14px;
+  box-shadow: 0 0 0 2px var(--primary, #2d6a4f);
+  background: rgba(45, 106, 79, 0.06);
 }
 
 .categories-order-group {
@@ -297,7 +313,7 @@
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
-  margin-right: 4px;
+  margin-right: 2px;
 }
 
 .categories-order-btn {
@@ -306,7 +322,7 @@
   border: none;
   background: transparent;
   color: var(--text-secondary, #888);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -325,19 +341,21 @@
   cursor: default;
 }
 
-.categories-order-num {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-secondary, #888);
-  min-width: 18px;
-  text-align: center;
-  line-height: 1;
-}
-
-.categories-list .products-item-info {
+.categories-item-content {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
   flex: 1;
+  min-width: 0;
+}
+
+.categories-drag-handle {
+  font-size: 1.1rem;
+  color: var(--text-secondary, #aaa);
+  cursor: grab;
+  flex-shrink: 0;
+  padding: 4px;
+  line-height: 1;
+  touch-action: none;
 }
