@@ -21,6 +21,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
   const [ramoId, setRamoId] = useState(settings.ramoId || '')
+  const [pin, setPin] = useState(settings.pin || '')
   const [ramos, setRamos] = useState([])
   const [showTasa, setShowTasa] = useState(false)
   const [showRamos, setShowRamos] = useState(false)
@@ -51,6 +52,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
       bgColor,
       textColor,
       ramoId,
+      pin,
     })
     onClose()
   }
@@ -83,6 +85,28 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
               ramos={ramos}
               className="settings-select"
             />
+          </label>
+
+          <label className="settings-field">
+            <span>PIN de administrador</span>
+            <div className="pin-input-row">
+              <input
+                type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6}
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                placeholder="Mínimo 4 dígitos. Dejar vacío = sin PIN"
+                className="pin-input"
+              />
+              {pin && pin.length < 4 && (
+                <span className="pin-hint">Mín. 4 dígitos</span>
+              )}
+            </div>
+            <span className="settings-field-desc">
+              Protege el acceso a Productos, Categorías, Tasa y Ramos
+            </span>
           </label>
 
           <hr className="settings-divider" />

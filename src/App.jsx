@@ -40,6 +40,7 @@ function App() {
     bgColor: '#4a8c5e',
     textColor: '#ffffff',
     ramoId: 'fruteria',
+    pin: '',
   })
   const [settingsOpen, setSettingsOpen] = useState(false)
 
