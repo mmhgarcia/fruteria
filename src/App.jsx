@@ -15,6 +15,7 @@ import Categories from './components/Categories'
 import BackupModal from './components/BackupModal'
 import SalesReportModal from './components/SalesReportModal'
 import SettingsModal from './components/SettingsModal'
+import PinPrompt from './components/PinPrompt'
 import './App.css'
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
     pin: '',
   })
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [pinPromptOpen, setPinPromptOpen] = useState(false)
 
   // El ramo activo siempre disponible sin consultar BD
   const ramoActivo = settings.ramoId || 'fruteria'
@@ -217,7 +219,13 @@ function App() {
           } else if (filter === 'sales-report') {
             setSalesReportOpen(true)
           } else if (filter === 'config') {
-            setSettingsOpen(true)
+            setIsMenuOpen(false)
+            if (settings.pin) {
+              setPinPromptOpen(true)
+            } else {
+              setSettingsOpen(true)
+            }
+            return
           } else {
             setCurrentFilter(filter)
           }
@@ -337,6 +345,17 @@ function App() {
           onSave={setSettings}
           onClose={() => setSettingsOpen(false)}
           onTasaChange={setTasa}
+        />
+      )}
+
+      {pinPromptOpen && (
+        <PinPrompt
+          pin={settings.pin}
+          onSuccess={() => {
+            setPinPromptOpen(false)
+            setSettingsOpen(true)
+          }}
+          onClose={() => setPinPromptOpen(false)}
         />
       )}
     </div>

@@ -1,0 +1,160 @@
+.pin-overlay {
+  z-index: 300;
+}
+
+.pin-prompt {
+  background: var(--card, #ffffff);
+  border-radius: 20px;
+  padding: 24px 20px 20px;
+  width: 90%;
+  max-width: 320px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  animation: modalIn 0.2s ease;
+}
+
+.pin-prompt-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pin-prompt-icon {
+  font-size: 24px;
+}
+
+.pin-prompt-header h2 {
+  margin: 0;
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.pin-prompt-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 1rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.pin-prompt-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.pin-prompt-desc {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  text-align: center;
+}
+
+.pin-display {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  min-height: 40px;
+  align-items: center;
+}
+
+.pin-dot {
+  font-size: 1.6rem;
+  color: var(--text-light, #bbb);
+  transition: all 0.12s;
+  width: 24px;
+  text-align: center;
+}
+
+.pin-dot.filled {
+  color: var(--primary, #2d6a4f);
+}
+
+.pin-display.error .pin-dot.filled {
+  color: var(--danger, #e63946);
+}
+
+.pin-display.shake {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+.pin-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--danger, #e63946);
+  font-weight: 600;
+}
+
+.pin-keypad {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 260px;
+}
+
+.pin-keypad-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.pin-key {
+  width: 64px;
+  height: 56px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.1s;
+  font-family: inherit;
+  color: var(--text, #1a1a1a);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.pin-key:active {
+  background: rgba(0, 0, 0, 0.12);
+  transform: scale(0.94);
+}
+
+.pin-key-backspace {
+  font-size: 1.2rem;
+  color: var(--text-secondary, #888);
+}
+
+.pin-key-placeholder {
+  width: 64px;
+  height: 56px;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
