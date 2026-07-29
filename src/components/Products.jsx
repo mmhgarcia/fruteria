@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getProducts, addProduct, updateProduct, deleteProduct, seedProducts } from '../utils/db'
 import { getCategories } from '../utils/categories'
+import { getRamos } from '../utils/ramos'
 import { defaultProducts } from '../data/products'
 import { formatCurrency } from '../utils/format'
 import './Products.css'
@@ -11,6 +12,7 @@ const EMPTY_PRODUCT = {
   group: 'frutas',
   um: 'kg',
   price: '',
+  ramo: 'fruteria',
 }
 
 const ICONS = [
@@ -20,6 +22,7 @@ const ICONS = [
 export default function Products({ onClose }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
+  const [ramos, setRamos] = useState([])
   const [form, setForm] = useState(EMPTY_PRODUCT)
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -29,6 +32,7 @@ export default function Products({ onClose }) {
   useEffect(() => {
     loadProducts()
     loadCategories()
+    loadRamos()
   }, [])
 
   async function loadProducts() {
@@ -53,6 +57,21 @@ export default function Products({ onClose }) {
     }
   }
 
+  async function loadRamos() {
+    try {
+      const list = await getRamos()
+      // Sort: fruteria first
+      list.sort((a, b) => {
+        if (a.id === 'fruteria') return -1
+        if (b.id === 'fruteria') return 1
+        return a.name.localeCompare(b.name)
+      })
+      setRamos(list)
+    } catch (error) {
+      console.error('Error al cargar ramos:', error)
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
@@ -60,6 +79,10 @@ export default function Products({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!form.ramo) {
+      alert('Debe seleccionar un Ramo Comercial.')
+      return
+    }
     const product = {
       ...form,
       price: parseFloat(form.price) || 0,
@@ -86,6 +109,7 @@ export default function Products({ onClose }) {
       group: product.group,
       um: product.um,
       price: product.price.toString(),
+      ramo: product.ramo || '',
     })
     setEditingId(product.id)
     setShowForm(true)
@@ -197,6 +221,7 @@ export default function Products({ onClose }) {
                       <strong>{product.name}</strong>
                       <span>
                         {product.group} · {product.um} · ${formatCurrency(product.price)}
+                        {product.ramo ? ` · ${ramos.find((r) => r.id === product.ramo)?.name || product.ramo}` : ''}
                       </span>
                     </div>
                     <button
@@ -236,13 +261,24 @@ export default function Products({ onClose }) {
               />
 
               <div className="products-form-row">
-                <select name="group" value={form.group} onChange={handleChange}>
-                  <option value="">Sin categoría</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.icon} {cat.name}
+                <select name="ramo" value={form.ramo} onChange={handleChange}>
+                  <option value="">-- Ramo --</option>
+                  {ramos.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
                     </option>
                   ))}
+                </select>
+
+                <select name="group" value={form.group} onChange={handleChange}>
+                  <option value="">Sin categoría</option>
+                  {categories
+                    .filter((cat) => !form.ramo || cat.ramo === form.ramo)
+                    .map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.icon} {cat.name}
+                      </option>
+                    ))}
                 </select>
 
                 <select name="um" value={form.um} onChange={handleChange}>
