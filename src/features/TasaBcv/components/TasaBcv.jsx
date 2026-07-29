@@ -15,9 +15,14 @@ export default function TasaBcv({ onClose, onTasaChange }) {
     e.preventDefault()
     if (!formData.tasa || !formData.fecha_tasa) return
 
+    const tasaValue = parseFloat(formData.tasa)
+    const action = editandoId ? 'actualizar' : 'registrar'
+
+    if (!window.confirm(`¿Confirmar nueva tasa a Bs ${formatCurrency(tasaValue)}?`)) return
+
     const data = {
       fecha_tasa: formData.fecha_tasa,
-      tasa: parseFloat(formData.tasa),
+      tasa: tasaValue,
     }
 
     const result = editandoId

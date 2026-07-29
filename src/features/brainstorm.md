@@ -51,7 +51,7 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 * Escudo de Fuerza Bruta: Bloquear temporalmente el teclado numérico durante 5 minutos si se introducen 3 PIN incorrectos de forma consecutiva.
 
-* Confirmación de Tasa Segura: Al cambiar la tasa del dólar, mostrar un modal de confirmación rápida (ej. ¿Confirmar nueva tasa a Bs 737,42?) para evitar errores tipográficos que alteren el valor de todo el inventario por accidente.
+~~* Confirmación de Tasa Segura: Al cambiar la tasa del dólar, mostrar un modal de confirmación rápida (ej. ¿Confirmar nueva tasa a Bs 737,42?) para evitar errores tipográficos que alteren el valor de todo el inventario por accidente. ~~
 
 ## 📂 5. Gestión de Productos y Categorías
 

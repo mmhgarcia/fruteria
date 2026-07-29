@@ -89,6 +89,7 @@ export default function Products({ onClose }) {
     })
     setEditingId(product.id)
     setShowForm(true)
+    setSearch('')
   }
 
   const handleDelete = async (id) => {
@@ -111,6 +112,7 @@ export default function Products({ onClose }) {
     setForm(EMPTY_PRODUCT)
     setEditingId(null)
     setShowForm(true)
+    setSearch('')
   }
 
   const handleImportData = async () => {
