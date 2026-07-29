@@ -43,8 +43,12 @@ function App() {
     companyName: 'Frutería POS',
     bgColor: '#4a8c5e',
     textColor: '#ffffff',
+    ramoId: 'fruteria',
   })
   const [settingsOpen, setSettingsOpen] = useState(false)
+
+  // El ramo activo siempre disponible sin consultar BD
+  const ramoActivo = settings.ramoId || 'fruteria'
 
   useEffect(() => {
     loadProducts()
@@ -299,6 +303,7 @@ function App() {
 
       {productsOpen && (
         <Products
+          ramoId={ramoActivo}
           onClose={() => {
             setProductsOpen(false)
             loadProducts()
@@ -308,6 +313,7 @@ function App() {
 
       {categoriesOpen && (
         <Categories
+          ramoId={ramoActivo}
           onClose={() => {
             setCategoriesOpen(false)
             loadCategories()

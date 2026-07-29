@@ -161,3 +161,23 @@
   font-size: 13px;
   opacity: 0.8;
 }
+
+/* ── Selector de Ramo Comercial en Settings ── */
+
+.settings-select {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s;
+  appearance: auto;
+  -webkit-appearance: auto;
+}
+
+.settings-select:focus {
+  border-color: var(--primary);
+}

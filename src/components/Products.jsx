@@ -19,11 +19,11 @@ const ICONS = [
   '🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '🍈', '🍋', '🥑', '🥬', '🍅', '🧅', '🥕', '🥒', '🥔', '🫑', '🧄', '🏷️', '📦'
 ]
 
-export default function Products({ onClose }) {
+export default function Products({ onClose, ramoId }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [ramos, setRamos] = useState([])
-  const [form, setForm] = useState(EMPTY_PRODUCT)
+  const [form, setForm] = useState({ ...EMPTY_PRODUCT, ramo: ramoId || 'fruteria' })
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)

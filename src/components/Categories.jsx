@@ -18,10 +18,10 @@ const EMPTY_CATEGORY = {
 
 const ICONS = ['🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '🍈', '🍋', '🥑', '🥬', '🍅', '🧅', '🥕', '🥒', '🥔', '🫑', '🧄', '🏷️', '📦', '📂']
 
-export default function Categories({ onClose }) {
+export default function Categories({ onClose, ramoId }) {
   const [categories, setCategories] = useState([])
   const [ramos, setRamos] = useState([])
-  const [selectedRamo, setSelectedRamo] = useState('')
+  const [selectedRamo, setSelectedRamo] = useState(ramoId || '')
   const [form, setForm] = useState(EMPTY_CATEGORY)
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -53,8 +53,8 @@ export default function Categories({ onClose }) {
       })
       setRamos(ramosList)
 
-      // Pre-select first ramo if none selected
-      const ramoActual = selectedRamo || ramosList[0].id
+      // Pre-select ramo: prop global > first available
+      const ramoActual = ramoId || selectedRamo || ramosList[0].id
       setSelectedRamo(ramoActual)
 
       // 2. Seed default categories for this ramo

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getRamos } from '../utils/ramos'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -16,12 +17,27 @@ export default function SettingsModal({ settings, onSave, onClose }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
+  const [ramoId, setRamoId] = useState(settings.ramoId || '')
+  const [ramos, setRamos] = useState([])
+
+  useEffect(() => {
+    getRamos()
+      .then((list) => {
+        setRamos(list.sort((a, b) => a.name.localeCompare(b.name)))
+        // If no ramo selected yet and we have ramos, set first as default
+        if (!settings.ramoId && list.length > 0) {
+          setRamoId(list[0].id)
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   const handleSave = () => {
     onSave({
       companyName: companyName.trim() || 'Mi Negocio',
       bgColor,
       textColor,
+      ramoId,
     })
     onClose()
   }
@@ -44,6 +60,22 @@ export default function SettingsModal({ settings, onSave, onClose }) {
               placeholder="Ej: Frutería Doña Ana"
               autoFocus
             />
+          </label>
+
+          <label className="settings-field">
+            <span>Ramo Comercial</span>
+            <select
+              className="settings-select"
+              value={ramoId}
+              onChange={(e) => setRamoId(e.target.value)}
+            >
+              <option value="">-- Seleccionar Ramo --</option>
+              {ramos.map((r) => (
+                <option key={r.id} value={r.id} disabled={!r.activo}>
+                  {r.activo ? '' : '⛔ '}{r.name}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="settings-field">
