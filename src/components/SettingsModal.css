@@ -1,5 +1,9 @@
 .settings-modal {
   max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow: hidden;
 }
 
 .modal-header {
@@ -7,6 +11,7 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .modal-icon {
@@ -23,6 +28,10 @@
   flex-direction: column;
   gap: 16px;
   margin-bottom: 20px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
 }
 
 .settings-field {
@@ -135,6 +144,7 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--text-light);
+  flex-shrink: 0;
 }
 
 .preview-bar {
