@@ -15,6 +15,8 @@ _Estandarizar modelo de base de datos a usar._
 
 ~~ Subtotal en Tiempo Real: Mostrar abajo del cuadro verde de cantidad el subtotal de la línea antes de agregarla al ticket (ej. 3 un x $3.50 = $10.50). ~~
 
+~~ Límite de 3 Decimales en kg: Limitar la entrada del teclado numérico a 3 decimales para productos por peso y mostrar 3 decimales en badge, carrito y ticket. ~~
+
 ## 🛒 2. Pantalla "Mi Carrito" y "Ticket de Venta"
 
 ~~ Edición Rápida: Permitir que, al tocar la fila de un producto en el carrito, se abra de nuevo su teclado numérico para corregir los kilos o unidades de inmediato, sin tener que borrar el ítem con el ícono de la papelera.~~
@@ -57,7 +59,7 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 * Icono Comodín: Configurar la caja de cartón (📦) como imagen por defecto si el usuario olvida seleccionar un ícono al crear un producto general (víveres).
 
-* Barra de Búsqueda: Añadir un buscador con filtro de texto en la parte superior de "Gestión de Productos" para agilizar la navegación cuando la lista supere los 100 ítems.
+~~* Barra de Búsqueda: Añadir un buscador con filtro de texto en la parte superior de "Gestión de Productos" para agilizar la navegación cuando la lista supere los 100 ítems. ~~
 
 ~~* Ordenamiento Amigable: Sustituir el campo de texto numérico de Orden: 1 en las categorías por un sistema de arrastrar y soltar (Drag and Drop) o flechas simples (▲ / ▼).~~
 

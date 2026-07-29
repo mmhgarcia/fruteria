@@ -24,6 +24,7 @@ export default function Products({ onClose }) {
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     loadProducts()
@@ -155,8 +156,33 @@ export default function Products({ onClose }) {
             </div>
           ) : (
             <>
+              <div className="products-search">
+                <span className="products-search-icon">🔍</span>
+                <input
+                  className="products-search-input"
+                  type="text"
+                  placeholder="Buscar producto…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                {search && (
+                  <button
+                    className="products-search-clear"
+                    onClick={() => setSearch('')}
+                    aria-label="Limpiar búsqueda"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
               <ul className="products-list">
-                {products.map((product) => (
+                {products
+                  .filter((p) =>
+                    search
+                      ? p.name.toLowerCase().includes(search.toLowerCase())
+                      : true
+                  )
+                  .map((product) => (
                   <li
                     key={product.id}
                     className="products-item"
