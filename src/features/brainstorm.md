@@ -97,3 +97,7 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ------------------------------
 
+## Identificacion de la app
+
+Al instalar a la app se le asignarà un serial id que quedarà grabado en mi db para mi control.
+

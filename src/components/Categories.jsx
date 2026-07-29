@@ -45,6 +45,12 @@ export default function Categories({ onClose }) {
         await addRamo(defaultRamo)
         ramosList = [defaultRamo]
       }
+      // Sort: "fruteria" first, then the rest alphabetically
+      ramosList.sort((a, b) => {
+        if (a.id === 'fruteria') return -1
+        if (b.id === 'fruteria') return 1
+        return a.name.localeCompare(b.name)
+      })
       setRamos(ramosList)
 
       // Pre-select first ramo if none selected
