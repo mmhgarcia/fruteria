@@ -110,6 +110,24 @@
   font-weight: 600;
 }
 
+.pin-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+
+.pin-toggle-btn:active {
+  background: rgba(0, 0, 0, 0.06);
+}
+
 .color-input-row {
   display: flex;
   align-items: center;

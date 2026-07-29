@@ -26,6 +26,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
   const [showTasa, setShowTasa] = useState(false)
   const [showRamos, setShowRamos] = useState(false)
   const [showColors, setShowColors] = useState(false)
+  const [showPin, setShowPin] = useState(false)
 
   // const [ramos, setRamos] = useState([]) ← dropdown
   // const [setRamoId, ] ← commented out
@@ -104,17 +105,25 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
             <span>PIN de administrador</span>
             <div className="pin-input-row">
               <input
-                type="password"
+                type={showPin ? 'text' : 'password'}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 maxLength={6}
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="Mín. 4, máx. 6 dígitos"
+                placeholder="Mín. 4, máx. 6 dig."
                 className="pin-input"
               />
+              <button
+                type="button"
+                className="pin-toggle-btn"
+                onClick={() => setShowPin(!showPin)}
+                aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+              >
+                {showPin ? '🙈' : '👁️'}
+              </button>
               {pin && pin.length < 4 && (
-                <span className="pin-hint">Mín. 4 dígitos</span>
+                <span className="pin-hint">Mín. 4 dig.</span>
               )}
             </div>
             <span className="settings-field-desc">
