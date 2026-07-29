@@ -21,6 +21,11 @@ function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
     // Los productos por unidad no admiten fracciones
     if (digit === '.' && isUnit) return
     if (digit === '.' && weight.includes('.')) return
+    // Limitar a 3 decimales para productos por peso
+    if (!isUnit && weight.includes('.')) {
+      const decimals = weight.split('.')[1]
+      if (decimals && decimals.length >= 3) return
+    }
     if (weight === '' && digit === '.') {
       setWeight('0.')
       return

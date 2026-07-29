@@ -84,5 +84,4 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 * Redundancia de Servidor (Failover): Crear un interruptor en la configuración de administración para poder apagar el rol de "Servidor" en el Móvil A y activarlo en el Móvil B si el administrador debe retirarse del local con su dispositivo.
 
 ------------------------------
-¿Cuál de estos bloques de tu plan de desarrollo te gustaría empezar a estructurar a nivel de interfaz de usuario (UI) o código técnico primero?
 

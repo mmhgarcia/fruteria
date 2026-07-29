@@ -5,5 +5,5 @@ export function formatCurrency(value) {
 }
 
 export function formatQty(qty, um) {
-  return um === 'unidad' ? Math.round(qty).toString() : qty.toFixed(2)
+  return um === 'unidad' ? Math.round(qty).toString() : qty.toFixed(3)
 }
