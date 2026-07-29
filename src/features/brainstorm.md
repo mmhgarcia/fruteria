@@ -59,6 +59,8 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ~~* Definicion de Ramos Comerciales en el cual va a ser utilizado el POS (CRUD implementado con nombre, identificador y flag activo/inactivo) ~~
 
+* Ramo comercial alinear check y leyenda a la izquierda.
+
 * Expansión de Iconografía: Agregar íconos o emojis de proteínas (🥩, 🍗, 🐟, 🥓) y lácteos/quesos (🧀) para poder mudar el POS al ramo de carnicería y charcutería.
 
 * Icono Comodín: Configurar la caja de cartón (📦) como imagen por defecto si el usuario olvida seleccionar un ícono al crear un producto general (víveres).
