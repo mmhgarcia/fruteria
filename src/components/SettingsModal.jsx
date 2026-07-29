@@ -24,6 +24,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
   const [ramos, setRamos] = useState([])
   const [showTasa, setShowTasa] = useState(false)
   const [showRamos, setShowRamos] = useState(false)
+  const [showColors, setShowColors] = useState(false)
 
   const closeRamos = () => {
     setShowRamos(false)
@@ -84,79 +85,98 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
             />
           </label>
 
-          <label className="settings-field">
-            <span>Color de fondo del POS</span>
-            <div className="color-input-row">
-              <input
-                type="color"
-                value={bgColor}
-                onChange={(e) => setBgColor(e.target.value)}
-                className="color-picker"
-              />
-              <input
-                type="text"
-                value={bgColor}
-                onChange={(e) => setBgColor(e.target.value)}
-                className="color-hex"
-                placeholder="#4a8c5e"
-              />
-            </div>
-          </label>
-
-          <label className="settings-field">
-            <span>Color del texto del POS</span>
-            <div className="color-input-row">
-              <input
-                type="color"
-                value={textColor}
-                onChange={(e) => setTextColor(e.target.value)}
-                className="color-picker"
-              />
-              <input
-                type="text"
-                value={textColor}
-                onChange={(e) => setTextColor(e.target.value)}
-                className="color-hex"
-                placeholder="#ffffff"
-              />
-            </div>
-          </label>
-
-          <div className="settings-presets">
-            <span>Paletas rápidas:</span>
-            <div className="preset-grid">
-              {COLOR_PRESETS.map((preset) => (
-                <button
-                  key={preset.label}
-                  className="preset-btn"
-                  style={{ background: preset.bg, color: preset.text }}
-                  onClick={() => {
-                    setBgColor(preset.bg)
-                    setTextColor(preset.text)
-                  }}
-                  title={preset.label}
-                >
-                  {preset.label.split(' ')[0]}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="settings-preview">
-            <span>Vista previa:</span>
-            <div
-              className="preview-bar"
-              style={{ background: bgColor, color: textColor }}
-            >
-              <span>☰</span>
-              <span>{companyName || 'Mi Negocio'}</span>
-              <span>💱 36,50</span>
-            </div>
-          </div>
-
           <hr className="settings-divider" />
 
-          <div className="settings-admin-section">
+          <div className="settings-section-group">
+
+            <button
+              className="settings-toggle-btn"
+              onClick={() => setShowColors(!showColors)}
+            >
+              <span className="settings-toggle-btn-icon">🎨</span>
+              <div className="settings-toggle-btn-text">
+                <strong>Personalizar colores</strong>
+                <span>Fondo, texto y paletas del POS</span>
+              </div>
+              <span className={`settings-toggle-btn-arrow ${showColors ? 'open' : ''}`}>▼</span>
+            </button>
+
+            {showColors && (
+              <div className="settings-toggle-content">
+                <label className="settings-field">
+                  <span>Color de fondo del POS</span>
+                  <div className="color-input-row">
+                    <input
+                      type="color"
+                      value={bgColor}
+                      onChange={(e) => setBgColor(e.target.value)}
+                      className="color-picker"
+                    />
+                    <input
+                      type="text"
+                      value={bgColor}
+                      onChange={(e) => setBgColor(e.target.value)}
+                      className="color-hex"
+                      placeholder="#4a8c5e"
+                    />
+                  </div>
+                </label>
+
+                <label className="settings-field">
+                  <span>Color del texto del POS</span>
+                  <div className="color-input-row">
+                    <input
+                      type="color"
+                      value={textColor}
+                      onChange={(e) => setTextColor(e.target.value)}
+                      className="color-picker"
+                    />
+                    <input
+                      type="text"
+                      value={textColor}
+                      onChange={(e) => setTextColor(e.target.value)}
+                      className="color-hex"
+                      placeholder="#ffffff"
+                    />
+                  </div>
+                </label>
+
+                <div className="settings-presets">
+                  <span>Paletas rápidas:</span>
+                  <div className="preset-grid">
+                    {COLOR_PRESETS.map((preset) => (
+                      <button
+                        key={preset.label}
+                        className="preset-btn"
+                        style={{ background: preset.bg, color: preset.text }}
+                        onClick={() => {
+                          setBgColor(preset.bg)
+                          setTextColor(preset.text)
+                        }}
+                        title={preset.label}
+                      >
+                        {preset.label.split(' ')[0]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="settings-preview">
+                  <span>Vista previa:</span>
+                  <div
+                    className="preview-bar"
+                    style={{ background: bgColor, color: textColor }}
+                  >
+                    <span>☰</span>
+                    <span>{companyName || 'Mi Negocio'}</span>
+                    <span>💱 36,50</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <hr className="settings-divider" />
+
             <h3 className="settings-admin-title">Administración</h3>
 
             <button
