@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getRamos } from '../utils/ramos'
-import RamoSelector from './RamoSelector'
+// import RamoSelector from './RamoSelector'
 import TasaBcv from '../features/TasaBcv/components/TasaBcv'
 import RamosComerciales from './RamosComerciales'
 import './SettingsModal.css'
@@ -20,38 +20,43 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
-  const [ramoId, setRamoId] = useState(settings.ramoId || '')
+  const ramoId = settings.ramoId || ''
   const [pin, setPin] = useState(settings.pin || '')
-  const [ramos, setRamos] = useState([])
+  const [ramoNombre, setRamoNombre] = useState('')
   const [showTasa, setShowTasa] = useState(false)
   const [showRamos, setShowRamos] = useState(false)
   const [showColors, setShowColors] = useState(false)
 
+  // const [ramos, setRamos] = useState([]) ← dropdown
+  // const [setRamoId, ] ← commented out
+
   const closeRamos = () => {
     setShowRamos(false)
     getRamos()
-      .then((list) => setRamos(list.sort((a, b) => a.name.localeCompare(b.name))))
+      .then((list) => {
+        const found = list.find((r) => r.id === ramoId)
+        if (found) setRamoNombre(found.name)
+      })
       .catch(console.error)
   }
 
   useEffect(() => {
-    getRamos()
-      .then((list) => {
-        setRamos(list.sort((a, b) => a.name.localeCompare(b.name)))
-        // If no ramo selected yet and we have ramos, set first as default
-        if (!settings.ramoId && list.length > 0) {
-          setRamoId(list[0].id)
-        }
-      })
-      .catch(console.error)
-  }, [])
+    if (ramoId) {
+      getRamos()
+        .then((list) => {
+          const found = list.find((r) => r.id === ramoId)
+          if (found) setRamoNombre(found.name)
+        })
+        .catch(console.error)
+    }
+  }, [ramoId])
 
   const handleSave = () => {
     onSave({
       companyName: companyName.trim() || 'Mi Negocio',
       bgColor,
       textColor,
-      ramoId,
+      ramoId: settings.ramoId || '',
       pin,
     })
     onClose()
@@ -78,13 +83,21 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
           </label>
 
           <label className="settings-field">
-            <span>Ramo Comercial</span>
+            <span>Ramo Comercial Asignado</span>
+            <input
+              type="text"
+              value={ramoNombre || ramoId || 'No establecido.'}
+              readOnly
+              className="settings-field-readonly"
+            />
+            {/* ↓ dropdown comentado
             <RamoSelector
               value={ramoId}
               onChange={setRamoId}
               ramos={ramos}
               className="settings-select"
             />
+            */}
           </label>
 
           <label className="settings-field">
@@ -113,6 +126,36 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
 
           <div className="settings-section-group">
 
+            <h3 className="settings-admin-title">Administración</h3>
+
+            <button
+              className="settings-admin-btn"
+              onClick={() => setShowTasa(true)}
+            >
+              <span className="settings-admin-btn-icon">💱</span>
+              <div className="settings-admin-btn-text">
+                <strong>Tasa BCV</strong>
+                <span>Registrar y gestionar tasas de cambio</span>
+              </div>
+              <span className="settings-admin-btn-arrow">›</span>
+            </button>
+
+            <button
+              className="settings-admin-btn"
+              onClick={() => setShowRamos(true)}
+            >
+              <span className="settings-admin-btn-icon">🏪</span>
+              <div className="settings-admin-btn-text">
+                <strong>Ramos Comerciales</strong>
+                <span>Crear y gestionar ramos del negocio</span>
+              </div>
+              <span className="settings-admin-btn-arrow">›</span>
+            </button>
+          </div>
+
+          <hr className="settings-divider" />
+
+          <div className="settings-section-group">
             <button
               className="settings-toggle-btn"
               onClick={() => setShowColors(!showColors)}
@@ -198,34 +241,6 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
                 </div>
               </div>
             )}
-
-            <hr className="settings-divider" />
-
-            <h3 className="settings-admin-title">Administración</h3>
-
-            <button
-              className="settings-admin-btn"
-              onClick={() => setShowTasa(true)}
-            >
-              <span className="settings-admin-btn-icon">💱</span>
-              <div className="settings-admin-btn-text">
-                <strong>Tasa BCV</strong>
-                <span>Registrar y gestionar tasas de cambio</span>
-              </div>
-              <span className="settings-admin-btn-arrow">›</span>
-            </button>
-
-            <button
-              className="settings-admin-btn"
-              onClick={() => setShowRamos(true)}
-            >
-              <span className="settings-admin-btn-icon">🏪</span>
-              <div className="settings-admin-btn-text">
-                <strong>Ramos Comerciales</strong>
-                <span>Crear y gestionar ramos del negocio</span>
-              </div>
-              <span className="settings-admin-btn-arrow">›</span>
-            </button>
           </div>
         </div>
 

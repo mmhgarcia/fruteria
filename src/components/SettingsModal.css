@@ -58,6 +58,20 @@
   border-color: var(--primary);
 }
 
+.settings-field-readonly {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text);
+  cursor: default;
+  opacity: 0.85;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .settings-field-desc {
   font-size: 12px;
   font-weight: 400;
