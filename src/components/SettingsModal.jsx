@@ -110,7 +110,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
                 maxLength={6}
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="Mínimo 4 dígitos. Dejar vacío = sin PIN"
+                placeholder="Mín. 4, máx. 6 dígitos"
                 className="pin-input"
               />
               {pin && pin.length < 4 && (
@@ -118,7 +118,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
               )}
             </div>
             <span className="settings-field-desc">
-              Protege el acceso a Productos, Categorías, Tasa y Ramos
+              Vacío = sin PIN. Protege acceso a Productos, Categorías, Tasa y Ramos
             </span>
           </label>
 
