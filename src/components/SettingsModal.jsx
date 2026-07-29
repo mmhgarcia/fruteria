@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getRamos } from '../utils/ramos'
+import RamoSelector from './RamoSelector'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -64,18 +65,12 @@ export default function SettingsModal({ settings, onSave, onClose }) {
 
           <label className="settings-field">
             <span>Ramo Comercial</span>
-            <select
-              className="settings-select"
+            <RamoSelector
               value={ramoId}
-              onChange={(e) => setRamoId(e.target.value)}
-            >
-              <option value="">-- Seleccionar Ramo --</option>
-              {ramos.map((r) => (
-                <option key={r.id} value={r.id} disabled={!r.activo}>
-                  {r.activo ? '' : '⛔ '}{r.name}
-                </option>
-              ))}
-            </select>
+              onChange={setRamoId}
+              ramos={ramos}
+              className="settings-select"
+            />
           </label>
 
           <label className="settings-field">

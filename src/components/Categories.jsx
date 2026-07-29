@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { getCategories, addCategory, updateCategory, deleteCategory, seedCategories } from '../utils/categories'
 import { getRamos, addRamo } from '../utils/ramos'
+import RamoSelector from './RamoSelector'
 import './Products.css'
 
 const DEFAULT_CATEGORIES = [
@@ -307,24 +308,12 @@ export default function Categories({ onClose, ramoId }) {
 
         <div className="products-body">
           {/* Selector de Ramo Comercial */}
-          <div className="categories-ramo-selector">
-            <label htmlFor="ramo-select">Ramo Comercial:</label>
-            <select
-              id="ramo-select"
-              value={selectedRamo}
-              onChange={handleRamoChange}
-              className="categories-ramo-select"
-            >
-              <option value="" disabled>
-                -- Seleccionar Ramo --
-              </option>
-              {ramos.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.activo ? '' : '⛔ '}{r.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <RamoSelector
+            label="Ramo Comercial:"
+            value={selectedRamo}
+            onChange={handleRamoChange}
+            className="ramo-selector-select"
+          />
 
           {loading ? (
             <p className="products-empty">Cargando...</p>

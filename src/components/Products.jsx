@@ -4,6 +4,7 @@ import { getCategories } from '../utils/categories'
 import { getRamos } from '../utils/ramos'
 import { defaultProducts } from '../data/products'
 import { formatCurrency } from '../utils/format'
+import RamoSelector from './RamoSelector'
 import './Products.css'
 
 const EMPTY_PRODUCT = {
@@ -261,14 +262,13 @@ export default function Products({ onClose, ramoId }) {
               />
 
               <div className="products-form-row">
-                <select name="ramo" value={form.ramo} onChange={handleChange}>
-                  <option value="">-- Ramo --</option>
-                  {ramos.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name}
-                    </option>
-                  ))}
-                </select>
+                <RamoSelector
+                  value={form.ramo}
+                  onChange={(val) => setForm((prev) => ({ ...prev, ramo: val }))}
+                  ramos={ramos}
+                  placeholder="-- Ramo --"
+                  showInactive
+                />
 
                 <select name="group" value={form.group} onChange={handleChange}>
                   <option value="">Sin categoría</option>
