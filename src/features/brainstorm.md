@@ -45,6 +45,10 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 * Desarrollar
 
+## Unicidad de ramo al instalar
+
+* Solo puede haber un ramo configurado. Si ya hay uno configurado y se trata de configurar otro debe haber un alert que los datos previos seran eliminados. Caso de insistir ya es responsabilidad del usuario y quedarà un log del user, fecha y hora y marcado como FATAL
+
 ## 🛡️ 4. Seguridad y Control de Acceso
 
 * PIN de Administrador Diario: Crear un cuadro flotante con teclado numérico integrado (estilo pantalla de bloqueo) para restringir el acceso a menús delicados.
@@ -59,7 +63,7 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ~~* Definicion de Ramos Comerciales en el cual va a ser utilizado el POS (CRUD implementado con nombre, identificador y flag activo/inactivo) ~~
 
-* Ramo comercial alinear check y leyenda a la izquierda.
+~~* Ramo comercial alinear check y leyenda a la izquierda. ~~
 
 * Expansión de Iconografía: Agregar íconos o emojis de proteínas (🥩, 🍗, 🐟, 🥓) y lácteos/quesos (🧀) para poder mudar el POS al ramo de carnicería y charcutería.
 

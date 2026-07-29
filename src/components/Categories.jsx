@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from 'react'
 import { getCategories, addCategory, updateCategory, deleteCategory, seedCategories } from '../utils/categories'
+import { getRamos, addRamo } from '../utils/ramos'
 import './Products.css'
 
 const DEFAULT_CATEGORIES = [
-  { name: 'Frutas', icon: '🍊', id: 'frutas', order: 1 },
-  { name: 'Verduras', icon: '🥬', id: 'verduras', order: 2 },
-  { name: 'Ofertas', icon: '🏷️', id: 'ofertas', order: 3 },
+  { name: 'Frutas', icon: '🍊', id: 'frutas', order: 1, ramo: 'fruteria' },
+  { name: 'Verduras', icon: '🥬', id: 'verduras', order: 2, ramo: 'fruteria' },
+  { name: 'Ofertas', icon: '🏷️', id: 'ofertas', order: 3, ramo: 'fruteria' },
 ]
 
 const EMPTY_CATEGORY = {
@@ -19,6 +20,8 @@ const ICONS = ['🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '
 
 export default function Categories({ onClose }) {
   const [categories, setCategories] = useState([])
+  const [ramos, setRamos] = useState([])
+  const [selectedRamo, setSelectedRamo] = useState('')
   const [form, setForm] = useState(EMPTY_CATEGORY)
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -29,22 +32,60 @@ export default function Categories({ onClose }) {
   const touchDragRef = useRef(null)
 
   useEffect(() => {
-    loadCategories()
+    loadData()
   }, [])
 
-  async function loadCategories() {
+  async function loadData() {
     try {
       setLoading(true)
-      await seedCategories(DEFAULT_CATEGORIES)
-      const list = await getCategories()
-      setCategories(
-        list.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
-      )
+      // 1. Ensure at least one ramo exists
+      let ramosList = await getRamos()
+      if (ramosList.length === 0) {
+        const defaultRamo = { id: 'fruteria', name: 'Fruteria', activo: true }
+        await addRamo(defaultRamo)
+        ramosList = [defaultRamo]
+      }
+      setRamos(ramosList)
+
+      // Pre-select first ramo if none selected
+      const ramoActual = selectedRamo || ramosList[0].id
+      setSelectedRamo(ramoActual)
+
+      // 2. Seed default categories for this ramo
+      const defaultsForRamo = DEFAULT_CATEGORIES.filter((c) => c.ramo === ramoActual)
+      if (defaultsForRamo.length > 0) {
+        await seedCategories(defaultsForRamo)
+      }
+
+      // 3. Load all categories and filter by ramo
+      await loadCategories(ramoActual)
     } catch (error) {
-      alert('Error al cargar categorías: ' + error.message)
+      alert('Error al cargar datos: ' + error.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  async function loadCategories(ramoId) {
+    try {
+      const list = await getCategories()
+      const filtered = list.filter((c) => c.ramo === (ramoId || selectedRamo))
+      setCategories(
+        filtered.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
+      )
+    } catch (error) {
+      alert('Error al cargar categorías: ' + error.message)
+    }
+  }
+
+  const handleRamoChange = (e) => {
+    const ramoId = e.target.value
+    setSelectedRamo(ramoId)
+    loadCategories(ramoId)
+    // Reset form when switching ramo
+    setForm(EMPTY_CATEGORY)
+    setEditingId(null)
+    setShowForm(false)
   }
 
   const handleChange = (e) => {
@@ -57,9 +98,16 @@ export default function Categories({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (!selectedRamo) {
+      alert('Debe seleccionar un Ramo Comercial.')
+      return
+    }
+
     const category = {
       ...form,
       id: form.id.trim().toLowerCase().replace(/\s+/g, '-'),
+      ramo: selectedRamo,
     }
 
     if (!category.id) {
@@ -77,7 +125,7 @@ export default function Categories({ onClose }) {
           alert('Ya existe una categoría con ese identificador.')
           return
         }
-        category.order = existing.length + 1
+        category.order = existing.filter((c) => c.ramo === selectedRamo).length + 1
         await addCategory(category)
       }
       await loadCategories()
@@ -210,6 +258,12 @@ export default function Categories({ onClose }) {
       order: category.order ?? 0,
     })
     setEditingId(category.id)
+    // Switch ramo dropdown to the category's ramo
+    if (category.ramo && category.ramo !== selectedRamo) {
+      setSelectedRamo(category.ramo)
+      // Reload categories for that ramo
+      setTimeout(() => loadCategories(category.ramo), 0)
+    }
     setShowForm(true)
   }
 
@@ -246,11 +300,31 @@ export default function Categories({ onClose }) {
         </div>
 
         <div className="products-body">
+          {/* Selector de Ramo Comercial */}
+          <div className="categories-ramo-selector">
+            <label htmlFor="ramo-select">Ramo Comercial:</label>
+            <select
+              id="ramo-select"
+              value={selectedRamo}
+              onChange={handleRamoChange}
+              className="categories-ramo-select"
+            >
+              <option value="" disabled>
+                -- Seleccionar Ramo --
+              </option>
+              {ramos.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.activo ? '' : '⛔ '}{r.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {loading ? (
             <p className="products-empty">Cargando...</p>
           ) : categories.length === 0 ? (
             <div className="products-empty">
-              <p>No hay categorías registradas.</p>
+              <p>No hay categorías para este ramo.</p>
             </div>
           ) : (
             <ul className="products-list categories-list" ref={listRef}>
@@ -297,7 +371,7 @@ export default function Categories({ onClose }) {
                     <span className="products-item-avatar">{category.icon}</span>
                     <div>
                       <strong>{category.name}</strong>
-                      <span>ID: {category.id}</span>
+                      <span>ID: {category.id} · {ramos.find((r) => r.id === category.ramo)?.name || category.ramo || 'Sin ramo'}</span>
                     </div>
                   </div>
                   <button
@@ -341,6 +415,10 @@ export default function Categories({ onClose }) {
                 disabled={!!editingId}
                 required
               />
+
+              <div className="categories-form-ramo">
+                Ramo: <strong>{ramos.find((r) => r.id === selectedRamo)?.name || selectedRamo}</strong>
+              </div>
 
               <div className="products-icons">
                 {ICONS.map((icon) => (

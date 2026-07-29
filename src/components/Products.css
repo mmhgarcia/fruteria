@@ -427,4 +427,50 @@
   padding: 0;
   margin: 0;
 }
+
+/* ── Selector de Ramo en Gestión de Categorías ── */
+
+.categories-ramo-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.categories-ramo-selector label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+  white-space: nowrap;
+}
+
+.categories-ramo-select {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  background: var(--surface, #ffffff);
+  font-size: 1rem;
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+  outline: none;
+  appearance: auto;
+  -webkit-appearance: auto;
+}
+
+.categories-ramo-select:focus {
+  border-color: var(--primary, #2d6a4f);
+}
+
+/* ── Ramo en formulario de categoría ── */
+
+.categories-form-ramo {
+  padding: 10px 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary, #666);
+}
+
+.categories-form-ramo strong {
+  color: var(--text-primary, #1a1a1a);
 }

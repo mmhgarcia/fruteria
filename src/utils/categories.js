@@ -13,6 +13,13 @@ export async function getCategories() {
   })
 }
 
+export async function getCategoriesByRamo(ramoId) {
+  const all = await getCategories()
+  return all
+    .filter((c) => c.ramo === ramoId)
+    .sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
+}
+
 export async function addCategory(category) {
   const db = await openDB()
   return new Promise((resolve, reject) => {

@@ -75,9 +75,9 @@ function App() {
     try {
       setLoadingCategories(true)
       await seedCategories([
-        { id: 'frutas', name: 'Frutas', icon: '🍊', order: 1 },
-        { id: 'verduras', name: 'Verduras', icon: '🥬', order: 2 },
-        { id: 'ofertas', name: 'Ofertas', icon: '🏷️', order: 3 },
+        { id: 'frutas', name: 'Frutas', icon: '🍊', order: 1, ramo: 'fruteria' },
+        { id: 'verduras', name: 'Verduras', icon: '🥬', order: 2, ramo: 'fruteria' },
+        { id: 'ofertas', name: 'Ofertas', icon: '🏷️', order: 3, ramo: 'fruteria' },
       ])
       const list = await getCategories()
       setCategories(
