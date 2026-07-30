@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './SalesReportModal.css'
 
 // ═══════════════════════════════════════════════════════════
@@ -43,12 +43,20 @@ export default function SalesReportModal({ onClose }) {
   const [presetActivo, setPresetActivo] = useState('Mes')
   const [pagina, setPagina] = useState(1)
   const totalPaginas = 3
+  const modalRef = useRef(null)
 
-  // Secciones colapsables: todas abiertas por defecto
+  // Scroll al tope cada vez que se abre el modal
+  useEffect(() => {
+    if (modalRef.current) {
+      modalRef.current.scrollTop = 0
+    }
+  }, [])
+
+  // Secciones colapsables: solo Dashboard abierto por defecto
   const [openSections, setOpenSections] = useState({
     dashboard: true,
-    metodosPago: true,
-    productos: true,
+    metodosPago: false,
+    productos: false,
   })
 
   const toggleSection = (key) =>
@@ -56,7 +64,7 @@ export default function SalesReportModal({ onClose }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal sales-report-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal sales-report-modal" ref={modalRef} onClick={(e) => e.stopPropagation()}>
 
         {/* ── HEADER ── */}
         <div className="modal-header">

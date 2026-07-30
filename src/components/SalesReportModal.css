@@ -11,6 +11,9 @@
   flex-direction: column;
   gap: 0;
   padding: 0;
+  overflow-y: auto;
+  align-self: flex-start;
+  margin-top: 2vh;
 }
 
 .sales-report-modal .modal-header {
