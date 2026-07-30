@@ -17,11 +17,11 @@ const MOCK_TARJETAS = [
 ]
 
 const MOCK_METODOS = [
-  { metodo: 'Efectivo $', usd: '$450,00', bs: '—', total: '$450,00' },
-  { metodo: 'Efectivo Bs', usd: '—', bs: 'Bs 18.000', total: 'Bs 18.000' },
-  { metodo: 'Pago Móvil', usd: '$500,00', bs: 'Bs 36.750', total: '$500 + Bs 36.750' },
-  { metodo: 'Punto', usd: '$200,00', bs: 'Bs 14.700', total: '$200 + Bs 14.700' },
-  { metodo: 'Divisa', usd: '$100,00', bs: '—', total: '$100,00' },
+  { metodo: 'Efectivo $', usd: '$450,00', bs: '—' },
+  { metodo: 'Efectivo Bs', usd: '—', bs: 'Bs 18.000' },
+  { metodo: 'Pago Móvil', usd: '$500,00', bs: 'Bs 36.750' },
+  { metodo: 'Punto', usd: '$200,00', bs: 'Bs 14.700' },
+  { metodo: 'Divisa', usd: '$100,00', bs: '—' },
 ]
 
 const MOCK_PRODUCTOS = [
@@ -151,7 +151,6 @@ export default function SalesReportModal({ onClose }) {
                     <th>Método</th>
                     <th>USD</th>
                     <th>Bs</th>
-                    <th>Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -160,7 +159,6 @@ export default function SalesReportModal({ onClose }) {
                       <td className="sr-td-metodo">{m.metodo}</td>
                       <td>{m.usd}</td>
                       <td>{m.bs}</td>
-                      <td className="sr-td-total">{m.total}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -169,7 +167,6 @@ export default function SalesReportModal({ onClose }) {
                     <td><strong>TOTALES</strong></td>
                     <td><strong>$1.250,00</strong></td>
                     <td><strong>Bs 69.450</strong></td>
-                    <td></td>
                   </tr>
                 </tfoot>
               </table>
