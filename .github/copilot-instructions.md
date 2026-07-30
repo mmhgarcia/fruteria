@@ -24,7 +24,7 @@ Sistema **Punto de Venta (POS) táctil** para una frutería en Venezuela.
 | Lenguaje | JavaScript (JSX) + TypeScript tipos (`@types/react`) |
 | Bundler | Vite 5 (`vite` ^5.0.8, `@vitejs/plugin-react` ^4.2.1) |
 | PWA | `vite-plugin-pwa` ^0.19.0 (service worker, instalable offline) |
-| Persistencia | **IndexedDB** nativo (productos, categorías, ventas, historial tasas) + **localStorage** (carrito, settings, tasa activa) |
+| Persistencia | **IndexedDB** nativo (productos, categorías, ventas, historial tasas, ramos, logs) + **localStorage** (carrito, settings, tasa activa, alert-read-at) |
 | Moneda | Dólar (USD) y Bolívar (Bs) con tasa BCV |
 | Hosting | GitHub Pages |
 | Backend | Ninguno — todo es 100% frontend, sin servidor |
@@ -69,15 +69,25 @@ src/
 │   ├── RamosComerciales.jsx # CRUD ramos + check "Asignar a Empresa"
 │   ├── RamoSelector.jsx # Componente reutilizable dropdown de ramos
 │   ├── SideMenu.jsx     # Menú lateral simplificado (solo ⚙️ Configuración)
-│   ├── SettingsModal.jsx# Configuración centralizada (Admin + Reportes + Colores + Backup)
+│   ├── SettingsModal.jsx# Configuración centralizada (Admin + Reportes + Colores + Backup + Logs)
 │   ├── SalesReportModal.jsx # Reporte de ventas
 │   ├── BackupModal.jsx  # Backup / exportación de datos
+│   ├── LogsViewerModal.jsx # Visor fullscreen de logs del sistema
+│   ├── LogsViewerModal.css
 │   └── PinPrompt.jsx    # Modal teclado numérico para PIN
 ├── features/
 │   └── TasaBcv/         # Feature: Histórico de tasas BCV
 │       ├── components/TasaBcv.jsx
 │       ├── hooks/useTasas.js
 │       └── services/tasaService.js
+├── utils/
+│   ├── backupService.js # Export/import de todas las stores IndexedDB
+│   ├── categories.js    # CRUD de categorías en IndexedDB
+│   ├── db.js            # Conexión y CRUD principal IndexedDB (products, sales, etc.)
+│   ├── format.js        # formatCurrency, formatQty (locale Venezuela)
+│   ├── hash.js          # hashPin → SHA-256
+│   ├── logService.js    # Sistema de logs (INFO, WARNING, ERROR, FATAL, ALERT)
+│   └── ramos.js         # CRUD de ramos comerciales
 └── ...
 ```
 
@@ -95,21 +105,24 @@ src/
 
 ## 🗄️ Reglas de Almacenamiento
 
-### IndexedDB (`fruteria-db`)
+### IndexedDB (`fruteria-db`, v6)
 - **products**: Catálogo de productos (CRUD desde gestión)
 - **categories**: Categorías con ícono y orden
 - **historico_tasas**: Historial de tasas BCV registradas manualmente
 - **sales**: Ventas realizadas (para reportes)
+- **ramos**: Ramos comerciales (CRUD desde RamosComerciales)
+- **logs**: Registro de eventos del sistema (INFO, WARNING, ERROR, FATAL, ALERT)
 
 ### localStorage
 - `fruteria-cart`: Items en el carrito actual
 - `fruteria-tasa`: Tasa de cambio activa (USD → Bs)
-- `fruteria-settings`: Preferencias (companyName, bgColor, textColor)
+- `fruteria-settings`: Preferencias (companyName, bgColor, textColor, ramoId, pin)
+- `fruteria-alert-read-at`: Timestamp ISO de la última vez que se marcaron alertas como leídas
 
 ### Reglas
 - No usar PouchDB ni Dexie — solo IndexedDB nativo + localStorage.
 - `seedProducts()` y `seedCategories()` solo insertan si no existen.
-- En `backupService.js` la versión DB está hardcodeada (DB_VERSION 3) — mantener sincronizada con `db.js` si se agregan stores.
+- Al modificar `db.js` (versión o stores), actualizar también `backupService.js` (DB_VERSION y STORES).
 
 ---
 
@@ -140,12 +153,14 @@ Toda la gestión administrativa está centralizada en **Configuración** (⚙️
 | **Reportes** | Resumen Ventas (y futuros reportes) |
 | **Personalizar colores** | Plegable: fondo, texto, paletas |
 | **Backup** | Exportar/importar datos |
+| **Logs del Sistema** | Visor fullscreen de logs con filtros y búsqueda |
 
 ### Flujo de PIN
 - Campo en Configuración (mín. 4, máx. 6 dígitos, con ojito mostrar/ocultar).
 - Si hay PIN configurado, al tocar "Configuración" desde el menú aparece `PinPrompt` (teclado numérico).
 - Si está vacío, entra directo sin PIN.
 - **Seguridad**: El PIN se persiste en localStorage como hash SHA-256 (64 caracteres hex), nunca en texto plano. `PinPrompt` compara el hash, y hay compatibilidad hacia atrás con PINs legacy en texto plano.
+- **3 intentos fallidos**: `PinPrompt` cuenta intentos. Al llegar a 3, registra un log tipo `ALERT` con datos del intento (timestamp, userAgent, pinIngresado). El badge rojo del header muestra alertas no leídas pendientes.
 
 ---
 
@@ -180,16 +195,42 @@ Toda la gestión administrativa está centralizada en **Configuración** (⚙️
 
 ---
 
-## 🔐 Seguridad (planeado)
+## 🪵 Sistema de Logs
+
+`src/utils/logService.js` — Sistema de logs en IndexedDB con tipos:
+- `INFO`, `WARNING`, `ERROR`, `FATAL`, `ALERT`
+
+**Funciones:** `addLog(type, message, details)`, `getLogs({ limit, type })`, `clearLogs()`
+
+Cada entrada: `{ type, message, details, timestamp }`.
+
+### 📋 Visor de Logs (`LogsViewerModal.jsx`)
+- Pantalla completa (fuera del overlay de Settings)
+- Filtros por tipo con colores distintivos
+- Búsqueda por texto en mensaje y detalles
+- Botón **✓ Marcar como leídas** → guarda `fruteria-alert-read-at` en localStorage y oculta el badge rojo
+- Botón **Limpiar todo** (con confirmación)
+- Orden descendente por fecha/hora
+
+### 🔴 Badge de alerta en Header
+- Aparece en la fila inferior (junto al carrito) cuando hay logs `ALERT` no leídos
+- Al hacer clic → abre flujo de Configuración (con PIN si está configurado)
+- El contador persiste aunque se reinicie la app: cuenta logs `ALERT` posteriores a `fruteria-alert-read-at`
+
+---
+
+## 🔐 Seguridad
 
 - PIN de administrador con teclado numérico (estilo bloqueo).
-- Bloqueo de seguridad tras 3 intentos fallidos (5 min).
+- Bloqueo de seguridad tras 3 intentos fallidos → log tipo `ALERT`.
 - Confirmación obligatoria al cambiar la tasa de cambio.
+- Badge rojo en header notifica al root de accesos no autorizados.
 
 ---
 
 ## 🧪 Notas de Desarrollo
 
 - El archivo `brainstorm.md` en `src/features/brainstorm.md` contiene la lluvia de ideas y hoja de ruta de features pendientes.
-- Al modificar `db.js` (versión o stores), actualizar también `backupService.js`.
+- Al modificar `db.js` (versión o stores), actualizar también `backupService.js` (DB_VERSION y STORES). DB_VERSION actual: **6**.
 - Los `_headers` en `/public` fuerzan `no-cache` para JS/CSS/HTML — necesario para evitar caché obsoleto del service worker.
+- Si se agregan nuevos tipos de log, actualizar `LOG_TYPES` en `logService.js` y `ALL_TYPES` en `LogsViewerModal.jsx`.
