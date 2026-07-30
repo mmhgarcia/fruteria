@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getRamos } from '../utils/ramos'
 // import RamoSelector from './RamoSelector'
+import { hashPin } from '../utils/hash'
 import TasaBcv from '../features/TasaBcv/components/TasaBcv'
 import RamosComerciales from './RamosComerciales'
 import Products from './Products'
@@ -25,7 +26,8 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
   const currentRamoId = settings.ramoId || ''
-  const [pin, setPin] = useState(settings.pin || '')
+  const [pin, setPin] = useState('') // always start empty; hashed on save
+  const hasPin = settings.pin ? true : false
   const [ramoNombre, setRamoNombre] = useState('')
   const [showTasa, setShowTasa] = useState(false)
   const [showRamos, setShowRamos] = useState(false)
@@ -44,15 +46,15 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
     // El useEffect con [ramoId] se encarga de refrescar el nombre al re-renderizar
   }
 
-  const handleRamoAsignado = (ramoId, ramoName) => {
+  const handleRamoAsignado = async (ramoId, ramoName) => {
     setRamoNombre(ramoName || '')
-    // Persist to localStorage immediately with current form values
+    const hashedPin = pin ? await hashPin(pin) : (settings.pin || '')
     onSave({
       companyName: companyName.trim() || 'Mi Negocio',
       bgColor,
       textColor,
       ramoId: ramoId || '',
-      pin,
+      pin: hashedPin,
     })
   }
 
@@ -67,13 +69,15 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
     }
   }, [currentRamoId])
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    // If pin is empty and there was one before, clear it. Otherwise hash the new one.
+    const hashedPin = pin ? await hashPin(pin) : (settings.pin || '')
     onSave({
       companyName: companyName.trim() || 'Mi Negocio',
       bgColor,
       textColor,
       ramoId: settings.ramoId || '',
-      pin,
+      pin: hashedPin,
     })
     onClose()
   }
@@ -117,7 +121,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
           </label>
 
           <label className="settings-field">
-            <span>PIN de administrador</span>
+            <span>PIN de administrador {hasPin ? <span className="pin-set-badge">✓ Configurado</span> : ''}</span>
             <div className="pin-input-row">
               <input
                 type={showPin ? 'text' : 'password'}
@@ -126,7 +130,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
                 maxLength={6}
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="Mín. 4, máx. 6 dig."
+                placeholder={hasPin ? 'Escriba para cambiar el PIN' : "Mín. 4, máx. 6 dig."}
                 className="pin-input"
               />
               <button

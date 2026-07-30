@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { hashPin } from '../utils/hash'
 import './PinPrompt.css'
 
 const KEYS = [
@@ -18,7 +19,7 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
     ref.current?.focus()
   }, [])
 
-  const handleKey = (key) => {
+  const handleKey = async (key) => {
     if (key === '⌫') {
       setDigits((prev) => prev.slice(0, -1))
       setError(false)
@@ -32,10 +33,11 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
     // Auto-check when enough digits entered
     if (next.length >= 4) {
       const entered = next.join('')
-      if (entered === pin) {
+      const enteredHash = await hashPin(entered)
+      if (enteredHash === pin) {
         setDigits([])
         onSuccess()
-      } else if (next.length >= pin.length || next.length === 6) {
+      } else if (next.length === 6) {
         setError(true)
         setShake(true)
         setTimeout(() => {
@@ -46,7 +48,7 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
     }
   }
 
-  const displayLen = Math.max(pin.length || 4, 4)
+  const displayLen = 6
   const display = digits.join('').padEnd(displayLen, '○')
 
   return (

@@ -110,6 +110,17 @@
   font-weight: 600;
 }
 
+.pin-set-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary, #2d6a4f);
+  background: rgba(45, 106, 79, 0.1);
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
 .pin-toggle-btn {
   width: 40px;
   height: 40px;
