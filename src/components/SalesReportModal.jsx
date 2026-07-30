@@ -141,28 +141,23 @@ export default function SalesReportModal({ onClose }) {
             <h3 className="sr-seccion-titulo">📋 Productos Vendidos</h3>
             <input type="text" className="sr-buscar" placeholder="Buscar producto..." readOnly />
           </div>
-          <table className="sr-tabla">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Producto</th>
-                <th>Cant</th>
-                <th>Total USD</th>
-                <th>Total Bs</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_PRODUCTOS.map((p) => (
-                <tr key={p.id}>
-                  <td className="sr-td-num">{p.id}</td>
-                  <td className="sr-td-producto">{p.icon} {p.nombre}</td>
-                  <td>{p.cant}</td>
-                  <td>{p.totalUSD}</td>
-                  <td>{p.totalBS}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+          <div className="sr-prod-lista">
+            {MOCK_PRODUCTOS.map((p) => (
+              <div key={p.id} className="sr-prod-card">
+                <span className="sr-prod-card-icon">{p.icon}</span>
+                <div className="sr-prod-card-body">
+                  <span className="sr-prod-card-name">{p.nombre}</span>
+                  <span className="sr-prod-card-qty">{p.cant}</span>
+                </div>
+                <div className="sr-prod-card-montos">
+                  <span className="sr-prod-card-usd">{p.totalUSD}</span>
+                  <span className="sr-prod-card-bs">{p.totalBS}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="sr-paginacion">
             <button className="sr-page-btn" onClick={() => setPagina(Math.max(1, pagina - 1))}>← Anterior</button>
             <span className="sr-page-info">Página {pagina} de {totalPaginas}</span>
