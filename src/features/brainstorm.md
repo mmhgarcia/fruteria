@@ -51,11 +51,15 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ## 🛡️ 4. Seguridad y Control de Acceso
 
-* PIN de Administrador Diario: Crear un cuadro flotante con teclado numérico integrado (estilo pantalla de bloqueo) para restringir el acceso a menús delicados.
+~~* PIN de Administrador: Campo en Configuración (mín. 4, máx. 6 dígitos) con ojito mostrar/ocultar. ~~
+
+~~* PinPrompt: Modal con teclado numérico estilo bloqueo que pide PIN al entrar a Configuración. ~~
 
 * Bloqueo por Sesión: Exigir este PIN al abrir el turno de trabajo por la mañana. El PIN bloquea automáticamente las funciones administrativas (Precios, Categorías, Tasa) al cerrar esas ventanas, evitando que el cajero las modifique si el dueño se retira del mostrador.
 
-* Escudo de Fuerza Bruta: Bloquear temporalmente el teclado numérico durante 5 minutos si se introducen 3 PIN incorrectos de forma consecutiva.
+* Escudo de Fuerza Bruta: Bloquear temporalmente el teclado numérico durante 5 minutos si se introducen 3 PIN incorrectos de forma consecutiva y Notificar por email.
+
+
 
 ~~* Confirmación de Tasa Segura: Al cambiar la tasa del dólar, mostrar un modal de confirmación rápida (ej. ¿Confirmar nueva tasa a Bs 737,42?) para evitar errores tipográficos que alteren el valor de todo el inventario por accidente. ~~
 
@@ -64,6 +68,12 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 ~~* Definicion de Ramos Comerciales en el cual va a ser utilizado el POS (CRUD implementado con nombre, identificador y flag activo/inactivo) ~~
 
 ~~* Ramo comercial alinear check y leyenda a la izquierda. ~~
+
+~~* Categorías jerárquicas por Ramo Comercial: las categorías pertenecen a un ramo. Dropdown selector en gestión. ~~
+
+~~* Productos con campo ramo: cada producto pertenece a un ramo. Dropdown RamoSelector reutilizable. ~~
+
+~~* RamoSelector: componente único y reutilizable para seleccionar ramos en toda la app. ~~
 
 * Expansión de Iconografía: Agregar íconos o emojis de proteínas (🥩, 🍗, 🐟, 🥓) y lácteos/quesos (🧀) para poder mudar el POS al ramo de carnicería y charcutería.
 
@@ -100,4 +110,3 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 ## Identificacion de la app
 
 Al instalar a la app se le asignarà un serial id que quedarà grabado en mi db para mi control.
-

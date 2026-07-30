@@ -64,27 +64,21 @@ src/
 │   ├── WeightModal.jsx  # Modal teclado numérico (peso/unidades)
 │   ├── CartModal.jsx    # Modal del carrito
 │   ├── PaymentModal.jsx # Modal de cobro (métodos de pago)
-│   ├── Categories.jsx   # Gestión de categorías
-│   ├── Products.jsx     # Gestión de productos
-│   ├── SideMenu.jsx     # Menú lateral
-│   ├── SettingsModal.jsx# Configuración (colores, nombre)
+│   ├── Categories.jsx   # Gestión de categorías (filtradas por ramo)
+│   ├── Products.jsx     # Gestión de productos (con campo ramo)
+│   ├── RamosComerciales.jsx # CRUD ramos + check "Asignar a Empresa"
+│   ├── RamoSelector.jsx # Componente reutilizable dropdown de ramos
+│   ├── SideMenu.jsx     # Menú lateral simplificado (solo ⚙️ Configuración)
+│   ├── SettingsModal.jsx# Configuración centralizada (Admin + Reportes + Colores + Backup)
 │   ├── SalesReportModal.jsx # Reporte de ventas
-│   └── BackupModal.jsx  # Backup / exportación de datos
-├── data/
-│   └── products.js      # Productos por defecto (seed data)
-├── hooks/
-│   └── useLocalStorage.js # Hook genérico localStorage
-├── utils/
-│   ├── db.js            # Capa IndexedDB (CRUD productos, ventas, tasas)
-│   ├── categories.js    # CRUD categorías en IndexedDB
-│   ├── format.js        # formatCurrency(), formatQty()
-│   └── backupService.js # Export/import de datos
+│   ├── BackupModal.jsx  # Backup / exportación de datos
+│   └── PinPrompt.jsx    # Modal teclado numérico para PIN
 ├── features/
 │   └── TasaBcv/         # Feature: Histórico de tasas BCV
 │       ├── components/TasaBcv.jsx
 │       ├── hooks/useTasas.js
 │       └── services/tasaService.js
-└── index.css / App.css
+└── ...
 ```
 
 ---
@@ -131,7 +125,26 @@ npm run dev
 ### Build y Publicación
 1. `npm run build` — genera en `dist/`
 2. Commit + push a GitHub
-3. `npm run deploy` — despliega a GitHub Pages vía gh-pages
+3. Vercel despliega automáticamente (NO usar gh-pages)
+
+---
+
+## 🧠 Estructura de Configuración (Settings)
+Toda la gestión administrativa está centralizada en **Configuración** (⚙️), único punto de entrada desde el SideMenu:
+
+### Secciones dentro de Configuración
+| Sección | Contenido |
+|---------|-----------|
+| **Datos empresa** | Nombre, Ramo Asignado (readonly), PIN admin |
+| **Administración** | Tasa BCV, Ramos Comerciales, Categorías, Productos |
+| **Reportes** | Resumen Ventas (y futuros reportes) |
+| **Personalizar colores** | Plegable: fondo, texto, paletas |
+| **Backup** | Exportar/importar datos |
+
+### Flujo de PIN
+- Campo en Configuración (mín. 4, máx. 6 dígitos, con ojito mostrar/ocultar).
+- Si hay PIN configurado, al tocar "Configuración" desde el menú aparece `PinPrompt` (teclado numérico).
+- Si está vacío, entra directo sin PIN.
 
 ---
 
