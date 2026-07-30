@@ -57,6 +57,40 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ─── Badge de alerta ─── */
+.alert-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #dc2626;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  position: relative;
+  padding: 0;
+}
+
+.alert-badge:active {
+  transform: scale(0.88);
+}
+
+.alert-badge:hover {
+  background: #b91c1c;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.6);
+}
+
+.alert-badge-count {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .tasa-input::-webkit-outer-spin-button,
 .tasa-input::-webkit-inner-spin-button {
   -webkit-appearance: none;

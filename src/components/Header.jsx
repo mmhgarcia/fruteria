@@ -16,6 +16,8 @@ function Header({
   onRemoveItem,
   onEditItem,
   companyName,
+  alertCount,
+  onAlertClick,
 }) {
   const [cartOpen, setCartOpen] = useState(false)
 
@@ -41,6 +43,11 @@ function Header({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
+          {alertCount > 0 && (
+            <button className="alert-badge" onClick={onAlertClick} aria-label="Alertas del sistema">
+              <span className="alert-badge-count">{alertCount}</span>
+            </button>
+          )}
           <button
             className="cart-btn"
             onClick={() => setCartOpen(true)}

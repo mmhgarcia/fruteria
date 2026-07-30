@@ -12,6 +12,7 @@ import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
 import SettingsModal from './components/SettingsModal'
 import PinPrompt from './components/PinPrompt'
+import { getLogs, LOG_TYPES } from './utils/logService'
 import './App.css'
 
 function App() {
@@ -37,6 +38,30 @@ function App() {
   })
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
+  const [alertCount, setAlertCount] = useState(0)
+
+  // Carga la cantidad de logs tipo ALERT
+  async function refreshAlertCount() {
+    try {
+      const logs = await getLogs({ type: LOG_TYPES.ALERT })
+      setAlertCount(logs.length)
+    } catch (e) {
+      // silencio
+    }
+  }
+
+  useEffect(() => {
+    refreshAlertCount()
+  }, [pinPromptOpen])
+
+  const handleAlertBadgeClick = () => {
+    setAlertCount(0)
+    if (settings.pin) {
+      setPinPromptOpen(true)
+    } else {
+      setSettingsOpen(true)
+    }
+  }
 
   // El ramo activo siempre disponible sin consultar BD
   const ramoActivo = settings.ramoId || 'fruteria'
@@ -227,6 +252,8 @@ function App() {
         onRemoveItem={removeItem}
         companyName={settings.companyName}
         onEditItem={editCartItem}
+        alertCount={alertCount}
+        onAlertClick={handleAlertBadgeClick}
       />
       <main className="main">
         {loadingProducts ? (
