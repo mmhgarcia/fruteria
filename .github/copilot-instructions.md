@@ -145,6 +145,7 @@ Toda la gestión administrativa está centralizada en **Configuración** (⚙️
 - Campo en Configuración (mín. 4, máx. 6 dígitos, con ojito mostrar/ocultar).
 - Si hay PIN configurado, al tocar "Configuración" desde el menú aparece `PinPrompt` (teclado numérico).
 - Si está vacío, entra directo sin PIN.
+- **Seguridad**: El PIN se persiste en localStorage como hash SHA-256 (64 caracteres hex), nunca en texto plano. `PinPrompt` compara el hash, y hay compatibilidad hacia atrás con PINs legacy en texto plano.
 
 ---
 

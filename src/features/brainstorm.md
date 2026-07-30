@@ -55,6 +55,8 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ~~* PinPrompt: Modal con teclado numérico estilo bloqueo que pide PIN al entrar a Configuración. ~~
 
+~~* PIN hasheado: Se persiste en localStorage como SHA-256 (64 chars hex), nunca en texto plano. Compatibilidad hacia atrás con PINs legacy en texto plano. ~~
+
 * Bloqueo por Sesión: Exigir este PIN al abrir el turno de trabajo por la mañana. El PIN bloquea automáticamente las funciones administrativas (Precios, Categorías, Tasa) al cerrar esas ventanas, evitando que el cajero las modifique si el dueño se retira del mostrador.
 
 * Escudo de Fuerza Bruta: Bloquear temporalmente el teclado numérico durante 5 minutos si se introducen 3 PIN incorrectos de forma consecutiva y Notificar por email.
@@ -110,3 +112,10 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 ## Identificacion de la app
 
 Al instalar a la app se le asignarà un serial id que quedarà grabado en mi db para mi control.
+
+
+## Proteccion de la APP
+
+El cajero deja el telefono solo por un momento,
+como activar una proteccion para acceso no autorizado?
+
