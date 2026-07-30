@@ -10,8 +10,6 @@ import WeightModal from './components/WeightModal'
 import PaymentModal from './components/PaymentModal'
 import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
-import Products from './components/Products'
-import Categories from './components/Categories'
 import BackupModal from './components/BackupModal'
 import SalesReportModal from './components/SalesReportModal'
 import SettingsModal from './components/SettingsModal'
@@ -28,8 +26,6 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [lastSale, setLastSale] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [productsOpen, setProductsOpen] = useState(false)
-  const [categoriesOpen, setCategoriesOpen] = useState(false)
   const [backupOpen, setBackupOpen] = useState(false)
   const [salesReportOpen, setSalesReportOpen] = useState(false)
   const [products, setProducts] = useState([])
@@ -210,11 +206,7 @@ function App() {
         categories={categories}
         companyName={settings.companyName}
         onFilterChange={(filter) => {
-          if (filter === 'productos') {
-            setProductsOpen(true)
-          } else if (filter === 'categorias') {
-            setCategoriesOpen(true)
-          } else if (filter === 'backup') {
+          if (filter === 'backup') {
             setBackupOpen(true)
           } else if (filter === 'sales-report') {
             setSalesReportOpen(true)
@@ -302,26 +294,6 @@ function App() {
         />
       )}
 
-      {productsOpen && (
-        <Products
-          ramoId={ramoActivo}
-          onClose={() => {
-            setProductsOpen(false)
-            loadProducts()
-          }}
-        />
-      )}
-
-      {categoriesOpen && (
-        <Categories
-          ramoId={ramoActivo}
-          onClose={() => {
-            setCategoriesOpen(false)
-            loadCategories()
-          }}
-        />
-      )}
-
       {backupOpen && (
         <BackupModal
           onClose={() => setBackupOpen(false)}
@@ -345,6 +317,9 @@ function App() {
           onSave={setSettings}
           onClose={() => setSettingsOpen(false)}
           onTasaChange={setTasa}
+          ramoId={ramoActivo}
+          onRefreshProducts={loadProducts}
+          onRefreshCategories={loadCategories}
         />
       )}
 

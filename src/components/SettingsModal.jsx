@@ -3,6 +3,8 @@ import { getRamos } from '../utils/ramos'
 // import RamoSelector from './RamoSelector'
 import TasaBcv from '../features/TasaBcv/components/TasaBcv'
 import RamosComerciales from './RamosComerciales'
+import Products from './Products'
+import Categories from './Categories'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -16,15 +18,17 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose, onTasaChange }) {
+export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
-  const ramoId = settings.ramoId || ''
+  const currentRamoId = settings.ramoId || ''
   const [pin, setPin] = useState(settings.pin || '')
   const [ramoNombre, setRamoNombre] = useState('')
   const [showTasa, setShowTasa] = useState(false)
   const [showRamos, setShowRamos] = useState(false)
+  const [showCategories, setShowCategories] = useState(false)
+  const [showProducts, setShowProducts] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
 
@@ -49,15 +53,15 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
   }
 
   useEffect(() => {
-    if (ramoId) {
+    if (currentRamoId) {
       getRamos()
         .then((list) => {
-          const found = list.find((r) => r.id === ramoId)
+          const found = list.find((r) => r.id === currentRamoId)
           if (found) setRamoNombre(found.name)
         })
         .catch(console.error)
     }
-  }, [ramoId])
+  }, [currentRamoId])
 
   const handleSave = () => {
     onSave({
@@ -94,7 +98,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
             <span>Ramo Comercial Asignado</span>
             <input
               type="text"
-              value={ramoNombre || ramoId || 'No establecido.'}
+              value={ramoNombre || currentRamoId || 'No establecido.'}
               readOnly
               className="settings-field-readonly"
             />
@@ -164,6 +168,30 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
               <div className="settings-admin-btn-text">
                 <strong>Ramos Comerciales</strong>
                 <span>Crear y gestionar ramos del negocio</span>
+              </div>
+              <span className="settings-admin-btn-arrow">›</span>
+            </button>
+
+            <button
+              className="settings-admin-btn"
+              onClick={() => setShowCategories(true)}
+            >
+              <span className="settings-admin-btn-icon">📂</span>
+              <div className="settings-admin-btn-text">
+                <strong>Categorías</strong>
+                <span>Gestionar categorías del ramo activo</span>
+              </div>
+              <span className="settings-admin-btn-arrow">›</span>
+            </button>
+
+            <button
+              className="settings-admin-btn"
+              onClick={() => setShowProducts(true)}
+            >
+              <span className="settings-admin-btn-icon">📦</span>
+              <div className="settings-admin-btn-text">
+                <strong>Productos</strong>
+                <span>Gestionar productos del ramo activo</span>
               </div>
               <span className="settings-admin-btn-arrow">›</span>
             </button>
@@ -281,6 +309,26 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
         <RamosComerciales
           onClose={closeRamos}
           onRamoAsignado={handleRamoAsignado}
+        />
+      )}
+
+      {showCategories && (
+        <Categories
+          ramoId={ramoId}
+          onClose={() => {
+            setShowCategories(false)
+            if (onRefreshCategories) onRefreshCategories()
+          }}
+        />
+      )}
+
+      {showProducts && (
+        <Products
+          ramoId={ramoId}
+          onClose={() => {
+            setShowProducts(false)
+            if (onRefreshProducts) onRefreshProducts()
+          }}
         />
       )}
     </div>

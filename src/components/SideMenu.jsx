@@ -8,8 +8,6 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
       .map((c) => ({ id: c.id, label: c.name, icon: c.icon, order: c.order ?? Infinity }))
       .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label)),
     { id: 'separator', label: '', icon: '', type: 'separator' },
-    { id: 'categorias', label: 'Categorías', icon: '📂' },
-    { id: 'productos', label: 'Productos', icon: '📦' },
     { id: 'backup', label: 'Backup', icon: '💾' },
     { id: 'config', label: 'Configuración', icon: '⚙️' },
     { id: 'sales-report', label: 'Resumen Ventas', icon: '📊' },
