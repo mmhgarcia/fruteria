@@ -201,7 +201,6 @@ function App() {
         onClose={() => setIsMenuOpen(false)}
         onOpen={() => setIsMenuOpen(true)}
         currentFilter={currentFilter}
-        categories={categories}
         companyName={settings.companyName}
         onFilterChange={(filter) => {
           if (filter === 'sales-report') {
