@@ -171,6 +171,25 @@
   color: #fff;
 }
 
+.logs-mark-read-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--primary, #2d6a4f);
+  border-radius: 10px;
+  background: var(--primary, #2d6a4f);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.logs-mark-read-btn:active {
+  opacity: 0.75;
+  transform: scale(0.97);
+}
+
 .logs-clear-btn {
   padding: 8px 16px;
   border: 1px solid var(--danger, #e63946);

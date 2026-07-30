@@ -324,6 +324,7 @@ function App() {
             loadProducts()
             loadCategories()
           }}
+          onAlertRead={() => setAlertCount(0)}
         />
       )}
 

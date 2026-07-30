@@ -22,7 +22,7 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup }) {
+export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup, onAlertRead }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
@@ -411,6 +411,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
       {showLogs && (
         <LogsViewerModal
           onClose={() => setShowLogs(false)}
+          onAlertRead={onAlertRead}
         />
       )}
     </>

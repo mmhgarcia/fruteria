@@ -4,7 +4,7 @@ import './LogsViewerModal.css'
 
 const ALL_TYPES = Object.values(LOG_TYPES)
 
-export default function LogsViewerModal({ onClose }) {
+export default function LogsViewerModal({ onClose, onAlertRead }) {
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState(null) // null = todos
@@ -124,6 +124,15 @@ export default function LogsViewerModal({ onClose }) {
             </button>
           ))}
         </div>
+
+        {logs.some(l => l.type === 'ALERT') && onAlertRead && (
+          <button
+            className="logs-mark-read-btn"
+            onClick={onAlertRead}
+          >
+            ✓ Marcar como leídas
+          </button>
+        )}
 
         {logs.length > 0 && (
           <button
