@@ -44,6 +44,16 @@ export default function SalesReportModal({ onClose }) {
   const [pagina, setPagina] = useState(1)
   const totalPaginas = 3
 
+  // Secciones colapsables: todas abiertas por defecto
+  const [openSections, setOpenSections] = useState({
+    dashboard: true,
+    metodosPago: true,
+    productos: true,
+  })
+
+  const toggleSection = (key) =>
+    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }))
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal sales-report-modal" onClick={(e) => e.stopPropagation()}>
@@ -52,10 +62,14 @@ export default function SalesReportModal({ onClose }) {
         <div className="modal-header">
           <span className="modal-icon">📊</span>
           <h2>Resumen de Ventas</h2>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">✕</button>
+          <div className="sr-header-actions">
+            <button className="btn-action">📥 CSV</button>
+            <button className="btn-action">🖨️ Imprimir</button>
+            <button className="btn-cancel" onClick={onClose}>✕</button>
+          </div>
         </div>
 
-        {/* ── SELECTOR DE FECHAS ── */}
+        {/* ── SELECTOR DE FECHAS (siempre visible) ── */}
         <div className="sr-filtros">
           <div className="sr-filtros-fechas">
             <label>
@@ -86,94 +100,120 @@ export default function SalesReportModal({ onClose }) {
           </div>
         </div>
 
-        {/* ── TARJETAS DE RESUMEN ── */}
-        <div className="sr-tarjetas">
-          {MOCK_TARJETAS.map((t) => (
-            <div key={t.label} className="sr-tarjeta">
-              <span className="sr-tarjeta-icono">{t.icon}</span>
-              <div className="sr-tarjeta-info">
-                <span className="sr-tarjeta-label">{t.label}</span>
-                <span className="sr-tarjeta-valor">{t.valor}</span>
+        {/* ── SECCIÓN 1: DASHBOARD ── */}
+        <div className="sr-collapsible">
+          <button
+            className={`sr-collapsible-header ${openSections.dashboard ? 'open' : ''}`}
+            onClick={() => toggleSection('dashboard')}
+          >
+            <span className="sr-collapsible-icon">{openSections.dashboard ? '▼' : '▶'}</span>
+            <span className="sr-collapsible-title">📊 Dashboard</span>
+          </button>
+          {openSections.dashboard && (
+            <div className="sr-collapsible-body">
+              <div className="sr-tarjetas">
+                {MOCK_TARJETAS.map((t) => (
+                  <div key={t.label} className="sr-tarjeta">
+                    <span className="sr-tarjeta-icono">{t.icon}</span>
+                    <div className="sr-tarjeta-info">
+                      <span className="sr-tarjeta-label">{t.label}</span>
+                      <span className="sr-tarjeta-valor">{t.valor}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+          )}
         </div>
 
-        {/* ── DESGLOSE POR MÉTODO DE PAGO ── */}
-        <div className="sr-seccion">
-          <h3 className="sr-seccion-titulo">💰 Desglose por Método de Pago</h3>
-          <table className="sr-tabla">
-            <thead>
-              <tr>
-                <th>Método</th>
-                <th>USD</th>
-                <th>Bs</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_METODOS.map((m) => (
-                <tr key={m.metodo}>
-                  <td className="sr-td-metodo">{m.metodo}</td>
-                  <td>{m.usd}</td>
-                  <td>{m.bs}</td>
-                  <td className="sr-td-total">{m.total}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td><strong>TOTALES</strong></td>
-                <td><strong>$1.250,00</strong></td>
-                <td><strong>Bs 69.450</strong></td>
-                <td></td>
-              </tr>
-            </tfoot>
-          </table>
-          <div className="sr-igtf">
-            IGTF 3%: No aplicado
-          </div>
+        {/* ── SECCIÓN 2: DESGLOSE POR MÉTODO DE PAGO ── */}
+        <div className="sr-collapsible">
+          <button
+            className={`sr-collapsible-header ${openSections.metodosPago ? 'open' : ''}`}
+            onClick={() => toggleSection('metodosPago')}
+          >
+            <span className="sr-collapsible-icon">{openSections.metodosPago ? '▼' : '▶'}</span>
+            <span className="sr-collapsible-title">💰 Desglose por Método de Pago</span>
+          </button>
+          {openSections.metodosPago && (
+            <div className="sr-collapsible-body">
+              <table className="sr-tabla">
+                <thead>
+                  <tr>
+                    <th>Método</th>
+                    <th>USD</th>
+                    <th>Bs</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {MOCK_METODOS.map((m) => (
+                    <tr key={m.metodo}>
+                      <td className="sr-td-metodo">{m.metodo}</td>
+                      <td>{m.usd}</td>
+                      <td>{m.bs}</td>
+                      <td className="sr-td-total">{m.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td><strong>TOTALES</strong></td>
+                    <td><strong>$1.250,00</strong></td>
+                    <td><strong>Bs 69.450</strong></td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+              <div className="sr-igtf">IGTF 3%: No aplicado</div>
+            </div>
+          )}
         </div>
 
-        {/* ── PRODUCTOS VENDIDOS ── */}
-        <div className="sr-seccion">
-          <div className="sr-productos-header">
-            <h3 className="sr-seccion-titulo">📋 Productos Vendidos</h3>
-            <input type="text" className="sr-buscar" placeholder="Buscar producto..." readOnly />
-          </div>
-
-          <div className="sr-prod-lista">
-            {MOCK_PRODUCTOS.map((p) => (
-              <div key={p.id} className="sr-prod-card">
-                <span className="sr-prod-card-icon">{p.icon}</span>
-                <div className="sr-prod-card-body">
-                  <span className="sr-prod-card-name">{p.nombre}</span>
-                  <span className="sr-prod-card-qty">{p.cant}</span>
-                </div>
-                <div className="sr-prod-card-montos">
-                  <span className="sr-prod-card-usd">{p.totalUSD}</span>
-                  <span className="sr-prod-card-bs">{p.totalBS}</span>
-                </div>
+        {/* ── SECCIÓN 3: PRODUCTOS VENDIDOS ── */}
+        <div className="sr-collapsible">
+          <button
+            className={`sr-collapsible-header ${openSections.productos ? 'open' : ''}`}
+            onClick={() => toggleSection('productos')}
+          >
+            <span className="sr-collapsible-icon">{openSections.productos ? '▼' : '▶'}</span>
+            <span className="sr-collapsible-title">📋 Productos Vendidos</span>
+          </button>
+          {openSections.productos && (
+            <div className="sr-collapsible-body">
+              <div className="sr-productos-header">
+                <input type="text" className="sr-buscar" placeholder="Buscar producto..." readOnly />
               </div>
-            ))}
-          </div>
-
-          <div className="sr-paginacion">
-            <button className="sr-page-btn" onClick={() => setPagina(Math.max(1, pagina - 1))}>← Anterior</button>
-            <span className="sr-page-info">Página {pagina} de {totalPaginas}</span>
-            <button className="sr-page-btn" onClick={() => setPagina(Math.min(totalPaginas, pagina + 1))}>Siguiente →</button>
-          </div>
+              <div className="sr-prod-lista">
+                {MOCK_PRODUCTOS.map((p) => (
+                  <div key={p.id} className="sr-prod-card">
+                    <span className="sr-prod-card-icon">{p.icon}</span>
+                    <div className="sr-prod-card-body">
+                      <span className="sr-prod-card-name">{p.nombre}</span>
+                      <span className="sr-prod-card-qty">{p.cant}</span>
+                    </div>
+                    <div className="sr-prod-card-montos">
+                      <span className="sr-prod-card-usd">{p.totalUSD}</span>
+                      <span className="sr-prod-card-bs">{p.totalBS}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="sr-paginacion">
+                <button className="sr-page-btn" onClick={() => setPagina(Math.max(1, pagina - 1))}>← Anterior</button>
+                <span className="sr-page-info">Página {pagina} de {totalPaginas}</span>
+                <button className="sr-page-btn" onClick={() => setPagina(Math.min(totalPaginas, pagina + 1))}>Siguiente →</button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* ── BOTONES DE ACCIÓN ── */}
-        <div className="modal-actions">
-          <button className="btn-cancel" onClick={onClose}>Cerrar</button>
-          <div className="modal-actions-right">
-            <button className="btn-action">📥 Exportar CSV</button>
-            <button className="btn-action">🖨️ Imprimir Reporte</button>
-          </div>
-        </div>
+      </div>
+    </div>
+  )
+}
 
+        </div>
       </div>
     </div>
   )
