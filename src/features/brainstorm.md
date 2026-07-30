@@ -1,3 +1,7 @@
+> ⚠️ **ARCHIVO MIGRADO** — Este contenido ahora vive en `BrainStorm/` (raíz del proyecto).
+> Cada tema tiene su propio archivo en `BrainStorm/` con análisis en profundidad.
+> Ver [`BrainStorm/Main.md`](../../BrainStorm/Main.md) para el índice maestro.
+
 ¡Excelente idea! Volvamos a la mesa de diseño para consolidar todo lo aprendido en esta gran lluvia de ideas. Aquí tienes el mapa completo de mejoras, observaciones y optimizaciones técnicas estructuradas por pantallas, listas para que planifiques tu hoja de ruta de desarrollo:
 
 
@@ -111,11 +115,22 @@ _* Desglose Multimoneda por Ítem: Mostrar en cada línea del ticket impreso/dig
 
 ## Identificacion de la app
 
-Al instalar a la app se le asignarà un serial id que quedarà grabado en mi db para mi control.
-
+*Al instalar a la app se le asignarà un serial id
+* Es posible?
+* Seria buena practica?
+* Donde y como se almacenaria?
 
 ## Proteccion de la APP
 
 El cajero deja el telefono solo por un momento,
 como activar una proteccion para acceso no autorizado?
 
+## Hasheo info de configuracion.
+* ???
+
+## CONFIGURACION
+* Gestion de la persistencia.
+
+
+## SEGURIDAD
+* Como proteger la app de copias no autorizadas? Estrategias.

@@ -1,13 +1,67 @@
-# Frutería POS — PWA
+# Frutería POS
 
-Punto de venta táctil para frutería, construido con React + Vite + PWA.
+> Punto de Venta táctil para fruterías, carnicerías y charcuterías en Venezuela.
+> 100% offline-first. Sin internet. Sin backend. Solo tu negocio.
 
-## Características
+<!-- 🚧 Documentación en construcción — Se completará al finalizar la fase de brainstorming -->
 
-- Catálogo de frutas y verduras con filtros y búsqueda.
-- Carrito / ticket con cálculo en USD y conversión a Bs.
-- Teclado numérico para peso/cantidad (kg con decimales, unidad sin decimales).
-- Selector de métodos de pago (Pago Móvil, Efectivo $/Bs, Divisa, Punto).
+**Estado:** 🚧 En desarrollo activo
+
+---
+
+## ✨ Features
+
+- 🖐️ Interfaz 100% táctil, grandes botones
+- 💵 **Dólar y Bolívar** con tasa BCV actualizable
+- 💳 **Pagos mixtos**: Pago Móvil, Punto, Efectivo ($ y Bs), Divisa
+- 🧾 Ticket digital imprimible con desglose por método de pago
+- 🔐 PIN de administrador para proteger configuraciones
+- 🗂️ Ramos comerciales: frutería, carnicería, charcutería…
+- 📦 Instalable como app (PWA), funciona sin internet
+- 🔄 Backup y restauración de datos
+
+---
+
+## 🚀 Instalación
+
+1. Abre la URL en Chrome o Edge
+2. Toca "Instalar" (o "Agregar a pantalla de inicio")
+3. Listo. Funciona como app nativa.
+
+> No requiere Play Store, no requiere internet para operar.
+
+---
+
+## 📖 Documentación
+
+| Para | Archivo |
+|------|---------|
+| 🧑‍🔧 **Manual del Cajero** | [`docs/MANUAL-USUARIO.md`](docs/MANUAL-USUARIO.md) |
+| 👑 **Manual del Administrador** | [`docs/MANUAL-ADMIN.md`](docs/MANUAL-ADMIN.md) |
+| ❓ **Solución de problemas** | [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) |
+| 🏗️ **Arquitectura del sistema** | [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) |
+| 🗄️ **Modelo de datos** | [`docs/MODELO-DATOS.md`](docs/MODELO-DATOS.md) |
+| 🚢 **Despliegue** | [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) |
+| 🛡️ **Seguridad** | [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md) |
+
+---
+
+## 🧠 BrainStorm
+
+El roadmap y análisis de features vive en [`BrainStorm/`](BrainStorm/Main.md).
+
+---
+
+## 📄 Licencia
+
+Este producto tiene licencia comercial. Ver [`LICENSE`](LICENSE).
+
+---
+
+## 🔗 Enlaces
+
+- **Última versión**: [CHANGELOG.md](CHANGELOG.md)
+- **Reportar error**: Abre un issue en GitHub
 - Pagos mixtos: combinar múltiples métodos en una misma venta.
 - IGTF 3% opcional configurable.
 - Vista previa de ticket e impresión.
