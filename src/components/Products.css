@@ -419,6 +419,14 @@
   user-select: none;
 }
 
+.ramos-asignar {
+  margin-top: -6px;
+  padding-top: 0;
+  padding-bottom: 4px;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
 .ramos-toggle input[type="checkbox"] {
   width: 22px;
   height: 22px;

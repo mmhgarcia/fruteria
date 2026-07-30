@@ -41,6 +41,18 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
       .catch(console.error)
   }
 
+  const handleRamoAsignado = (ramoId, ramoName) => {
+    setRamoNombre(ramoName)
+    // Persist to localStorage immediately with current form values
+    onSave({
+      companyName: companyName.trim() || 'Mi Negocio',
+      bgColor,
+      textColor,
+      ramoId,
+      pin,
+    })
+  }
+
   useEffect(() => {
     if (ramoId) {
       getRamos()
@@ -273,6 +285,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
       {showRamos && (
         <RamosComerciales
           onClose={closeRamos}
+          onRamoAsignado={handleRamoAsignado}
         />
       )}
     </div>

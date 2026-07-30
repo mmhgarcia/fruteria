@@ -6,9 +6,10 @@ const EMPTY_RAMO = {
   name: '',
   id: '',
   activo: true,
+  asignarEmpresa: false,
 }
 
-export default function RamosComerciales({ onClose }) {
+export default function RamosComerciales({ onClose, onRamoAsignado }) {
   const [ramos, setRamos] = useState([])
   const [form, setForm] = useState(EMPTY_RAMO)
   const [editingId, setEditingId] = useState(null)
@@ -62,6 +63,12 @@ export default function RamosComerciales({ onClose }) {
         }
         await addRamo(ramo)
       }
+
+      // Si el check "Asignar a Empresa" está activo, actualiza el ramo asignado
+      if (form.asignarEmpresa && onRamoAsignado) {
+        onRamoAsignado(ramo.id, ramo.name)
+      }
+
       await loadRamos()
       setForm(EMPTY_RAMO)
       setEditingId(null)
@@ -76,6 +83,7 @@ export default function RamosComerciales({ onClose }) {
       name: ramo.name,
       id: ramo.id,
       activo: ramo.activo,
+      asignarEmpresa: false,
     })
     setEditingId(ramo.id)
     setShowForm(true)
@@ -189,6 +197,16 @@ export default function RamosComerciales({ onClose }) {
                   onChange={handleChange}
                 />
                 <span>Ramo activo</span>
+              </label>
+
+              <label className="ramos-toggle ramos-asignar">
+                <input
+                  name="asignarEmpresa"
+                  type="checkbox"
+                  checked={form.asignarEmpresa}
+                  onChange={handleChange}
+                />
+                <span>Asignar a Empresa</span>
               </label>
 
               <div className="products-actions">
