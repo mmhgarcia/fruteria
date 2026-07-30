@@ -33,22 +33,17 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange 
 
   const closeRamos = () => {
     setShowRamos(false)
-    getRamos()
-      .then((list) => {
-        const found = list.find((r) => r.id === ramoId)
-        if (found) setRamoNombre(found.name)
-      })
-      .catch(console.error)
+    // El useEffect con [ramoId] se encarga de refrescar el nombre al re-renderizar
   }
 
   const handleRamoAsignado = (ramoId, ramoName) => {
-    setRamoNombre(ramoName)
+    setRamoNombre(ramoName || '')
     // Persist to localStorage immediately with current form values
     onSave({
       companyName: companyName.trim() || 'Mi Negocio',
       bgColor,
       textColor,
-      ramoId,
+      ramoId: ramoId || '',
       pin,
     })
   }

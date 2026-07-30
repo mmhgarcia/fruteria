@@ -64,9 +64,14 @@ export default function RamosComerciales({ onClose, onRamoAsignado }) {
         await addRamo(ramo)
       }
 
-      // Si el check "Asignar a Empresa" está activo, actualiza el ramo asignado
-      if (form.asignarEmpresa && onRamoAsignado) {
-        onRamoAsignado(ramo.id, ramo.name)
+      // Si el check "Asignar a Empresa" está activo, actualiza el ramo asignado;
+      // si está desactivado, lo limpia.
+      if (onRamoAsignado) {
+        if (form.asignarEmpresa) {
+          onRamoAsignado(ramo.id, ramo.name)
+        } else {
+          onRamoAsignado('', '')
+        }
       }
 
       await loadRamos()
