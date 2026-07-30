@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { hashPin } from '../utils/hash'
+import { addLog, LOG_TYPES } from '../utils/logService'
 import './PinPrompt.css'
 
 const KEYS = [
@@ -13,7 +14,9 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
   const [digits, setDigits] = useState([])
   const [error, setError] = useState(false)
   const [shake, setShake] = useState(false)
+  const [failedAttempts, setFailedAttempts] = useState(0)
   const ref = useRef(null)
+  const loggedRef = useRef(false)
 
   // Detecta si el PIN almacenado ya está hasheado (64 chars hex) o es texto plano
   const isHashed = pin && /^[0-9a-f]{64}$/.test(pin)
@@ -42,13 +45,30 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
       if (enteredHash === pin || entered === pin) {
         // PIN correcto (hash o texto plano legacy)
         setDigits([])
+        setFailedAttempts(0)
+        loggedRef.current = false
         onSuccess()
         return
       }
       // PIN incorrecto → mostrar error si ya completó todos los dígitos
       if (next.length === pinLength || next.length === 6) {
+        const newFailed = failedAttempts + 1
+        setFailedAttempts(newFailed)
         setError(true)
         setShake(true)
+
+        // 3 intentos fallidos → log tipo ALERT
+        if (newFailed >= 3 && !loggedRef.current) {
+          loggedRef.current = true
+          addLog(LOG_TYPES.ALERT, 'Acceso no autorizado - 3 intentos fallidos de PIN', {
+            failedAttempts: newFailed,
+            intentos: newFailed,
+            pinIngresado: entered,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+          })
+        }
+
         setTimeout(() => {
           setDigits([])
           setShake(false)
@@ -57,16 +77,22 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
     }
   }
 
+  const handleClose = () => {
+    setFailedAttempts(0)
+    loggedRef.current = false
+    onClose()
+  }
+
   const displayLen = pinLength
   const display = digits.join('').padEnd(displayLen, '○')
 
   return (
-    <div className="modal-overlay pin-overlay" onClick={onClose}>
+    <div className="modal-overlay pin-overlay" onClick={handleClose}>
       <div className="pin-prompt" onClick={(e) => e.stopPropagation()}>
         <div className="pin-prompt-header">
           <span className="pin-prompt-icon">🔒</span>
           <h2>Acceso a Configuración</h2>
-          <button className="pin-prompt-close" onClick={onClose} aria-label="Cerrar">
+          <button className="pin-prompt-close" onClick={handleClose} aria-label="Cerrar">
             ✕
           </button>
         </div>

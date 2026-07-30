@@ -8,6 +8,7 @@ import Products from './Products'
 import Categories from './Categories'
 import BackupModal from './BackupModal'
 import SalesReportModal from './SalesReportModal'
+import LogsViewerModal from './LogsViewerModal'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -35,6 +36,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   const [showProducts, setShowProducts] = useState(false)
   const [showBackup, setShowBackup] = useState(false)
   const [showSalesReport, setShowSalesReport] = useState(false)
+  const [showLogs, setShowLogs] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
 
@@ -327,6 +329,20 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
             </div>
             <span className="settings-admin-btn-arrow">›</span>
           </button>
+
+          <hr className="settings-divider" />
+
+          <button
+            className="settings-admin-btn"
+            onClick={() => setShowLogs(true)}
+          >
+            <span className="settings-admin-btn-icon">📋</span>
+            <div className="settings-admin-btn-text">
+              <strong>Logs del Sistema</strong>
+              <span>Ver registro de eventos y alertas</span>
+            </div>
+            <span className="settings-admin-btn-arrow">›</span>
+          </button>
         </div>
 
         <div className="modal-actions">
@@ -387,6 +403,12 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
       {showSalesReport && (
         <SalesReportModal
           onClose={() => setShowSalesReport(false)}
+        />
+      )}
+
+      {showLogs && (
+        <LogsViewerModal
+          onClose={() => setShowLogs(false)}
         />
       )}
     </div>
