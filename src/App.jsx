@@ -10,7 +10,6 @@ import WeightModal from './components/WeightModal'
 import PaymentModal from './components/PaymentModal'
 import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
-import BackupModal from './components/BackupModal'
 import SalesReportModal from './components/SalesReportModal'
 import SettingsModal from './components/SettingsModal'
 import PinPrompt from './components/PinPrompt'
@@ -26,7 +25,6 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [lastSale, setLastSale] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [backupOpen, setBackupOpen] = useState(false)
   const [salesReportOpen, setSalesReportOpen] = useState(false)
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
@@ -206,9 +204,7 @@ function App() {
         categories={categories}
         companyName={settings.companyName}
         onFilterChange={(filter) => {
-          if (filter === 'backup') {
-            setBackupOpen(true)
-          } else if (filter === 'sales-report') {
+          if (filter === 'sales-report') {
             setSalesReportOpen(true)
           } else if (filter === 'config') {
             setIsMenuOpen(false)
@@ -294,17 +290,6 @@ function App() {
         />
       )}
 
-      {backupOpen && (
-        <BackupModal
-          onClose={() => setBackupOpen(false)}
-          onImportComplete={() => {
-            loadProducts()
-            loadCategories()
-            window.location.reload()
-          }}
-        />
-      )}
-
       {salesReportOpen && (
         <SalesReportModal
           onClose={() => setSalesReportOpen(false)}
@@ -320,6 +305,10 @@ function App() {
           ramoId={ramoActivo}
           onRefreshProducts={loadProducts}
           onRefreshCategories={loadCategories}
+          onRefreshBackup={() => {
+            loadProducts()
+            loadCategories()
+          }}
         />
       )}
 

@@ -5,6 +5,7 @@ import TasaBcv from '../features/TasaBcv/components/TasaBcv'
 import RamosComerciales from './RamosComerciales'
 import Products from './Products'
 import Categories from './Categories'
+import BackupModal from './BackupModal'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -18,7 +19,7 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories }) {
+export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
@@ -29,6 +30,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   const [showRamos, setShowRamos] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
+  const [showBackup, setShowBackup] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
 
@@ -286,6 +288,20 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
               </div>
             )}
           </div>
+
+          <hr className="settings-divider" />
+
+          <button
+            className="settings-admin-btn"
+            onClick={() => setShowBackup(true)}
+          >
+            <span className="settings-admin-btn-icon">💾</span>
+            <div className="settings-admin-btn-text">
+              <strong>Backup</strong>
+              <span>Exportar e importar datos del sistema</span>
+            </div>
+            <span className="settings-admin-btn-arrow">›</span>
+          </button>
         </div>
 
         <div className="modal-actions">
@@ -328,6 +344,17 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
           onClose={() => {
             setShowProducts(false)
             if (onRefreshProducts) onRefreshProducts()
+          }}
+        />
+      )}
+
+      {showBackup && (
+        <BackupModal
+          onClose={() => setShowBackup(false)}
+          onImportComplete={() => {
+            setShowBackup(false)
+            if (onRefreshBackup) onRefreshBackup()
+            window.location.reload()
           }}
         />
       )}
