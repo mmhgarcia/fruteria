@@ -86,7 +86,7 @@ export default function LogsViewerModal({ onClose }) {
   const counts = getTypeCounts()
 
   return (
-    <div className="logs-fullscreen">
+    <div className="logs-fullscreen" onClick={(e) => e.stopPropagation()}>
       {/* Header */}
       <div className="logs-header">
         <span className="logs-header-icon">📋</span>

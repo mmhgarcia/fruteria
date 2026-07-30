@@ -85,332 +85,334 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal settings-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <span className="modal-icon">⚙️</span>
-          <h2>Configuración del Sistema</h2>
-        </div>
+    <>
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal settings-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <span className="modal-icon">⚙️</span>
+            <h2>Configuración del Sistema</h2>
+          </div>
 
-        <div className="settings-body">
-          <label className="settings-field">
-            <span>Nombre de la empresa</span>
-            <input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="Ej: Frutería Doña Ana"
-              autoFocus
-            />
-          </label>
-
-          <label className="settings-field">
-            <span>Ramo Comercial Asignado</span>
-            <input
-              type="text"
-              value={ramoNombre || currentRamoId || 'No establecido.'}
-              readOnly
-              className="settings-field-readonly"
-            />
-            {/* ↓ dropdown comentado
-            <RamoSelector
-              value={ramoId}
-              onChange={setRamoId}
-              ramos={ramos}
-              className="settings-select"
-            />
-            */}
-          </label>
-
-          <label className="settings-field">
-            <span>PIN de administrador {hasPin ? <span className="pin-set-badge">✓ Configurado</span> : ''}</span>
-            <div className="pin-input-row">
+          <div className="settings-body">
+            <label className="settings-field">
+              <span>Nombre de la empresa</span>
               <input
-                type={showPin ? 'text' : 'password'}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={6}
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder={hasPin ? 'Escriba para cambiar el PIN' : "Mín. 4, máx. 6 dig."}
-                className="pin-input"
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Ej: Frutería Doña Ana"
+                autoFocus
               />
+            </label>
+
+            <label className="settings-field">
+              <span>Ramo Comercial Asignado</span>
+              <input
+                type="text"
+                value={ramoNombre || currentRamoId || 'No establecido.'}
+                readOnly
+                className="settings-field-readonly"
+              />
+              {/* ↓ dropdown comentado
+              <RamoSelector
+                value={ramoId}
+                onChange={setRamoId}
+                ramos={ramos}
+                className="settings-select"
+              />
+              */}
+            </label>
+
+            <label className="settings-field">
+              <span>PIN de administrador {hasPin ? <span className="pin-set-badge">✓ Configurado</span> : ''}</span>
+              <div className="pin-input-row">
+                <input
+                  type={showPin ? 'text' : 'password'}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder={hasPin ? 'Escriba para cambiar el PIN' : "Mín. 4, máx. 6 dig."}
+                  className="pin-input"
+                />
+                <button
+                  type="button"
+                  className="pin-toggle-btn"
+                  onClick={() => setShowPin(!showPin)}
+                  aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+                >
+                  {showPin ? '🙈' : '👁️'}
+                </button>
+                {pin && pin.length < 4 && (
+                  <span className="pin-hint">Mín. 4 dig.</span>
+                )}
+              </div>
+              <span className="settings-field-desc">
+                Solo para entrar a Configuración.
+              </span>
+            </label>
+
+            <hr className="settings-divider" />
+
+            <div className="settings-section-group">
+
+              <h3 className="settings-admin-title">Administración</h3>
+
               <button
-                type="button"
-                className="pin-toggle-btn"
-                onClick={() => setShowPin(!showPin)}
-                aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+                className="settings-admin-btn"
+                onClick={() => setShowTasa(true)}
               >
-                {showPin ? '🙈' : '👁️'}
+                <span className="settings-admin-btn-icon">💱</span>
+                <div className="settings-admin-btn-text">
+                  <strong>Tasa BCV</strong>
+                  <span>Registrar y gestionar tasas de cambio</span>
+                </div>
+                <span className="settings-admin-btn-arrow">›</span>
               </button>
-              {pin && pin.length < 4 && (
-                <span className="pin-hint">Mín. 4 dig.</span>
+
+              <button
+                className="settings-admin-btn"
+                onClick={() => setShowRamos(true)}
+              >
+                <span className="settings-admin-btn-icon">🏪</span>
+                <div className="settings-admin-btn-text">
+                  <strong>Ramos Comerciales</strong>
+                  <span>Crear y gestionar ramos del negocio</span>
+                </div>
+                <span className="settings-admin-btn-arrow">›</span>
+              </button>
+
+              <button
+                className="settings-admin-btn"
+                onClick={() => setShowCategories(true)}
+              >
+                <span className="settings-admin-btn-icon">📂</span>
+                <div className="settings-admin-btn-text">
+                  <strong>Categorías</strong>
+                  <span>Gestionar categorías del ramo activo</span>
+                </div>
+                <span className="settings-admin-btn-arrow">›</span>
+              </button>
+
+              <button
+                className="settings-admin-btn"
+                onClick={() => setShowProducts(true)}
+              >
+                <span className="settings-admin-btn-icon">📦</span>
+                <div className="settings-admin-btn-text">
+                  <strong>Productos</strong>
+                  <span>Gestionar productos del ramo activo</span>
+                </div>
+                <span className="settings-admin-btn-arrow">›</span>
+              </button>
+            </div>
+
+            <hr className="settings-divider" />
+
+            <div className="settings-section-group">
+
+              <h3 className="settings-admin-title">Reportes</h3>
+
+              <button
+                className="settings-admin-btn"
+                onClick={() => setShowSalesReport(true)}
+              >
+                <span className="settings-admin-btn-icon">📊</span>
+                <div className="settings-admin-btn-text">
+                  <strong>Resumen Ventas</strong>
+                  <span>Consultar ventas realizadas</span>
+                </div>
+                <span className="settings-admin-btn-arrow">›</span>
+              </button>
+            </div>
+
+            <hr className="settings-divider" />
+
+            <div className="settings-section-group">
+              <button
+                className="settings-toggle-btn"
+                onClick={() => setShowColors(!showColors)}
+              >
+                <span className="settings-toggle-btn-icon">🎨</span>
+                <div className="settings-toggle-btn-text">
+                  <strong>Personalizar colores</strong>
+                  <span>Fondo, texto y paletas del POS</span>
+                </div>
+                <span className={`settings-toggle-btn-arrow ${showColors ? 'open' : ''}`}>▼</span>
+              </button>
+
+              {showColors && (
+                <div className="settings-toggle-content">
+                  <label className="settings-field">
+                    <span>Color de fondo del POS</span>
+                    <div className="color-input-row">
+                      <input
+                        type="color"
+                        value={bgColor}
+                        onChange={(e) => setBgColor(e.target.value)}
+                        className="color-picker"
+                      />
+                      <input
+                        type="text"
+                        value={bgColor}
+                        onChange={(e) => setBgColor(e.target.value)}
+                        className="color-hex"
+                        placeholder="#4a8c5e"
+                      />
+                    </div>
+                  </label>
+
+                  <label className="settings-field">
+                    <span>Color del texto del POS</span>
+                    <div className="color-input-row">
+                      <input
+                        type="color"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="color-picker"
+                      />
+                      <input
+                        type="text"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="color-hex"
+                        placeholder="#ffffff"
+                      />
+                    </div>
+                  </label>
+
+                  <div className="settings-presets">
+                    <span>Paletas rápidas:</span>
+                    <div className="preset-grid">
+                      {COLOR_PRESETS.map((preset) => (
+                        <button
+                          key={preset.label}
+                          className="preset-btn"
+                          style={{ background: preset.bg, color: preset.text }}
+                          onClick={() => {
+                            setBgColor(preset.bg)
+                            setTextColor(preset.text)
+                          }}
+                          title={preset.label}
+                        >
+                          {preset.label.split(' ')[0]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="settings-preview">
+                    <span>Vista previa:</span>
+                    <div
+                      className="preview-bar"
+                      style={{ background: bgColor, color: textColor }}
+                    >
+                      <span>☰</span>
+                      <span>{companyName || 'Mi Negocio'}</span>
+                      <span>💱 36,50</span>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
-            <span className="settings-field-desc">
-              Solo para entrar a Configuración.
-            </span>
-          </label>
 
-          <hr className="settings-divider" />
-
-          <div className="settings-section-group">
-
-            <h3 className="settings-admin-title">Administración</h3>
+            <hr className="settings-divider" />
 
             <button
               className="settings-admin-btn"
-              onClick={() => setShowTasa(true)}
+              onClick={() => setShowBackup(true)}
             >
-              <span className="settings-admin-btn-icon">💱</span>
+              <span className="settings-admin-btn-icon">💾</span>
               <div className="settings-admin-btn-text">
-                <strong>Tasa BCV</strong>
-                <span>Registrar y gestionar tasas de cambio</span>
+                <strong>Backup</strong>
+                <span>Exportar e importar datos del sistema</span>
               </div>
               <span className="settings-admin-btn-arrow">›</span>
             </button>
 
-            <button
-              className="settings-admin-btn"
-              onClick={() => setShowRamos(true)}
-            >
-              <span className="settings-admin-btn-icon">🏪</span>
-              <div className="settings-admin-btn-text">
-                <strong>Ramos Comerciales</strong>
-                <span>Crear y gestionar ramos del negocio</span>
-              </div>
-              <span className="settings-admin-btn-arrow">›</span>
-            </button>
+            <hr className="settings-divider" />
 
             <button
               className="settings-admin-btn"
-              onClick={() => setShowCategories(true)}
+              onClick={() => setShowLogs(true)}
             >
-              <span className="settings-admin-btn-icon">📂</span>
+              <span className="settings-admin-btn-icon">📋</span>
               <div className="settings-admin-btn-text">
-                <strong>Categorías</strong>
-                <span>Gestionar categorías del ramo activo</span>
-              </div>
-              <span className="settings-admin-btn-arrow">›</span>
-            </button>
-
-            <button
-              className="settings-admin-btn"
-              onClick={() => setShowProducts(true)}
-            >
-              <span className="settings-admin-btn-icon">📦</span>
-              <div className="settings-admin-btn-text">
-                <strong>Productos</strong>
-                <span>Gestionar productos del ramo activo</span>
+                <strong>Logs del Sistema</strong>
+                <span>Ver registro de eventos y alertas</span>
               </div>
               <span className="settings-admin-btn-arrow">›</span>
             </button>
           </div>
 
-          <hr className="settings-divider" />
-
-          <div className="settings-section-group">
-
-            <h3 className="settings-admin-title">Reportes</h3>
-
-            <button
-              className="settings-admin-btn"
-              onClick={() => setShowSalesReport(true)}
-            >
-              <span className="settings-admin-btn-icon">📊</span>
-              <div className="settings-admin-btn-text">
-                <strong>Resumen Ventas</strong>
-                <span>Consultar ventas realizadas</span>
-              </div>
-              <span className="settings-admin-btn-arrow">›</span>
+          <div className="modal-actions">
+            <button className="btn-cancel" onClick={onClose}>
+              Cancelar
+            </button>
+            <button className="btn-confirm" onClick={handleSave}>
+              Guardar configuración
             </button>
           </div>
-
-          <hr className="settings-divider" />
-
-          <div className="settings-section-group">
-            <button
-              className="settings-toggle-btn"
-              onClick={() => setShowColors(!showColors)}
-            >
-              <span className="settings-toggle-btn-icon">🎨</span>
-              <div className="settings-toggle-btn-text">
-                <strong>Personalizar colores</strong>
-                <span>Fondo, texto y paletas del POS</span>
-              </div>
-              <span className={`settings-toggle-btn-arrow ${showColors ? 'open' : ''}`}>▼</span>
-            </button>
-
-            {showColors && (
-              <div className="settings-toggle-content">
-                <label className="settings-field">
-                  <span>Color de fondo del POS</span>
-                  <div className="color-input-row">
-                    <input
-                      type="color"
-                      value={bgColor}
-                      onChange={(e) => setBgColor(e.target.value)}
-                      className="color-picker"
-                    />
-                    <input
-                      type="text"
-                      value={bgColor}
-                      onChange={(e) => setBgColor(e.target.value)}
-                      className="color-hex"
-                      placeholder="#4a8c5e"
-                    />
-                  </div>
-                </label>
-
-                <label className="settings-field">
-                  <span>Color del texto del POS</span>
-                  <div className="color-input-row">
-                    <input
-                      type="color"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      className="color-picker"
-                    />
-                    <input
-                      type="text"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      className="color-hex"
-                      placeholder="#ffffff"
-                    />
-                  </div>
-                </label>
-
-                <div className="settings-presets">
-                  <span>Paletas rápidas:</span>
-                  <div className="preset-grid">
-                    {COLOR_PRESETS.map((preset) => (
-                      <button
-                        key={preset.label}
-                        className="preset-btn"
-                        style={{ background: preset.bg, color: preset.text }}
-                        onClick={() => {
-                          setBgColor(preset.bg)
-                          setTextColor(preset.text)
-                        }}
-                        title={preset.label}
-                      >
-                        {preset.label.split(' ')[0]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="settings-preview">
-                  <span>Vista previa:</span>
-                  <div
-                    className="preview-bar"
-                    style={{ background: bgColor, color: textColor }}
-                  >
-                    <span>☰</span>
-                    <span>{companyName || 'Mi Negocio'}</span>
-                    <span>💱 36,50</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <hr className="settings-divider" />
-
-          <button
-            className="settings-admin-btn"
-            onClick={() => setShowBackup(true)}
-          >
-            <span className="settings-admin-btn-icon">💾</span>
-            <div className="settings-admin-btn-text">
-              <strong>Backup</strong>
-              <span>Exportar e importar datos del sistema</span>
-            </div>
-            <span className="settings-admin-btn-arrow">›</span>
-          </button>
-
-          <hr className="settings-divider" />
-
-          <button
-            className="settings-admin-btn"
-            onClick={() => setShowLogs(true)}
-          >
-            <span className="settings-admin-btn-icon">📋</span>
-            <div className="settings-admin-btn-text">
-              <strong>Logs del Sistema</strong>
-              <span>Ver registro de eventos y alertas</span>
-            </div>
-            <span className="settings-admin-btn-arrow">›</span>
-          </button>
         </div>
 
-        <div className="modal-actions">
-          <button className="btn-cancel" onClick={onClose}>
-            Cancelar
-          </button>
-          <button className="btn-confirm" onClick={handleSave}>
-            Guardar configuración
-          </button>
-        </div>
+        {showTasa && (
+          <TasaBcv
+            onClose={() => setShowTasa(false)}
+            onTasaChange={onTasaChange}
+          />
+        )}
+
+        {showRamos && (
+          <RamosComerciales
+            onClose={closeRamos}
+            onRamoAsignado={handleRamoAsignado}
+          />
+        )}
+
+        {showCategories && (
+          <Categories
+            ramoId={ramoId}
+            onClose={() => {
+              setShowCategories(false)
+              if (onRefreshCategories) onRefreshCategories()
+            }}
+          />
+        )}
+
+        {showProducts && (
+          <Products
+            ramoId={ramoId}
+            onClose={() => {
+              setShowProducts(false)
+              if (onRefreshProducts) onRefreshProducts()
+            }}
+          />
+        )}
+
+        {showBackup && (
+          <BackupModal
+            onClose={() => setShowBackup(false)}
+            onImportComplete={() => {
+              setShowBackup(false)
+              if (onRefreshBackup) onRefreshBackup()
+              window.location.reload()
+            }}
+          />
+        )}
+
+        {showSalesReport && (
+          <SalesReportModal
+            onClose={() => setShowSalesReport(false)}
+          />
+        )}
       </div>
-
-      {showTasa && (
-        <TasaBcv
-          onClose={() => setShowTasa(false)}
-          onTasaChange={onTasaChange}
-        />
-      )}
-
-      {showRamos && (
-        <RamosComerciales
-          onClose={closeRamos}
-          onRamoAsignado={handleRamoAsignado}
-        />
-      )}
-
-      {showCategories && (
-        <Categories
-          ramoId={ramoId}
-          onClose={() => {
-            setShowCategories(false)
-            if (onRefreshCategories) onRefreshCategories()
-          }}
-        />
-      )}
-
-      {showProducts && (
-        <Products
-          ramoId={ramoId}
-          onClose={() => {
-            setShowProducts(false)
-            if (onRefreshProducts) onRefreshProducts()
-          }}
-        />
-      )}
-
-      {showBackup && (
-        <BackupModal
-          onClose={() => setShowBackup(false)}
-          onImportComplete={() => {
-            setShowBackup(false)
-            if (onRefreshBackup) onRefreshBackup()
-            window.location.reload()
-          }}
-        />
-      )}
-
-      {showSalesReport && (
-        <SalesReportModal
-          onClose={() => setShowSalesReport(false)}
-        />
-      )}
 
       {showLogs && (
         <LogsViewerModal
           onClose={() => setShowLogs(false)}
         />
       )}
-    </div>
+    </>
   )
 }
