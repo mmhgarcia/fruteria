@@ -40,11 +40,20 @@ function App() {
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
   const [alertCount, setAlertCount] = useState(0)
 
-  // Carga la cantidad de logs tipo ALERT
+  // Lee de localStorage cuándo fue la última vez que se marcaron leídas
+  const [lastAlertReadAt, setLastAlertReadAt] = useState(
+    () => localStorage.getItem('fruteria-alert-read-at') || null
+  )
+
+  // Carga la cantidad de logs tipo ALERT NO LEÍDOS (posteriores a lastAlertReadAt)
   async function refreshAlertCount() {
     try {
       const logs = await getLogs({ type: LOG_TYPES.ALERT })
-      setAlertCount(logs.length)
+      const readAt = localStorage.getItem('fruteria-alert-read-at')
+      const unread = readAt
+        ? logs.filter((l) => new Date(l.timestamp) > new Date(readAt)).length
+        : logs.length
+      setAlertCount(unread)
     } catch (e) {
       // silencio
     }
@@ -52,15 +61,21 @@ function App() {
 
   useEffect(() => {
     refreshAlertCount()
-  }, [pinPromptOpen])
+  }, [pinPromptOpen, lastAlertReadAt])
 
   const handleAlertBadgeClick = () => {
-    setAlertCount(0)
     if (settings.pin) {
       setPinPromptOpen(true)
     } else {
       setSettingsOpen(true)
     }
+  }
+
+  const handleAlertRead = () => {
+    const now = new Date().toISOString()
+    localStorage.setItem('fruteria-alert-read-at', now)
+    setLastAlertReadAt(now)
+    setAlertCount(0)
   }
 
   // El ramo activo siempre disponible sin consultar BD
@@ -69,6 +84,7 @@ function App() {
   useEffect(() => {
     loadProducts()
     loadCategories()
+    refreshAlertCount()
   }, [])
 
   // Aplica los colores del theme al :root del documento
@@ -324,7 +340,7 @@ function App() {
             loadProducts()
             loadCategories()
           }}
-          onAlertRead={() => setAlertCount(0)}
+          onAlertRead={handleAlertRead}
         />
       )}
 
