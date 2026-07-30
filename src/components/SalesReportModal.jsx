@@ -1,186 +1,185 @@
-import { useEffect, useMemo, useState } from 'react'
-import { getSales } from '../utils/db'
-import { formatQty, formatCurrency } from '../utils/format'
+import { useState } from 'react'
 import './SalesReportModal.css'
 
+// ═══════════════════════════════════════════════════════════
+// 🎨 MOCK ESTÁTICO — Solo interfaz visual, cero lógica.
+//    Diseño basado en BrainStorm/09-administracion-analitica.md
+// ═══════════════════════════════════════════════════════════
+
+const MOCK_FECHA_DESDE = '01/07/2026'
+const MOCK_FECHA_HASTA = '30/07/2026'
+
+const MOCK_TARJETAS = [
+  { label: 'Total Ventas', valor: '150 operaciones', icon: '🧾' },
+  { label: 'Ticket Promedio', valor: '$8,33', icon: '🎫' },
+  { label: 'Total USD', valor: '$1.250,00', icon: '💵' },
+  { label: 'Total Bs', valor: 'Bs 91.875,00', icon: '💶' },
+]
+
+const MOCK_METODOS = [
+  { metodo: 'Efectivo $', usd: '$450,00', bs: '—', total: '$450,00' },
+  { metodo: 'Efectivo Bs', usd: '—', bs: 'Bs 18.000', total: 'Bs 18.000' },
+  { metodo: 'Pago Móvil', usd: '$500,00', bs: 'Bs 36.750', total: '$500 + Bs 36.750' },
+  { metodo: 'Punto', usd: '$200,00', bs: 'Bs 14.700', total: '$200 + Bs 14.700' },
+  { metodo: 'Divisa', usd: '$100,00', bs: '—', total: '$100,00' },
+]
+
+const MOCK_PRODUCTOS = [
+  { id: 1, nombre: 'Lechuga', icon: '🥬', cant: '45 un', totalUSD: '$67,50', totalBS: 'Bs 4.961' },
+  { id: 2, nombre: 'Tomate', icon: '🍅', cant: '30 un', totalUSD: '$45,00', totalBS: 'Bs 3.307' },
+  { id: 3, nombre: 'Cebolla', icon: '🧅', cant: '25 un', totalUSD: '$37,50', totalBS: 'Bs 2.756' },
+  { id: 4, nombre: 'Lechosa', icon: '🍈', cant: '18 un', totalUSD: '$36,00', totalBS: 'Bs 2.646' },
+  { id: 5, nombre: 'Cambur', icon: '🍌', cant: '22 kg', totalUSD: '$33,00', totalBS: 'Bs 2.425' },
+  { id: 6, nombre: 'Parchita', icon: '🍊', cant: '15 un', totalUSD: '$30,00', totalBS: 'Bs 2.205' },
+  { id: 7, nombre: 'Aguacate', icon: '🥑', cant: '12 un', totalUSD: '$28,80', totalBS: 'Bs 2.116' },
+  { id: 8, nombre: 'Mango', icon: '🥭', cant: '20 un', totalUSD: '$26,00', totalBS: 'Bs 1.911' },
+]
+
+const PRESETS = ['Hoy', 'Ayer', 'Semana', 'Mes']
+
 export default function SalesReportModal({ onClose }) {
-  const [sales, setSales] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [expandedDays, setExpandedDays] = useState(new Set())
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const data = await getSales()
-        setSales(data.sort((a, b) => new Date(b.date) - new Date(a.date)))
-      } catch (err) {
-        setError('Error cargando las ventas')
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [])
-
-  const report = useMemo(() => {
-    const days = new Map()
-
-    for (const sale of sales) {
-      const day = sale.date.slice(0, 10)
-      if (!days.has(day)) {
-        days.set(day, { products: new Map(), totalUSD: 0, totalBS: 0, tasas: new Set() })
-      }
-      const dayData = days.get(day)
-      dayData.totalUSD += sale.totalUSD
-      dayData.totalBS += sale.totalBS
-      dayData.tasas.add(sale.tasa)
-
-      for (const item of sale.items) {
-        const key = `${item.id}-${item.name}-${item.um}-${item.price}`
-        if (!dayData.products.has(key)) {
-          dayData.products.set(key, {
-            id: item.id,
-            name: item.name,
-            icon: item.icon,
-            um: item.um,
-            price: item.price,
-            qty: 0,
-            totalUSD: 0,
-          })
-        }
-        const product = dayData.products.get(key)
-        product.qty += item.qty
-        product.totalUSD += item.totalUSD
-      }
-    }
-
-    return Array.from(days.entries()).map(([date, data]) => {
-      const tasas = Array.from(data.tasas).sort((a, b) => a - b)
-      return {
-        date,
-        totalUSD: data.totalUSD,
-        totalBS: data.totalBS,
-        tasaLabel: formatTasas(tasas),
-        products: Array.from(data.products.values()).sort((a, b) =>
-          a.name.localeCompare(b.name)
-        ),
-      }
-    })
-  }, [sales])
-
-  const grandTotal = useMemo(() => {
-    return report.reduce(
-      (acc, day) => ({
-        totalUSD: acc.totalUSD + day.totalUSD,
-        totalBS: acc.totalBS + day.totalBS,
-      }),
-      { totalUSD: 0, totalBS: 0 }
-    )
-  }, [report])
-
-  const toggleDay = (date) => {
-    setExpandedDays((prev) => {
-      const next = new Set(prev)
-      if (next.has(date)) {
-        next.delete(date)
-      } else {
-        next.add(date)
-      }
-      return next
-    })
-  }
-
-  const expandAll = () => setExpandedDays(new Set(report.map((d) => d.date)))
-  const collapseAll = () => setExpandedDays(new Set())
+  const [fechaDesde, setFechaDesde] = useState(MOCK_FECHA_DESDE)
+  const [fechaHasta, setFechaHasta] = useState(MOCK_FECHA_HASTA)
+  const [presetActivo, setPresetActivo] = useState('Mes')
+  const [pagina, setPagina] = useState(1)
+  const totalPaginas = 3
 
   return (
-    <div className="modal-overlay active" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div className="modal sales-report-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-product">
-          <div className="modal-icon">📊</div>
-          <div className="modal-name">Resumen de Ventas</div>
-          <div className="modal-price">
-            Total: ${formatCurrency(grandTotal.totalUSD)} / Bs {formatCurrency(grandTotal.totalBS)}
+
+        {/* ── HEADER ── */}
+        <div className="modal-header">
+          <span className="modal-icon">📊</span>
+          <h2>Resumen de Ventas</h2>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">✕</button>
+        </div>
+
+        {/* ── SELECTOR DE FECHAS ── */}
+        <div className="sr-filtros">
+          <div className="sr-filtros-fechas">
+            <label>
+              <span>Desde</span>
+              <input type="text" value={fechaDesde} readOnly className="sr-input-fecha" />
+            </label>
+            <label>
+              <span>Hasta</span>
+              <input type="text" value={fechaHasta} readOnly className="sr-input-fecha" />
+            </label>
+          </div>
+          <div className="sr-presets">
+            {PRESETS.map((p) => (
+              <button
+                key={p}
+                className={`sr-preset-btn ${presetActivo === p ? 'active' : ''}`}
+                onClick={() => setPresetActivo(p)}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              className={`sr-preset-btn ${presetActivo === 'Personalizado' ? 'active' : ''}`}
+              onClick={() => setPresetActivo('Personalizado')}
+            >
+              Personalizado
+            </button>
           </div>
         </div>
 
-        <div className="sales-report-actions">
-          <button className="btn-small" onClick={expandAll}>
-            ▼ Expandir
-          </button>
-          <button className="btn-small" onClick={collapseAll}>
-            ▲ Colapsar
-          </button>
-        </div>
-
-        <div className="sales-report-content">
-          {loading && <div className="sales-report-loading">Cargando ventas...</div>}
-          {error && <div className="sales-report-error">{error}</div>}
-          {!loading && !error && report.length === 0 && (
-            <div className="sales-report-empty">No hay ventas registradas</div>
-          )}
-          {!loading && report.map((day) => (
-            <div key={day.date} className="sales-report-day">
-              <button
-                className="sales-report-day-header"
-                onClick={() => toggleDay(day.date)}
-              >
-                <span className="sales-report-day-toggle">
-                  {expandedDays.has(day.date) ? '▼' : '▶'}
-                </span>
-                <span className="sales-report-day-info">
-                  <span className="sales-report-day-date">{formatDate(day.date)}</span>
-                  <span className="sales-report-day-tasa">{day.tasaLabel}</span>
-                </span>
-                <span className="sales-report-day-total">
-                  {formatCurrency(day.totalUSD)} / Bs {formatCurrency(day.totalBS)}
-                </span>
-              </button>
-
-              {expandedDays.has(day.date) && (
-                <div className="sales-report-day-body">
-                  <div className="sales-report-table-header">
-                    <span>Producto</span>
-                    <span>Cant</span>
-                    <span>Total $</span>
-                  </div>
-                  {day.products.map((product) => (
-                    <div key={`${day.date}-${product.id}`} className="sales-report-product">
-                      <span className="sales-report-product-name">
-                        {product.icon} {product.name}
-                      </span>
-                      <span className="sales-report-product-qty">
-                        {formatQty(product.qty, product.um)} {product.um}
-                      </span>
-                      <span className="sales-report-product-total">
-                        {formatCurrency(product.totalUSD)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+        {/* ── TARJETAS DE RESUMEN ── */}
+        <div className="sr-tarjetas">
+          {MOCK_TARJETAS.map((t) => (
+            <div key={t.label} className="sr-tarjeta">
+              <span className="sr-tarjeta-icono">{t.icon}</span>
+              <div className="sr-tarjeta-info">
+                <span className="sr-tarjeta-label">{t.label}</span>
+                <span className="sr-tarjeta-valor">{t.valor}</span>
+              </div>
             </div>
           ))}
         </div>
 
-        <div className="modal-actions">
-          <button className="btn-cancel" onClick={onClose}>
-            Cerrar
-          </button>
+        {/* ── DESGLOSE POR MÉTODO DE PAGO ── */}
+        <div className="sr-seccion">
+          <h3 className="sr-seccion-titulo">💰 Desglose por Método de Pago</h3>
+          <table className="sr-tabla">
+            <thead>
+              <tr>
+                <th>Método</th>
+                <th>USD</th>
+                <th>Bs</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_METODOS.map((m) => (
+                <tr key={m.metodo}>
+                  <td className="sr-td-metodo">{m.metodo}</td>
+                  <td>{m.usd}</td>
+                  <td>{m.bs}</td>
+                  <td className="sr-td-total">{m.total}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td><strong>TOTALES</strong></td>
+                <td><strong>$1.250,00</strong></td>
+                <td><strong>Bs 69.450</strong></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+          <div className="sr-igtf">
+            IGTF 3%: No aplicado
+          </div>
         </div>
+
+        {/* ── PRODUCTOS VENDIDOS ── */}
+        <div className="sr-seccion">
+          <div className="sr-productos-header">
+            <h3 className="sr-seccion-titulo">📋 Productos Vendidos</h3>
+            <input type="text" className="sr-buscar" placeholder="Buscar producto..." readOnly />
+          </div>
+          <table className="sr-tabla">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Cant</th>
+                <th>Total USD</th>
+                <th>Total Bs</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_PRODUCTOS.map((p) => (
+                <tr key={p.id}>
+                  <td className="sr-td-num">{p.id}</td>
+                  <td className="sr-td-producto">{p.icon} {p.nombre}</td>
+                  <td>{p.cant}</td>
+                  <td>{p.totalUSD}</td>
+                  <td>{p.totalBS}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="sr-paginacion">
+            <button className="sr-page-btn" onClick={() => setPagina(Math.max(1, pagina - 1))}>← Anterior</button>
+            <span className="sr-page-info">Página {pagina} de {totalPaginas}</span>
+            <button className="sr-page-btn" onClick={() => setPagina(Math.min(totalPaginas, pagina + 1))}>Siguiente →</button>
+          </div>
+        </div>
+
+        {/* ── BOTONES DE ACCIÓN ── */}
+        <div className="modal-actions">
+          <button className="btn-cancel" onClick={onClose}>Cerrar</button>
+          <div className="modal-actions-right">
+            <button className="btn-action">📥 Exportar CSV</button>
+            <button className="btn-action">🖨️ Imprimir Reporte</button>
+          </div>
+        </div>
+
       </div>
     </div>
   )
-}
-
-function formatDate(dateString) {
-  const [year, month, day] = dateString.split('-')
-  return `${day}/${month}/${year}`
-}
-
-function formatTasas(tasas) {
-  if (tasas.length === 0) return ''
-  if (tasas.length === 1) return `Tasa: ${formatCurrency(tasas[0])}`
-  return `Tasa: ${formatCurrency(tasas[0])} - ${formatCurrency(tasas[tasas.length - 1])}`
 }
