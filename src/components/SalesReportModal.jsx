@@ -212,9 +212,3 @@ export default function SalesReportModal({ onClose }) {
     </div>
   )
 }
-
-        </div>
-      </div>
-    </div>
-  )
-}
