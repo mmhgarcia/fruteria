@@ -6,6 +6,7 @@ import RamosComerciales from './RamosComerciales'
 import Products from './Products'
 import Categories from './Categories'
 import BackupModal from './BackupModal'
+import SalesReportModal from './SalesReportModal'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -31,6 +32,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   const [showCategories, setShowCategories] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
   const [showBackup, setShowBackup] = useState(false)
+  const [showSalesReport, setShowSalesReport] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
 
@@ -202,6 +204,25 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
           <hr className="settings-divider" />
 
           <div className="settings-section-group">
+
+            <h3 className="settings-admin-title">Reportes</h3>
+
+            <button
+              className="settings-admin-btn"
+              onClick={() => setShowSalesReport(true)}
+            >
+              <span className="settings-admin-btn-icon">📊</span>
+              <div className="settings-admin-btn-text">
+                <strong>Resumen Ventas</strong>
+                <span>Consultar ventas realizadas</span>
+              </div>
+              <span className="settings-admin-btn-arrow">›</span>
+            </button>
+          </div>
+
+          <hr className="settings-divider" />
+
+          <div className="settings-section-group">
             <button
               className="settings-toggle-btn"
               onClick={() => setShowColors(!showColors)}
@@ -356,6 +377,12 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
             if (onRefreshBackup) onRefreshBackup()
             window.location.reload()
           }}
+        />
+      )}
+
+      {showSalesReport && (
+        <SalesReportModal
+          onClose={() => setShowSalesReport(false)}
         />
       )}
     </div>

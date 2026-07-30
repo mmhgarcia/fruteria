@@ -4,7 +4,6 @@ import './SideMenu.css'
 export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName }) {
   const MENU_OPTIONS = [
     { id: 'config', label: 'Configuración', icon: '⚙️' },
-    { id: 'sales-report', label: 'Resumen Ventas', icon: '📊' },
   ]
   const menuRef = useRef(null)
   const edgeRef = useRef(null)

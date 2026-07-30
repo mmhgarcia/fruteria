@@ -10,7 +10,6 @@ import WeightModal from './components/WeightModal'
 import PaymentModal from './components/PaymentModal'
 import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
-import SalesReportModal from './components/SalesReportModal'
 import SettingsModal from './components/SettingsModal'
 import PinPrompt from './components/PinPrompt'
 import './App.css'
@@ -25,7 +24,6 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [lastSale, setLastSale] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [salesReportOpen, setSalesReportOpen] = useState(false)
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
@@ -203,20 +201,17 @@ function App() {
         currentFilter={currentFilter}
         companyName={settings.companyName}
         onFilterChange={(filter) => {
-          if (filter === 'sales-report') {
-            setSalesReportOpen(true)
-          } else if (filter === 'config') {
+          if (filter === 'config') {
             setIsMenuOpen(false)
             if (settings.pin) {
               setPinPromptOpen(true)
             } else {
               setSettingsOpen(true)
             }
-            return
           } else {
             setCurrentFilter(filter)
+            setIsMenuOpen(false)
           }
-          setIsMenuOpen(false)
         }}
       />
       <Header
@@ -286,12 +281,6 @@ function App() {
           tasa={tasa}
           onClose={() => setPreviewOpen(false)}
           companyName={settings.companyName}
-        />
-      )}
-
-      {salesReportOpen && (
-        <SalesReportModal
-          onClose={() => setSalesReportOpen(false)}
         />
       )}
 
