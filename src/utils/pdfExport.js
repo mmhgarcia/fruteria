@@ -10,28 +10,35 @@ function formatoFecha(d) {
   return `${partes[2]}/${partes[1]}/${partes[0]}`
 }
 
+function nombreArchivo(desde, hasta) {
+  return `resumen-ventas-${desde}-a-${hasta}.pdf`
+}
+
 /**
- * Genera y abre/descarga el PDF del resumen de ventas.
- * Funciona offline y desde el móvil: el PDF se crea en el dispositivo
- * y se abre en una pestaña nueva (o se descarga si el navegador lo bloquea).
+ * Construye el documento PDF del resumen de ventas.
  */
-export function exportarPDF({ companyName, desde, hasta, reporte }) {
+export function generarPDF({ companyName, desde, hasta, modalidad, reporte }) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   const pageWidth = doc.internal.pageSize.getWidth()
   const margin = 14
 
   // ── Header ──
   doc.setFillColor(...VERDE)
-  doc.rect(0, 0, pageWidth, 28, 'F')
+  doc.rect(0, 0, pageWidth, 34, 'F')
   doc.setTextColor(255, 255, 255)
-  doc.setFontSize(16)
-  doc.setFont('helvetica', 'bold')
-  doc.text((companyName || 'Frutería POS').toUpperCase(), margin, 13)
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'normal')
-  doc.text('Resumen de Ventas', margin, 20)
   doc.setFontSize(9)
-  doc.text(`Período: ${formatoFecha(desde)} al ${formatoFecha(hasta)}`, margin, 25)
+  doc.setFont('helvetica', 'normal')
+  doc.text((companyName || 'Frutería POS').toUpperCase(), margin, 11)
+  doc.text(`Fecha de Emisión: ${new Date().toLocaleString('es-VE')}`, pageWidth - margin, 11, { align: 'right' })
+  doc.setFontSize(22)
+  doc.setFont('helvetica', 'bold')
+  doc.text('RESUMEN DE VENTAS', margin, 22)
+  doc.setFontSize(10)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Período: ${formatoFecha(desde)} al ${formatoFecha(hasta)}`, margin, 29)
+  if (modalidad) {
+    doc.text(`Modalidad: ${modalidad}`, pageWidth - margin, 29, { align: 'right' })
+  }
 
   // ── Tarjetas de resumen ──
   const cards = [
@@ -42,7 +49,7 @@ export function exportarPDF({ companyName, desde, hasta, reporte }) {
   ]
 
   const cardW = (pageWidth - margin * 2 - 8) / 2
-  let y = 36
+  let y = 42
 
   cards.forEach((card, i) => {
     const col = i % 2
@@ -102,15 +109,25 @@ export function exportarPDF({ companyName, desde, hasta, reporte }) {
     head: [['Producto', 'Cantidad', 'Total USD', 'Total Bs']],
     body: reporte.productos.length
       ? reporte.productos.map((p) => [
-          `${p.icon} ${p.nombre}`,
+          p.nombre,
           `${formatQty(p.cant, p.um)} ${p.um}`,
           `$${formatCurrency(p.totalUSD)}`,
           `Bs ${formatCurrency(p.totalBS)}`,
         ])
       : [['—', '—', '—', '—']],
+    foot: [['TOTALES', '', `$${formatCurrency(reporte.totalUSD)}`, `Bs ${formatCurrency(reporte.totalBS)}`]],
     headStyles: { fillColor: VERDE, fontSize: 9 },
+    footStyles: { fillColor: [230, 235, 240], textColor: [30, 30, 30], fontStyle: 'bold', fontSize: 9 },
     bodyStyles: { fontSize: 9 },
     columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } },
+    didParseCell: (data) => {
+      if (data.section === 'head' && data.column.index > 0) {
+        data.cell.styles.halign = 'right'
+      }
+      if (data.section === 'foot' && data.column.index > 0) {
+        data.cell.styles.halign = 'right'
+      }
+    },
     theme: 'striped',
   })
 
@@ -127,16 +144,64 @@ export function exportarPDF({ companyName, desde, hasta, reporte }) {
     )
   }
 
-  // ── Abrir / descargar desde el móvil ──
+  return doc
+}
+
+function descargarBlob(blob, filename) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+}
+
+/**
+ * Abre el PDF en una pestaña nueva (visión). Si el navegador lo bloquea, descarga.
+ */
+export function exportarPDF(opts) {
+  const doc = generarPDF(opts)
+  const filename = nombreArchivo(opts.desde, opts.hasta)
   const blob = doc.output('blob')
   const url = URL.createObjectURL(blob)
   const win = window.open(url, '_blank')
   if (!win) {
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `resumen-ventas-${desde}-a-${hasta}.pdf`
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
+    descargarBlob(blob, filename)
   }
+}
+
+/**
+ * Descarga el PDF directamente al dispositivo.
+ */
+export function descargarPDF(opts) {
+  const doc = generarPDF(opts)
+  descargarBlob(doc.output('blob'), nombreArchivo(opts.desde, opts.hasta))
+}
+
+/**
+ * Comparte el PDF vía el menú nativo del sistema (Web Share API).
+ * En el móvil permite enviarlo por WhatsApp, correo, guardarlo en archivos, etc.
+ * Si la compartición no está disponible, descarga el archivo como alternativa.
+ */
+export async function compartirPDF(opts) {
+  const doc = generarPDF(opts)
+  const filename = nombreArchivo(opts.desde, opts.hasta)
+  const blob = doc.output('blob')
+
+  const file = new File([blob], filename, { type: 'application/pdf' })
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: filename,
+        text: 'Resumen de ventas',
+      })
+      return
+    } catch (error) {
+      if (error.name === 'AbortError') return
+    }
+  }
+
+  descargarBlob(blob, filename)
 }

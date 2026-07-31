@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { getSalesByDateRange } from '../utils/db'
 import { formatCurrency, formatQty } from '../utils/format'
-import { exportarPDF } from '../utils/pdfExport'
+import { exportarPDF, descargarPDF, compartirPDF } from '../utils/pdfExport'
 import './SalesReportModal.css'
 
 // ═══════════════════════════════════════════════════════════
@@ -179,7 +179,9 @@ export default function SalesReportModal({ onClose, companyName }) {
           <span className="modal-icon">📊</span>
           <h2>Resumen de Ventas</h2>
           <div className="sr-header-actions">
-            <button className="btn-action" onClick={() => exportarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, reporte })}>📄 Exportar a PDF</button>
+            <button className="btn-action" onClick={() => exportarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>📄 Ver PDF</button>
+            <button className="btn-action" onClick={() => descargarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>📥 Descargar</button>
+            <button className="btn-action" onClick={() => compartirPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>📤 Compartir</button>
             <button className="btn-cancel" onClick={onClose}>✕</button>
           </div>
         </div>
