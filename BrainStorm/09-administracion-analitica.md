@@ -20,6 +20,14 @@ Proveer herramientas de administración y cierre de caja: reportes financieros, 
 - Modo Personalizado se activa al editar manualmente una fecha
 - Lógica en `calcularRango()` dentro de `SalesReportModal.jsx`
 
+### Datos Reales desde IndexedDB
+- Carga de ventas con `getSalesByDateRange()` al abrir y al cambiar el rango
+- Filtro real por rango de fechas (desde 00:00 hasta 23:59:59 del día final)
+- Tarjetas calculadas: Total Ventas, Ticket Promedio, Total USD, Total Bs
+- Desglose por método de pago real: Efectivo $, Efectivo Bs, Pago Móvil, Punto
+- Productos vendidos agregados por producto (cantidad, total USD, total Bs)
+- Paginación real (8 productos por página) y estados de carga/vacío
+
 ### Interfaz Visual
 - Tarjetas de resumen (Total Ventas, Ticket Promedio, Total USD, Total Bs)
 - Tabla de desglose por método de pago (sin columna Total)
@@ -31,10 +39,9 @@ Proveer herramientas de administración y cierre de caja: reportes financieros, 
 
 ## Pendiente / Ideas
 
-### Conectar con Datos Reales
-- Reemplazar MOCK_TARJETAS, MOCK_METODOS, MOCK_PRODUCTOS con consultas a IndexedDB
-- Implementar filtro real por rango de fechas
-- Calcular totales reales desde la base de datos
+### Exportación Funcional
+- [ ] Implementar descarga CSV real de las ventas del rango
+- [ ] Implementar impresión del reporte
 
 ### Desglose Financiero en Resumen
 - El resumen de ventas debe totalizar el dinero clasificado por cada método de pago:

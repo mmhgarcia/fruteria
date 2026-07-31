@@ -1,38 +1,15 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import { getSalesByDateRange } from '../utils/db'
+import { formatCurrency, formatQty } from '../utils/format'
 import './SalesReportModal.css'
 
 // ═══════════════════════════════════════════════════════════
-// 🎨 MOCK ESTÁTICO — Data mock visual, lógica de fechas real.
+// 📊 Resumen de Ventas — Datos reales desde IndexedDB.
 //    Diseño basado en BrainStorm/09-administracion-analitica.md
 // ═══════════════════════════════════════════════════════════
 
-const MOCK_TARJETAS = [
-  { label: 'Total Ventas', valor: '150 operaciones', icon: '🧾' },
-  { label: 'Ticket Promedio', valor: '$8,33', icon: '🎫' },
-  { label: 'Total USD', valor: '$1.250,00', icon: '💵' },
-  { label: 'Total Bs', valor: 'Bs 91.875,00', icon: '💶' },
-]
-
-const MOCK_METODOS = [
-  { metodo: 'Efectivo $', usd: '$450,00', bs: '—' },
-  { metodo: 'Efectivo Bs', usd: '—', bs: 'Bs 18.000' },
-  { metodo: 'Pago Móvil', usd: '$500,00', bs: 'Bs 36.750' },
-  { metodo: 'Punto', usd: '$200,00', bs: 'Bs 14.700' },
-  { metodo: 'Divisa', usd: '$100,00', bs: '—' },
-]
-
-const MOCK_PRODUCTOS = [
-  { id: 1, nombre: 'Lechuga', icon: '🥬', cant: '45 un', totalUSD: '$67,50', totalBS: 'Bs 4.961' },
-  { id: 2, nombre: 'Tomate', icon: '🍅', cant: '30 un', totalUSD: '$45,00', totalBS: 'Bs 3.307' },
-  { id: 3, nombre: 'Cebolla', icon: '🧅', cant: '25 un', totalUSD: '$37,50', totalBS: 'Bs 2.756' },
-  { id: 4, nombre: 'Lechosa', icon: '🍈', cant: '18 un', totalUSD: '$36,00', totalBS: 'Bs 2.646' },
-  { id: 5, nombre: 'Cambur', icon: '🍌', cant: '22 kg', totalUSD: '$33,00', totalBS: 'Bs 2.425' },
-  { id: 6, nombre: 'Parchita', icon: '🍊', cant: '15 un', totalUSD: '$30,00', totalBS: 'Bs 2.205' },
-  { id: 7, nombre: 'Aguacate', icon: '🥑', cant: '12 un', totalUSD: '$28,80', totalBS: 'Bs 2.116' },
-  { id: 8, nombre: 'Mango', icon: '🥭', cant: '20 un', totalUSD: '$26,00', totalBS: 'Bs 1.911' },
-]
-
 const PRESETS = ['Hoy', 'Ayer', 'Semana', 'Mes']
+const PRODUCTOS_POR_PAGINA = 8
 
 function toDateStr(d) {
   const y = d.getFullYear()
@@ -72,13 +49,21 @@ function calcularRango(preset) {
   return { desde: toDateStr(inicio), hasta: toDateStr(fin) }
 }
 
+function rangoAIntervalo(desde, hasta) {
+  return {
+    start: new Date(`${desde}T00:00:00`),
+    end: new Date(`${hasta}T23:59:59.999`),
+  }
+}
+
 export default function SalesReportModal({ onClose }) {
   const rangoInicial = calcularRango('Mes')
   const [fechaDesde, setFechaDesde] = useState(rangoInicial.desde)
   const [fechaHasta, setFechaHasta] = useState(rangoInicial.hasta)
   const [presetActivo, setPresetActivo] = useState('Mes')
   const [pagina, setPagina] = useState(1)
-  const totalPaginas = 3
+  const [ventas, setVentas] = useState([])
+  const [cargando, setCargando] = useState(true)
   const modalRef = useRef(null)
 
   // Scroll al tope cada vez que se abre el modal
@@ -87,6 +72,25 @@ export default function SalesReportModal({ onClose }) {
       modalRef.current.scrollTop = 0
     }
   }, [])
+
+  // Cargar ventas reales según el rango de fechas
+  useEffect(() => {
+    let cancelled = false
+    const cargar = async () => {
+      setCargando(true)
+      const { start, end } = rangoAIntervalo(fechaDesde, fechaHasta)
+      const ventasEnRango = await getSalesByDateRange(start, end)
+      if (!cancelled) {
+        setVentas(ventasEnRango)
+        setPagina(1)
+        setCargando(false)
+      }
+    }
+    cargar()
+    return () => {
+      cancelled = true
+    }
+  }, [fechaDesde, fechaHasta])
 
   // Secciones colapsables: solo Dashboard abierto por defecto
   const [openSections, setOpenSections] = useState({
@@ -97,6 +101,73 @@ export default function SalesReportModal({ onClose }) {
 
   const toggleSection = (key) =>
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }))
+
+  // ── Cálculo del reporte ──
+  const reporte = useMemo(() => {
+    let totalVentas = 0
+    let totalUSD = 0
+    let totalBS = 0
+    let divisaUSD = 0
+    let efectivoBS = 0
+    let pagomovilBS = 0
+    let puntoBS = 0
+    const productosMap = new Map()
+
+    ventas.forEach((sale) => {
+      const tasa = sale.tasa || 0
+      totalVentas += 1
+      totalUSD += sale.totalUSD || 0
+      totalBS += sale.totalBS || 0
+      divisaUSD += sale.divisaUSD || 0
+      efectivoBS += sale.efectivoBS || 0
+      pagomovilBS += sale.pagomovilMonto || 0
+      puntoBS += sale.puntoMonto || 0
+
+      ;(sale.items || []).forEach((item) => {
+        const key = item.id ?? item.name
+        const prev = productosMap.get(key) || {
+          nombre: item.name,
+          icon: item.icon || '📦',
+          um: item.um || 'unidad',
+          cant: 0,
+          totalUSD: 0,
+          totalBS: 0,
+        }
+        prev.cant += item.qty || 0
+        prev.totalUSD += item.totalUSD || 0
+        prev.totalBS += (item.totalUSD || 0) * tasa
+        productosMap.set(key, prev)
+      })
+    })
+
+    const ticketPromedio = totalVentas > 0 ? totalUSD / totalVentas : 0
+
+    const metodos = [
+      { metodo: 'Efectivo $', usd: divisaUSD, bs: 0 },
+      { metodo: 'Efectivo Bs', usd: 0, bs: efectivoBS },
+      { metodo: 'Pago Móvil', usd: 0, bs: pagomovilBS },
+      { metodo: 'Punto', usd: 0, bs: puntoBS },
+    ].filter((m) => m.usd > 0 || m.bs > 0)
+
+    const productos = Array.from(productosMap.values())
+      .sort((a, b) => b.totalUSD - a.totalUSD)
+
+    return { totalVentas, totalUSD, totalBS, ticketPromedio, metodos, productos }
+  }, [ventas])
+
+  const totalPaginas = Math.max(1, Math.ceil(reporte.productos.length / PRODUCTOS_POR_PAGINA))
+  const paginaSegura = Math.min(pagina, totalPaginas)
+  const productosPagina = reporte.productos.slice(
+    (paginaSegura - 1) * PRODUCTOS_POR_PAGINA,
+    paginaSegura * PRODUCTOS_POR_PAGINA
+  )
+
+  const tarjetas = [
+    { label: 'Total Ventas', valor: `${reporte.totalVentas} ${reporte.totalVentas === 1 ? 'operación' : 'operaciones'}`, icon: '🧾' },
+    { label: 'Ticket Promedio', valor: `$${formatCurrency(reporte.ticketPromedio)}`, icon: '🎫' },
+    { label: 'Total USD', valor: `$${formatCurrency(reporte.totalUSD)}`, icon: '💵' },
+    { label: 'Total Bs', valor: `Bs ${formatCurrency(reporte.totalBS)}`, icon: '💶' },
+  ]
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -161,6 +232,12 @@ export default function SalesReportModal({ onClose }) {
           </div>
         </div>
 
+        {cargando && <div className="sr-cargando">Cargando ventas…</div>}
+
+        {!cargando && reporte.totalVentas === 0 && (
+          <div className="sr-vacio">Sin ventas en el período seleccionado</div>
+        )}
+
         {/* ── SECCIÓN 1: DASHBOARD ── */}
         <div className="sr-collapsible">
           <button
@@ -173,7 +250,7 @@ export default function SalesReportModal({ onClose }) {
           {openSections.dashboard && (
             <div className="sr-collapsible-body">
               <div className="sr-tarjetas">
-                {MOCK_TARJETAS.map((t) => (
+                {tarjetas.map((t) => (
                   <div key={t.label} className="sr-tarjeta">
                     <span className="sr-tarjeta-icono">{t.icon}</span>
                     <div className="sr-tarjeta-info">
@@ -207,19 +284,24 @@ export default function SalesReportModal({ onClose }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {MOCK_METODOS.map((m) => (
+                  {reporte.metodos.length === 0 && (
+                    <tr>
+                      <td colSpan={3} className="sr-td-vacio">Sin pagos registrados</td>
+                    </tr>
+                  )}
+                  {reporte.metodos.map((m) => (
                     <tr key={m.metodo}>
                       <td className="sr-td-metodo">{m.metodo}</td>
-                      <td>{m.usd}</td>
-                      <td>{m.bs}</td>
+                      <td>{m.usd > 0 ? `$${formatCurrency(m.usd)}` : '—'}</td>
+                      <td>{m.bs > 0 ? `Bs ${formatCurrency(m.bs)}` : '—'}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr>
                     <td><strong>TOTALES</strong></td>
-                    <td><strong>$1.250,00</strong></td>
-                    <td><strong>Bs 69.450</strong></td>
+                    <td><strong>${formatCurrency(reporte.totalUSD)}</strong></td>
+                    <td><strong>Bs {formatCurrency(reporte.totalBS)}</strong></td>
                   </tr>
                 </tfoot>
               </table>
@@ -239,28 +321,28 @@ export default function SalesReportModal({ onClose }) {
           </button>
           {openSections.productos && (
             <div className="sr-collapsible-body">
-              <div className="sr-productos-header">
-                <input type="text" className="sr-buscar" placeholder="Buscar producto..." readOnly />
-              </div>
               <div className="sr-prod-lista">
-                {MOCK_PRODUCTOS.map((p) => (
-                  <div key={p.id} className="sr-prod-card">
+                {productosPagina.map((p) => (
+                  <div key={p.nombre} className="sr-prod-card">
                     <span className="sr-prod-card-icon">{p.icon}</span>
                     <div className="sr-prod-card-body">
                       <span className="sr-prod-card-name">{p.nombre}</span>
-                      <span className="sr-prod-card-qty">{p.cant}</span>
+                      <span className="sr-prod-card-qty">{formatQty(p.cant, p.um)} {p.um}</span>
                     </div>
                     <div className="sr-prod-card-montos">
-                      <span className="sr-prod-card-usd">{p.totalUSD}</span>
-                      <span className="sr-prod-card-bs">{p.totalBS}</span>
+                      <span className="sr-prod-card-usd">${formatCurrency(p.totalUSD)}</span>
+                      <span className="sr-prod-card-bs">Bs {formatCurrency(p.totalBS)}</span>
                     </div>
                   </div>
                 ))}
+                {productosPagina.length === 0 && (
+                  <div className="sr-vacio">Sin productos vendidos en el período</div>
+                )}
               </div>
               <div className="sr-paginacion">
-                <button className="sr-page-btn" onClick={() => setPagina(Math.max(1, pagina - 1))}>← Anterior</button>
-                <span className="sr-page-info">Página {pagina} de {totalPaginas}</span>
-                <button className="sr-page-btn" onClick={() => setPagina(Math.min(totalPaginas, pagina + 1))}>Siguiente →</button>
+                <button className="sr-page-btn" onClick={() => setPagina(Math.max(1, paginaSegura - 1))} disabled={paginaSegura <= 1}>← Anterior</button>
+                <span className="sr-page-info">Página {paginaSegura} de {totalPaginas}</span>
+                <button className="sr-page-btn" onClick={() => setPagina(Math.min(totalPaginas, paginaSegura + 1))} disabled={paginaSegura >= totalPaginas}>Siguiente →</button>
               </div>
             </div>
           )}

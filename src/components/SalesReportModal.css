@@ -135,6 +135,17 @@
   border-color: var(--header-bg, #4a8c5e);
 }
 
+/* ── ESTADOS: CARGANDO Y VACÍO ── */
+
+.sr-cargando,
+.sr-vacio {
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #6b7280);
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
 /* ── TARJETAS DE RESUMEN ── */
 
 .sr-tarjetas {
@@ -385,6 +396,18 @@
 
 .sr-page-btn:hover {
   background: var(--bg-hover, #f3f4f6);
+}
+
+.sr-page-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  background: var(--bg-primary, #ffffff);
+}
+
+.sr-td-vacio {
+  text-align: center;
+  color: var(--text-secondary, #6b7280);
+  padding: 10px 0;
 }
 
 .sr-page-info {
