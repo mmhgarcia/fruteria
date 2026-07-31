@@ -39,7 +39,8 @@ Proveer herramientas de administración y cierre de caja: reportes financieros, 
 
 ## Pendiente / Ideas
 
-### Exportación Funcional
+### ⚠️ **Exportación Funcional — PENDIENTE**
+- [ ] **Exportar CSV e imprimir siguen siendo solo visuales (botones sin funcionalidad)**
 - [ ] Implementar descarga CSV real de las ventas del rango
 - [ ] Implementar impresión del reporte
 

@@ -8,7 +8,7 @@ import './SalesReportModal.css'
 //    Diseño basado en BrainStorm/09-administracion-analitica.md
 // ═══════════════════════════════════════════════════════════
 
-const PRESETS = ['Hoy', 'Ayer', 'Semana', 'Mes']
+const PRESETS = ['Ayer', 'Hoy', 'Semana', 'Mes']
 const PRODUCTOS_POR_PAGINA = 8
 
 function toDateStr(d) {
@@ -57,10 +57,10 @@ function rangoAIntervalo(desde, hasta) {
 }
 
 export default function SalesReportModal({ onClose }) {
-  const rangoInicial = calcularRango('Mes')
+  const rangoInicial = calcularRango('Hoy')
   const [fechaDesde, setFechaDesde] = useState(rangoInicial.desde)
   const [fechaHasta, setFechaHasta] = useState(rangoInicial.hasta)
-  const [presetActivo, setPresetActivo] = useState('Mes')
+  const [presetActivo, setPresetActivo] = useState('Hoy')
   const [pagina, setPagina] = useState(1)
   const [ventas, setVentas] = useState([])
   const [cargando, setCargando] = useState(true)
@@ -223,12 +223,6 @@ export default function SalesReportModal({ onClose }) {
                 {p}
               </button>
             ))}
-            <button
-              className={`sr-preset-btn ${presetActivo === 'Personalizado' ? 'active' : ''}`}
-              onClick={() => setPresetActivo('Personalizado')}
-            >
-              Personalizado
-            </button>
           </div>
         </div>
 
