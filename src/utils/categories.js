@@ -55,26 +55,30 @@ export async function deleteCategory(id) {
 
 export async function seedCategories(defaultCategories) {
   const existing = await getCategories()
-  const existingIds = new Set(existing.map((c) => c.id))
-  const missing = defaultCategories.filter((c) => !existingIds.has(c.id))
+  const existingById = new Map(existing.map((c) => [c.id, c]))
+  const missing = defaultCategories.filter((c) => !existingById.has(c.id))
+  const toFix = defaultCategories
+    .filter((c) => existingById.has(c.id) && existingById.get(c.id).ramo !== c.ramo)
+    .map((c) => ({ ...existingById.get(c.id), ramo: c.ramo }))
 
-  if (missing.length === 0) return existing
+  if (missing.length === 0 && toFix.length === 0) return existing
 
   const db = await openDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
     const store = tx.objectStore(STORE_NAME)
-    const added = []
+    const result = [...existing]
 
     missing.forEach((category) => {
-      const request = store.put(category)
-      request.onsuccess = () => added.push(category)
-      request.onerror = () => {
-        console.error('Error adding category:', category, request.error)
-      }
+      store.put(category)
+      result.push(category)
     })
 
-    tx.oncomplete = () => resolve([...existing, ...added])
+    toFix.forEach((category) => {
+      store.put(category)
+    })
+
+    tx.oncomplete = () => resolve(result)
     tx.onerror = () => reject(tx.error)
   })
 }

@@ -36,7 +36,11 @@ export default function Products({ onClose, ramoId }) {
   async function loadProducts() {
     try {
       const list = await getProducts()
-      setProducts(list.sort((a, b) => a.name.localeCompare(b.name)))
+      setProducts(
+        list
+          .filter((p) => p.ramo === ramoId)
+          .sort((a, b) => a.name.localeCompare(b.name))
+      )
     } catch (error) {
       alert('Error al cargar productos: ' + error.message)
     } finally {
@@ -48,7 +52,9 @@ export default function Products({ onClose, ramoId }) {
     try {
       const list = await getCategories()
       setCategories(
-        list.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
+        list
+          .filter((c) => c.ramo === ramoId)
+          .sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
       )
     } catch (error) {
       alert('Error al cargar categorías: ' + error.message)

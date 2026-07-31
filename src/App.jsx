@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { getProducts, seedProducts, addSale } from './utils/db'
-import { getCategories, seedCategories } from './utils/categories'
+import { getProducts, seedProducts, addSale, updateProduct } from './utils/db'
+import { getCategories, getCategoriesByRamo, seedCategories, updateCategory } from './utils/categories'
 import Header from './components/Header'
 import ProductGrid from './components/ProductGrid'
 import Ticket from './components/Ticket'
@@ -141,10 +141,22 @@ function App() {
   async function loadProducts(ramoIdOverride) {
     try {
       setLoadingProducts(true)
-      const ramo = getRamoPorId(ramoIdOverride || ramoActivo)
-      await seedProducts(ramo ? ramo.products : [])
+      const ramoId = ramoIdOverride || ramoActivo
+      const ramo = getRamoPorId(ramoId)
+      if (ramo && (ramoIdOverride || settings.ramoId)) {
+        await seedProducts(ramo.products)
+        const allP = await getProducts()
+        const desconocidos = allP.filter((p) => !p.ramo || !getRamoPorId(p.ramo))
+        for (const p of desconocidos) {
+          await updateProduct({ ...p, ramo: ramo.id })
+        }
+      }
       const list = await getProducts()
-      setProducts(list.sort((a, b) => a.name.localeCompare(b.name)))
+      setProducts(
+        list
+          .filter((p) => p.ramo === ramoId)
+          .sort((a, b) => a.name.localeCompare(b.name))
+      )
     } catch (error) {
       console.error('Error inicializando productos:', error)
     } finally {
@@ -155,14 +167,18 @@ function App() {
   async function loadCategories(ramoIdOverride) {
     try {
       setLoadingCategories(true)
-      const ramo = getRamoPorId(ramoIdOverride || ramoActivo)
-      if (ramo) {
+      const ramoId = ramoIdOverride || ramoActivo
+      const ramo = getRamoPorId(ramoId)
+      if (ramo && (ramoIdOverride || settings.ramoId)) {
         await seedCategories(ramo.categories.map((c) => ({ ...c, ramo: ramo.id })))
+        const all = await getCategories()
+        const desconocidas = all.filter((c) => !c.ramo || !getRamoPorId(c.ramo))
+        for (const c of desconocidas) {
+          await updateCategory({ ...c, ramo: ramo.id })
+        }
       }
-      const list = await getCategories()
-      setCategories(
-        list.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
-      )
+      const list = await getCategoriesByRamo(ramoId)
+      setCategories(list)
     } catch (error) {
       console.error('Error inicializando categorías:', error)
     } finally {
