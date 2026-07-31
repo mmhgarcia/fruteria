@@ -330,7 +330,7 @@ export default function Categories({ onClose, ramoId }) {
         </button>
 
         {showForm && (
-          <div className="products-form-panel">
+          <div className="products-form-panel categories-form-panel">
             <form className="products-form" onSubmit={handleSubmit}>
               <div className="categories-ramo-badge">
                 Ramo: <strong>{getRamoPorId(ramoId)?.name || ramoId}</strong>

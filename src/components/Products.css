@@ -512,3 +512,22 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+
+/* ── Panel de formulario de categorías: anclado arriba, sin scroll ── */
+
+.categories-form-panel {
+  top: 0;
+  bottom: 0;
+  max-height: 100%;
+  border-radius: 0;
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
