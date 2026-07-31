@@ -332,29 +332,32 @@ export default function Categories({ onClose, ramoId }) {
         {showForm && (
           <div className="products-form-panel">
             <form className="products-form" onSubmit={handleSubmit}>
-              <input
-                name="name"
-                type="text"
-                placeholder="Nombre de la categoría"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
+              <div className="categories-ramo-badge">
+                Ramo: <strong>{getRamoPorId(ramoId)?.name || ramoId}</strong>
+              </div>
 
+              <label className="products-field-label">Id Categoría</label>
               <input
                 name="id"
                 type="text"
-                placeholder="Identificador (ej: frutas)"
+                placeholder="ej: frutas"
                 value={form.id}
                 onChange={handleChange}
                 disabled={!!editingId}
                 required
               />
 
-              <div className="categories-form-ramo">
-                Ramo: <strong>{getRamoPorId(ramoId)?.name || ramoId}</strong>
-              </div>
+              <label className="products-field-label">Nombre Categoría</label>
+              <input
+                name="name"
+                type="text"
+                placeholder="ej: Frutas"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
 
+              <label className="products-field-label">Icono</label>
               <div className="products-icons">
                 {ICONS.map((icon) => (
                   <button
@@ -370,7 +373,7 @@ export default function Categories({ onClose, ramoId }) {
 
               <div className="products-actions">
                 <button type="submit" className="products-btn products-btn-primary">
-                  {editingId ? 'Actualizar' : 'Añadir'}
+                  Grabar
                 </button>
                 <button type="button" className="products-btn" onClick={handleCancel}>
                   Cancelar

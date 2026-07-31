@@ -482,3 +482,33 @@
 .categories-form-ramo strong {
   color: var(--text-primary, #1a1a1a);
 }
+
+/* ── Badge de ramo en formulario de categoría ── */
+
+.categories-ramo-badge {
+  background: #eef5ef;
+  border: 1px solid #cfe3d3;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: #2c3e2f;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.categories-ramo-badge strong {
+  color: #2d6a4f;
+}
+
+/* ── Etiquetas de campo del formulario ── */
+
+.products-field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5c6b5f;
+  margin: 10px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
