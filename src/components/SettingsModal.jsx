@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { getRamos } from '../utils/ramos'
 // import RamoSelector from './RamoSelector'
 import { hashPin } from '../utils/hash'
+import { tiempoRestanteSesion, bloquearSesion } from '../utils/session'
 import TasaBcv from '../features/TasaBcv/components/TasaBcv'
 import RamosComerciales from './RamosComerciales'
 import Products from './Products'
@@ -39,6 +40,9 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   const [showLogs, setShowLogs] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
+  const [sessionHoras, setSessionHoras] = useState(settings.sessionHoras ?? 8)
+  const [sessionMinutos, setSessionMinutos] = useState(settings.sessionMinutos ?? 0)
+  const [sesionInfo, setSesionInfo] = useState(tiempoRestanteSesion)
 
   // const [ramos, setRamos] = useState([]) ← dropdown
   // const [setRamoId, ] ← commented out
@@ -57,6 +61,8 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
       textColor,
       ramoId: ramoId || '',
       pin: hashedPin,
+      sessionHoras,
+      sessionMinutos,
     })
   }
 
@@ -80,6 +86,8 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
       textColor,
       ramoId: settings.ramoId || '',
       pin: hashedPin,
+      sessionHoras,
+      sessionMinutos,
     })
     onClose()
   }
@@ -151,6 +159,55 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
               <span className="settings-field-desc">
                 Solo para entrar a Configuración.
               </span>
+
+              <div className="pin-session-row">
+                <div className="pin-duration">
+                  <label>
+                    <span>Horas</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      max={24}
+                      value={sessionHoras}
+                      onChange={(e) => setSessionHoras(Math.max(0, Math.min(24, Number(e.target.value) || 0)))}
+                      className="pin-duration-input"
+                    />
+                  </label>
+                  <label>
+                    <span>Minutos</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      max={59}
+                      value={sessionMinutos}
+                      onChange={(e) => setSessionMinutos(Math.max(0, Math.min(59, Number(e.target.value) || 0)))}
+                      className="pin-duration-input"
+                    />
+                  </label>
+                </div>
+                <div className="pin-duration-hint">
+                  {sessionHoras === 0 && sessionMinutos === 0
+                    ? 'Mínimo 1 minuto'
+                    : `La sesión dura ${sessionHoras}h ${sessionMinutos}m desde el PIN`}
+                </div>
+                {sesionInfo && (
+                  <div className="pin-session-active">
+                    <span>🔓 Desbloqueado: {sesionInfo.horas}h {sesionInfo.minutos}m restantes</span>
+                    <button
+                      type="button"
+                      className="pin-lock-now-btn"
+                      onClick={() => {
+                        bloquearSesion()
+                        setSesionInfo(null)
+                      }}
+                    >
+                      🔒 Bloquear ahora
+                    </button>
+                  </div>
+                )}
+              </div>
             </label>
 
             <hr className="settings-divider" />

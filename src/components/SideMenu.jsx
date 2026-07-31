@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, onLockNow }) {
   const MENU_OPTIONS = [
     { id: 'config', label: 'Configuración', icon: '⚙️' },
   ]
@@ -98,6 +98,18 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
                 <span className="side-menu-label">{option.label}</span>
               </button>
             )
+          )}
+          {hasPin && (
+            <button
+              className="side-menu-option side-menu-lock"
+              onClick={() => {
+                onLockNow()
+                onClose()
+              }}
+            >
+              <span className="side-menu-icon">🔒</span>
+              <span className="side-menu-label">Bloquear ahora</span>
+            </button>
           )}
         </nav>
 

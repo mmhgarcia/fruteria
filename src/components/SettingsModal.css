@@ -139,6 +139,83 @@
   background: rgba(0, 0, 0, 0.06);
 }
 
+.pin-session-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border, #e5e7eb);
+}
+
+.pin-duration {
+  display: flex;
+  gap: 12px;
+}
+
+.pin-duration label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary, #6b7280);
+  font-weight: 600;
+}
+
+.pin-duration-input {
+  width: 80px;
+  padding: 8px 10px;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 8px;
+  font-size: 15px;
+  text-align: center;
+  outline: none;
+  background: var(--bg, #fff);
+  color: var(--text, #111827);
+  font-variant-numeric: tabular-nums;
+}
+
+.pin-duration-input:focus {
+  border-color: var(--primary, #2d6a4f);
+}
+
+.pin-duration-hint {
+  font-size: 12px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.pin-session-active {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary, #2d6a4f);
+  background: rgba(45, 106, 79, 0.08);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.pin-lock-now-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--danger, #e63946);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--danger, #e63946);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+
+.pin-lock-now-btn:hover {
+  background: rgba(230, 57, 70, 0.08);
+}
+
 .color-input-row {
   display: flex;
   align-items: center;

@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { hashPin } from '../utils/hash'
 import { addLog, LOG_TYPES } from '../utils/logService'
+import {
+  getBloqueoFuerzaBruta,
+  bloquearFuerzaBruta,
+  PIN_CONFIG,
+} from '../utils/session'
 import './PinPrompt.css'
 
 const KEYS = [
@@ -15,6 +20,7 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
   const [error, setError] = useState(false)
   const [shake, setShake] = useState(false)
   const [failedAttempts, setFailedAttempts] = useState(0)
+  const [bloqueadoHasta, setBloqueadoHasta] = useState(getBloqueoFuerzaBruta)
   const ref = useRef(null)
   const loggedRef = useRef(false)
 
@@ -27,7 +33,28 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
     ref.current?.focus()
   }, [])
 
+  // Cuenta regresiva del bloqueo por fuerza bruta
+  const [now, setNow] = useState(Date.now())
+  useEffect(() => {
+    if (!bloqueadoHasta) return
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [bloqueadoHasta])
+
+  useEffect(() => {
+    if (bloqueadoHasta && bloqueadoHasta <= new Date()) {
+      setBloqueadoHasta(null)
+      setFailedAttempts(0)
+      loggedRef.current = false
+    }
+  }, [now, bloqueadoHasta])
+
+  const segundosRestantes = bloqueadoHasta
+    ? Math.max(0, Math.ceil((bloqueadoHasta - new Date()) / 1000))
+    : 0
+
   const handleKey = async (key) => {
+    if (bloqueadoHasta) return
     if (key === '⌫') {
       setDigits((prev) => prev.slice(0, -1))
       setError(false)
@@ -57,16 +84,25 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
         setError(true)
         setShake(true)
 
-        // 3 intentos fallidos → log tipo ALERT
-        if (newFailed >= 3 && !loggedRef.current) {
-          loggedRef.current = true
-          addLog(LOG_TYPES.ALERT, 'Acceso no autorizado - 3 intentos fallidos de PIN', {
-            failedAttempts: newFailed,
-            intentos: newFailed,
-            pinIngresado: entered,
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-          })
+        // 3 intentos fallidos → log tipo ALERT + bloqueo de fuerza bruta
+        if (newFailed >= PIN_CONFIG.MAX_INTENTOS) {
+          if (!loggedRef.current) {
+            loggedRef.current = true
+            addLog(LOG_TYPES.ALERT, 'Acceso no autorizado - 3 intentos fallidos de PIN', {
+              failedAttempts: newFailed,
+              intentos: newFailed,
+              pinIngresado: entered,
+              timestamp: new Date().toISOString(),
+              userAgent: navigator.userAgent,
+            })
+          }
+          bloquearFuerzaBruta()
+          setBloqueadoHasta(getBloqueoFuerzaBruta())
+          setDigits([])
+          setError(false)
+          setShake(false)
+          setFailedAttempts(0)
+          return
         }
 
         setTimeout(() => {
@@ -100,36 +136,49 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
         <div className="pin-prompt-body">
           <p className="pin-prompt-desc">Ingrese el PIN de administrador</p>
 
-          <div className={`pin-display ${shake ? 'shake' : ''} ${error ? 'error' : ''}`}>
-            {display.split('').map((ch, i) => (
-              <span key={i} className={`pin-dot ${ch !== '○' ? 'filled' : ''}`}>
-                {ch === '○' ? '○' : '●'}
-              </span>
-            ))}
-          </div>
-
-          {error && <p className="pin-error">PIN incorrecto</p>}
-
-          <div className="pin-keypad">
-            {KEYS.map((row, ri) => (
-              <div key={ri} className="pin-keypad-row">
-                {row.map((key) =>
-                  key === '' ? (
-                    <span key="empty" className="pin-key-placeholder" />
-                  ) : (
-                    <button
-                      key={key}
-                      className={`pin-key ${key === '⌫' ? 'pin-key-backspace' : ''}`}
-                      onClick={() => handleKey(key)}
-                      aria-label={key === '⌫' ? 'Borrar' : key}
-                    >
-                      {key === '⌫' ? '⌫' : key}
-                    </button>
-                  )
-                )}
+          {bloqueadoHasta ? (
+            <>
+              <div className="pin-blocked">
+                🔒 Demasiados intentos fallidos
               </div>
-            ))}
-          </div>
+              <div className="pin-blocked-countdown">
+                Intente de nuevo en {Math.floor(segundosRestantes / 60)}:{String(segundosRestantes % 60).padStart(2, '0')}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={`pin-display ${shake ? 'shake' : ''} ${error ? 'error' : ''}`}>
+                {display.split('').map((ch, i) => (
+                  <span key={i} className={`pin-dot ${ch !== '○' ? 'filled' : ''}`}>
+                    {ch === '○' ? '○' : '●'}
+                  </span>
+                ))}
+              </div>
+
+              {error && <p className="pin-error">PIN incorrecto</p>}
+
+              <div className="pin-keypad">
+                {KEYS.map((row, ri) => (
+                  <div key={ri} className="pin-keypad-row">
+                    {row.map((key) =>
+                      key === '' ? (
+                        <span key="empty" className="pin-key-placeholder" />
+                      ) : (
+                        <button
+                          key={key}
+                          className={`pin-key ${key === '⌫' ? 'pin-key-backspace' : ''}`}
+                          onClick={() => handleKey(key)}
+                          aria-label={key === '⌫' ? 'Borrar' : key}
+                        >
+                          {key === '⌫' ? '⌫' : key}
+                        </button>
+                      )
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

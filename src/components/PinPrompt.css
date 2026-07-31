@@ -57,6 +57,23 @@
   text-align: center;
 }
 
+.pin-blocked {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #b91c1c;
+  padding: 18px 0 4px 0;
+}
+
+.pin-blocked-countdown {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary, #666);
+  padding-bottom: 14px;
+}
+
 .pin-display {
   display: flex;
   gap: 10px;

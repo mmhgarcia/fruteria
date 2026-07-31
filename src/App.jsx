@@ -13,6 +13,7 @@ import SideMenu from './components/SideMenu'
 import SettingsModal from './components/SettingsModal'
 import PinPrompt from './components/PinPrompt'
 import { getLogs, LOG_TYPES } from './utils/logService'
+import { estaDesbloqueado, crearSesion, bloquearSesion } from './utils/session'
 import './App.css'
 
 function App() {
@@ -35,10 +36,13 @@ function App() {
     textColor: '#ffffff',
     ramoId: 'fruteria',
     pin: '',
+    sessionHoras: 8,
+    sessionMinutos: 0,
   })
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
   const [alertCount, setAlertCount] = useState(0)
+  const [sesionActiva, setSesionActiva] = useState(() => estaDesbloqueado())
 
   // Lee de localStorage cuándo fue la última vez que se marcaron leídas
   const [lastAlertReadAt, setLastAlertReadAt] = useState(
@@ -69,6 +73,20 @@ function App() {
     } else {
       setSettingsOpen(true)
     }
+  }
+
+  // Abre Configuración: con PIN pedido solo si no hay sesión activa
+  const abrirConfiguracion = () => {
+    if (settings.pin && !sesionActiva) {
+      setPinPromptOpen(true)
+    } else {
+      setSettingsOpen(true)
+    }
+  }
+
+  const handleLockNow = () => {
+    bloquearSesion()
+    setSesionActiva(false)
   }
 
   const handleAlertRead = () => {
@@ -244,16 +262,14 @@ function App() {
         onFilterChange={(filter) => {
           if (filter === 'config') {
             setIsMenuOpen(false)
-            if (settings.pin) {
-              setPinPromptOpen(true)
-            } else {
-              setSettingsOpen(true)
-            }
+            abrirConfiguracion()
           } else {
             setCurrentFilter(filter)
             setIsMenuOpen(false)
           }
         }}
+        hasPin={!!settings.pin}
+        onLockNow={handleLockNow}
       />
       <Header
         cartCount={totals.count}
@@ -348,6 +364,8 @@ function App() {
         <PinPrompt
           pin={settings.pin}
           onSuccess={() => {
+            crearSesion(settings.sessionHoras ?? 8, settings.sessionMinutos ?? 0)
+            setSesionActiva(true)
             setPinPromptOpen(false)
             setSettingsOpen(true)
           }}

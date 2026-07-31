@@ -113,6 +113,56 @@ correcto = (enteredHash === pin) || (entered === pin)  // hash o legacy
 
 ---
 
+## 🚧 Plan: Sesión de Desbloqueo por Jornada (~~implementado 2026-07-31~~)
+
+> ~~Sustituye la molestia actual: pedir PIN en cada apertura de Configuración.~~
+
+### ~~Objetivo~~
+- ~~El PIN se pide **una sola vez por jornada**, no en cada acceso~~
+- ~~La sesión expira automáticamente tras la duración configurada~~
+- ~~El admin controla la duración directamente en Configuración~~
+
+### ~~Configuración (SettingsModal)~~
+- ~~Justo debajo de la caja del PIN, **2 campos numéricos**:~~
+  - ~~**Horas** (0–24)~~
+  - ~~**Minutos** (0–59)~~
+- ~~Validación: total entre **1 minuto y 24 horas** (no permitir 0/0)~~
+- ~~Default: **8 horas**~~
+- ~~Se persiste en `fruteria-settings` junto al PIN hasheado~~
+- ~~Los cambios de duración aplican solo a **sesiones nuevas**~~
+
+### ~~Estado de sesión (localStorage)~~
+- ~~`fruteria-auth-session` = `{ autorizado: bool, expiresAt: ISO }`~~
+- ~~Se crea al validar el PIN correctamente~~
+- ~~Expira solo al pasar `expiresAt` (sobrevive recargas)~~
+- ~~Al expirar → `autorizado = false` → se vuelve a pedir PIN~~
+
+### ~~Flujo de acceso~~
+1. ~~Abrir Configuración con PIN configurado~~
+2. ~~¿Sesión activa y no expirada? → entra directo, **sin PIN**~~
+3. ~~¿Expirada o sin sesión? → PinPrompt → PIN correcto → sesión nueva con duración configurada~~
+4. ~~Desde Configuración: indicador **"Desbloqueado: Xh Ym restantes"** + botón **🔒 Bloquear ahora**~~
+5. ~~"Bloquear ahora" → elimina la sesión → PIN en el próximo acceso~~
+
+### ~~Bloqueo manual (ausencia del admin)~~
+- ~~**Botón 🔒 Bloquear ahora en el SideMenu** — siempre visible, un toque~~
+- ~~Bloquear **nunca pide PIN**~~
+- ~~Al bloquear → se elimina la sesión~~
+- ~~La sesión **no se cierra al apagarse la pantalla** ni en segundo plano~~
+
+### ~~Fuerza bruta~~
+- ~~Mantener: 3 intentos fallidos → log ALERT~~
+- ~~Tras 3 fallos → bloqueo del teclado numérico por **5 minutos** (persistente) con cuenta regresiva~~
+
+### Archivos tocados
+- `src/utils/session.js` (nuevo)
+- `src/components/SettingsModal.jsx` + CSS
+- `src/components/PinPrompt.jsx` + CSS
+- `src/components/SideMenu.jsx` + CSS
+- `src/App.jsx`
+
+---
+
 ## Relacionado
 
 - Ver [07-seguridad-control-acceso.md](07-seguridad-control-acceso.md) — control de acceso general
