@@ -3,9 +3,6 @@ import { getRamos } from '../utils/ramos'
 // import RamoSelector from './RamoSelector'
 import { hashPin } from '../utils/hash'
 import { tiempoRestanteSesion, bloquearSesion } from '../utils/session'
-import RamosComerciales from './RamosComerciales'
-import Products from './Products'
-import Categories from './Categories'
 import BackupModal from './BackupModal'
 import './SettingsModal.css'
 
@@ -20,7 +17,7 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup, onAlertRead }) {
+export default function SettingsModal({ settings, onSave, onClose, onRefreshBackup }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
@@ -28,37 +25,12 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   const [pin, setPin] = useState('') // always start empty; hashed on save
   const hasPin = settings.pin ? true : false
   const [ramoNombre, setRamoNombre] = useState('')
-  const [showRamos, setShowRamos] = useState(false)
-  const [showCategories, setShowCategories] = useState(false)
-  const [showProducts, setShowProducts] = useState(false)
   const [showBackup, setShowBackup] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
   const [sessionHoras, setSessionHoras] = useState(settings.sessionHoras ?? 8)
   const [sessionMinutos, setSessionMinutos] = useState(settings.sessionMinutos ?? 0)
   const [sesionInfo, setSesionInfo] = useState(tiempoRestanteSesion)
-
-  // const [ramos, setRamos] = useState([]) ← dropdown
-  // const [setRamoId, ] ← commented out
-
-  const closeRamos = () => {
-    setShowRamos(false)
-    // El useEffect con [ramoId] se encarga de refrescar el nombre al re-renderizar
-  }
-
-  const handleRamoAsignado = async (ramoId, ramoName) => {
-    setRamoNombre(ramoName || '')
-    const hashedPin = pin ? await hashPin(pin) : (settings.pin || '')
-    onSave({
-      companyName: companyName.trim() || 'Mi Negocio',
-      bgColor,
-      textColor,
-      ramoId: ramoId || '',
-      pin: hashedPin,
-      sessionHoras,
-      sessionMinutos,
-    })
-  }
 
   useEffect(() => {
     if (currentRamoId) {
@@ -212,36 +184,12 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
 
               <button
                 className="settings-admin-btn"
-                onClick={() => setShowRamos(true)}
+                onClick={() => setShowBackup(true)}
               >
-                <span className="settings-admin-btn-icon">🏪</span>
+                <span className="settings-admin-btn-icon">💾</span>
                 <div className="settings-admin-btn-text">
-                  <strong>Ramos Comerciales</strong>
-                  <span>Crear y gestionar ramos del negocio</span>
-                </div>
-                <span className="settings-admin-btn-arrow">›</span>
-              </button>
-
-              <button
-                className="settings-admin-btn"
-                onClick={() => setShowCategories(true)}
-              >
-                <span className="settings-admin-btn-icon">📂</span>
-                <div className="settings-admin-btn-text">
-                  <strong>Categorías</strong>
-                  <span>Gestionar categorías del ramo activo</span>
-                </div>
-                <span className="settings-admin-btn-arrow">›</span>
-              </button>
-
-              <button
-                className="settings-admin-btn"
-                onClick={() => setShowProducts(true)}
-              >
-                <span className="settings-admin-btn-icon">📦</span>
-                <div className="settings-admin-btn-text">
-                  <strong>Productos</strong>
-                  <span>Gestionar productos del ramo activo</span>
+                  <strong>Backup</strong>
+                  <span>Exportar e importar datos del sistema</span>
                 </div>
                 <span className="settings-admin-btn-arrow">›</span>
               </button>
@@ -336,20 +284,6 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
                 </div>
               )}
             </div>
-
-            <hr className="settings-divider" />
-
-            <button
-              className="settings-admin-btn"
-              onClick={() => setShowBackup(true)}
-            >
-              <span className="settings-admin-btn-icon">💾</span>
-              <div className="settings-admin-btn-text">
-                <strong>Backup</strong>
-                <span>Exportar e importar datos del sistema</span>
-              </div>
-              <span className="settings-admin-btn-arrow">›</span>
-            </button>
           </div>
 
           <div className="modal-actions">
@@ -361,33 +295,6 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
             </button>
           </div>
         </div>
-
-        {showRamos && (
-          <RamosComerciales
-            onClose={closeRamos}
-            onRamoAsignado={handleRamoAsignado}
-          />
-        )}
-
-        {showCategories && (
-          <Categories
-            ramoId={ramoId}
-            onClose={() => {
-              setShowCategories(false)
-              if (onRefreshCategories) onRefreshCategories()
-            }}
-          />
-        )}
-
-        {showProducts && (
-          <Products
-            ramoId={ramoId}
-            onClose={() => {
-              setShowProducts(false)
-              if (onRefreshProducts) onRefreshProducts()
-            }}
-          />
-        )}
 
         {showBackup && (
           <BackupModal

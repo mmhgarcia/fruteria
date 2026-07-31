@@ -15,6 +15,9 @@ import PinPrompt from './components/PinPrompt'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import SalesReportModal from './components/SalesReportModal'
 import LogsViewerModal from './components/LogsViewerModal'
+import RamosComerciales from './components/RamosComerciales'
+import Categories from './components/Categories'
+import Products from './components/Products'
 import { getLogs, LOG_TYPES } from './utils/logService'
 import { estaDesbloqueado, crearSesion, bloquearSesion } from './utils/session'
 import './App.css'
@@ -49,6 +52,9 @@ function App() {
   const [showTasa, setShowTasa] = useState(false)
   const [showSalesReport, setShowSalesReport] = useState(false)
   const [showLogs, setShowLogs] = useState(false)
+  const [showRamos, setShowRamos] = useState(false)
+  const [showCategories, setShowCategories] = useState(false)
+  const [showProducts, setShowProducts] = useState(false)
 
   // Lee de localStorage cuándo fue la última vez que se marcaron leídas
   const [lastAlertReadAt, setLastAlertReadAt] = useState(
@@ -100,6 +106,10 @@ function App() {
     localStorage.setItem('fruteria-alert-read-at', now)
     setLastAlertReadAt(now)
     setAlertCount(0)
+  }
+
+  const handleRamoAsignado = (ramoId) => {
+    setSettings((prev) => ({ ...prev, ramoId: ramoId || '' }))
   }
 
   // El ramo activo siempre disponible sin consultar BD
@@ -280,6 +290,9 @@ function App() {
         onOpenTasa={() => setShowTasa(true)}
         onOpenSalesReport={() => setShowSalesReport(true)}
         onOpenLogs={() => setShowLogs(true)}
+        onOpenRamos={() => setShowRamos(true)}
+        onOpenCategories={() => setShowCategories(true)}
+        onOpenProducts={() => setShowProducts(true)}
       />
       <Header
         cartCount={totals.count}
@@ -358,15 +371,10 @@ function App() {
           settings={settings}
           onSave={setSettings}
           onClose={() => setSettingsOpen(false)}
-          onTasaChange={setTasa}
-          ramoId={ramoActivo}
-          onRefreshProducts={loadProducts}
-          onRefreshCategories={loadCategories}
           onRefreshBackup={() => {
             loadProducts()
             loadCategories()
           }}
-          onAlertRead={handleAlertRead}
         />
       )}
 
@@ -388,6 +396,33 @@ function App() {
         <LogsViewerModal
           onClose={() => setShowLogs(false)}
           onAlertRead={handleAlertRead}
+        />
+      )}
+
+      {showRamos && (
+        <RamosComerciales
+          onClose={() => setShowRamos(false)}
+          onRamoAsignado={handleRamoAsignado}
+        />
+      )}
+
+      {showCategories && (
+        <Categories
+          ramoId={ramoActivo}
+          onClose={() => {
+            setShowCategories(false)
+            loadCategories()
+          }}
+        />
+      )}
+
+      {showProducts && (
+        <Products
+          ramoId={ramoActivo}
+          onClose={() => {
+            setShowProducts(false)
+            loadProducts()
+          }}
         />
       )}
 

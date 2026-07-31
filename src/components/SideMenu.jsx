@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenLogs }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenLogs, onOpenRamos, onOpenCategories, onOpenProducts }) {
   const MENU_OPTIONS = [
     { id: 'config', label: 'Configuración', icon: '⚙️' },
   ]
@@ -9,6 +9,9 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
     { id: 'tasa', label: 'Tasa BCV', icon: '💱', onClick: onOpenTasa },
     { id: 'sales', label: 'Resumen Ventas', icon: '📊', onClick: onOpenSalesReport },
     { id: 'logs', label: 'Logs del Sistema', icon: '📋', onClick: onOpenLogs },
+    { id: 'ramos', label: 'Ramos Comerciales', icon: '🏪', onClick: onOpenRamos },
+    { id: 'categorias', label: 'Categorías', icon: '📂', onClick: onOpenCategories },
+    { id: 'productos', label: 'Productos', icon: '📦', onClick: onOpenProducts },
   ]
   const verAdmin = sesionActiva
   const menuRef = useRef(null)
