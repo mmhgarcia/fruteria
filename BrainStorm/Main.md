@@ -19,7 +19,6 @@ mindmap
     Administracion
       05-Historico-Ventas
       06-Unicidad-Ramo
-      09-Administracion-Analitica
       19-Modulo-Inventario
     Seguridad
       07-Control-Acceso
@@ -36,6 +35,7 @@ mindmap
       Done/02-Carrito-Ticket
       Done/03-Flujo-Cobranza
       Done/08-Gestion-Productos
+      Done/09-Admin-Analitica
 ```
 
 ---
@@ -52,7 +52,6 @@ mindmap
 | 05 | Histórico de Ventas | 🔍 En análisis | Alta | [📄](05-historico-ventas.md) |
 | 06 | Unicidad de Ramo | 💡 Idea | Media | [📄](06-unicidad-ramo.md) |
 | 07 | Seguridad y Control de Acceso | 🛡️ Implementado parcial | Alta | [📄](07-seguridad-control-acceso.md) |
-| 09 | Administración y Analítica | 🔍 En análisis | Media | [📄](09-administracion-analitica.md) |
 | 10 | Persistencia y Base de Datos | 🗄️ Estable | Alta | [📄](10-persistencia-bases-datos.md) |
 | 11 | PouchDB y Sincronización | 💡 En evaluación | Baja | [📄](11-pouchdb-sincronizacion.md) |
 | 12 | Arquitectura del Sistema (PWA) | ⚡ En evolución | Alta | [📄](12-arquitectura-sistema.md) |
@@ -73,6 +72,7 @@ mindmap
 | 02 | Carrito y Ticket de Venta | [📄](Done/02-carrito-ticket.md) |
 | 03 | Flujo de Cobranza | [📄](Done/03-flujo-cobranza.md) |
 | 08 | Gestión de Productos y Categorías | [📄](Done/08-gestion-productos-categorias.md) |
+| 09 | Administración y Analítica | [📄](Done/09-administracion-analitica.md) |
 
 **Leyenda:**
 - ✅ Completado = Implementado en código, archivado en `Done/`
