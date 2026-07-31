@@ -284,6 +284,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .products-field {
