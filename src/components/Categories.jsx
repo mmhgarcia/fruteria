@@ -42,10 +42,10 @@ export default function Categories({ onClose, ramoId }) {
     }
   }
 
-  async function loadCategories(ramoId) {
+  async function loadCategories(filtroRamo = ramoId) {
     try {
       const list = await getCategories()
-      const filtered = list.filter((c) => c.ramo === ramoId)
+      const filtered = list.filter((c) => c.ramo === filtroRamo)
       setCategories(
         filtered.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
       )
