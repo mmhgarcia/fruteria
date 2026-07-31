@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { getProducts, addProduct, updateProduct, deleteProduct, seedProducts } from '../utils/db'
 import { getCategories } from '../utils/categories'
-import { getRamos } from '../utils/ramos'
 import { defaultProducts } from '../data/products'
+import { getRamoPorId } from '../data/ramos'
 import { formatCurrency } from '../utils/format'
-import RamoSelector from './RamoSelector'
 import './Products.css'
 
 const EMPTY_PRODUCT = {
@@ -23,7 +22,6 @@ const ICONS = [
 export default function Products({ onClose, ramoId }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
-  const [ramos, setRamos] = useState([])
   const [form, setForm] = useState({ ...EMPTY_PRODUCT, ramo: ramoId || 'fruteria' })
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -33,7 +31,6 @@ export default function Products({ onClose, ramoId }) {
   useEffect(() => {
     loadProducts()
     loadCategories()
-    loadRamos()
   }, [])
 
   async function loadProducts() {
@@ -55,21 +52,6 @@ export default function Products({ onClose, ramoId }) {
       )
     } catch (error) {
       alert('Error al cargar categorías: ' + error.message)
-    }
-  }
-
-  async function loadRamos() {
-    try {
-      const list = await getRamos()
-      // Sort: fruteria first
-      list.sort((a, b) => {
-        if (a.id === 'fruteria') return -1
-        if (b.id === 'fruteria') return 1
-        return a.name.localeCompare(b.name)
-      })
-      setRamos(list)
-    } catch (error) {
-      console.error('Error al cargar ramos:', error)
     }
   }
 
@@ -222,7 +204,7 @@ export default function Products({ onClose, ramoId }) {
                       <strong>{product.name}</strong>
                       <span>
                         {product.group} · {product.um} · ${formatCurrency(product.price)}
-                        {product.ramo ? ` · ${ramos.find((r) => r.id === product.ramo)?.name || product.ramo}` : ''}
+                        {product.ramo ? ` · ${getRamoPorId(product.ramo)?.name || product.ramo}` : ''}
                       </span>
                     </div>
                     <button
@@ -262,18 +244,10 @@ export default function Products({ onClose, ramoId }) {
               />
 
               <div className="products-form-row">
-                <RamoSelector
-                  value={form.ramo}
-                  onChange={(val) => setForm((prev) => ({ ...prev, ramo: val }))}
-                  ramos={ramos}
-                  placeholder="-- Ramo --"
-                  showInactive
-                />
-
                 <select name="group" value={form.group} onChange={handleChange}>
                   <option value="">Sin categoría</option>
                   {categories
-                    .filter((cat) => !form.ramo || cat.ramo === form.ramo)
+                    .filter((cat) => cat.ramo === ramoId)
                     .map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.icon} {cat.name}

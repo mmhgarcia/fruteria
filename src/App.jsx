@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react'
-import { defaultProducts } from './data/products'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { getProducts, seedProducts, addSale } from './utils/db'
 import { getCategories, seedCategories } from './utils/categories'
@@ -12,13 +11,14 @@ import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
 import SettingsModal from './components/SettingsModal'
 import PinPrompt from './components/PinPrompt'
+import RamoSetup from './components/RamoSetup'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import SalesReportModal from './components/SalesReportModal'
 import LogsViewerModal from './components/LogsViewerModal'
-import RamosComerciales from './components/RamosComerciales'
 import Categories from './components/Categories'
 import Products from './components/Products'
-import { getLogs, LOG_TYPES } from './utils/logService'
+import { getRamoPorId } from './data/ramos'
+import { getLogs, addLog, LOG_TYPES } from './utils/logService'
 import { estaDesbloqueado, crearSesion, bloquearSesion } from './utils/session'
 import './App.css'
 
@@ -40,7 +40,7 @@ function App() {
     companyName: 'Frutería POS',
     bgColor: '#4a8c5e',
     textColor: '#ffffff',
-    ramoId: 'fruteria',
+    ramoId: '',
     pin: '',
     sessionHoras: 8,
     sessionMinutos: 0,
@@ -52,7 +52,6 @@ function App() {
   const [showTasa, setShowTasa] = useState(false)
   const [showSalesReport, setShowSalesReport] = useState(false)
   const [showLogs, setShowLogs] = useState(false)
-  const [showRamos, setShowRamos] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
 
@@ -108,8 +107,19 @@ function App() {
     setAlertCount(0)
   }
 
-  const handleRamoAsignado = (ramoId) => {
-    setSettings((prev) => ({ ...prev, ramoId: ramoId || '' }))
+  const handleRamoSeleccionado = async (ramo) => {
+    try {
+      await addLog(LOG_TYPES.INFO, 'Ramo comercial asignado', {
+        ramoId: ramo.id,
+        ramoName: ramo.name,
+        timestamp: new Date().toISOString(),
+      })
+    } catch (e) {
+      // silencio
+    }
+    setSettings((prev) => ({ ...prev, ramoId: ramo.id }))
+    loadProducts(ramo.id)
+    loadCategories(ramo.id)
   }
 
   // El ramo activo siempre disponible sin consultar BD
@@ -128,10 +138,11 @@ function App() {
     root.style.setProperty('--header-text', settings.textColor)
   }, [settings])
 
-  async function loadProducts() {
+  async function loadProducts(ramoIdOverride) {
     try {
       setLoadingProducts(true)
-      await seedProducts(defaultProducts)
+      const ramo = getRamoPorId(ramoIdOverride || ramoActivo)
+      await seedProducts(ramo ? ramo.products : [])
       const list = await getProducts()
       setProducts(list.sort((a, b) => a.name.localeCompare(b.name)))
     } catch (error) {
@@ -141,14 +152,13 @@ function App() {
     }
   }
 
-  async function loadCategories() {
+  async function loadCategories(ramoIdOverride) {
     try {
       setLoadingCategories(true)
-      await seedCategories([
-        { id: 'frutas', name: 'Frutas', icon: '🍊', order: 1, ramo: 'fruteria' },
-        { id: 'verduras', name: 'Verduras', icon: '🥬', order: 2, ramo: 'fruteria' },
-        { id: 'ofertas', name: 'Ofertas', icon: '🏷️', order: 3, ramo: 'fruteria' },
-      ])
+      const ramo = getRamoPorId(ramoIdOverride || ramoActivo)
+      if (ramo) {
+        await seedCategories(ramo.categories.map((c) => ({ ...c, ramo: ramo.id })))
+      }
       const list = await getCategories()
       setCategories(
         list.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
@@ -269,6 +279,9 @@ function App() {
 
   return (
     <div className="app">
+      {!settings.ramoId && (
+        <RamoSetup onSelect={handleRamoSeleccionado} />
+      )}
       <SideMenu
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
@@ -290,7 +303,6 @@ function App() {
         onOpenTasa={() => setShowTasa(true)}
         onOpenSalesReport={() => setShowSalesReport(true)}
         onOpenLogs={() => setShowLogs(true)}
-        onOpenRamos={() => setShowRamos(true)}
         onOpenCategories={() => setShowCategories(true)}
         onOpenProducts={() => setShowProducts(true)}
       />
@@ -396,13 +408,6 @@ function App() {
         <LogsViewerModal
           onClose={() => setShowLogs(false)}
           onAlertRead={handleAlertRead}
-        />
-      )}
-
-      {showRamos && (
-        <RamosComerciales
-          onClose={() => setShowRamos(false)}
-          onRamoAsignado={handleRamoAsignado}
         />
       )}
 

@@ -16,7 +16,6 @@ Documentar la estructura actual del menú lateral y servir de referencia viva mi
 Orden y agrupación definidos por el dueño del negocio:
 
 ```
-🏪 Ramos Comerciales
 📂 Categorías de Producto
 📦 Catálogo de Productos
 ─────────────
@@ -30,6 +29,8 @@ Orden y agrupación definidos por el dueño del negocio:
 🔒 Bloquear ahora
 ```
 
+> El ramo comercial ya **no** es una pantalla del menú: se elige una sola vez en el asistente de instalación (ver [Done/06-unicidad-ramo.md](Done/06-unicidad-ramo.md)).
+
 ### Reglas de visibilidad
 - **Bloqueo:** si hay PIN configurado y **no** hay sesión activa, solo se muestra **⚙️ Configuración de Sistema** (actúa como puerta de desbloqueo) y 🔒 Bloquear ahora.
 - **Admin:** el resto de opciones aparecen únicamente con **sesión activa** (`sesionActiva`). Un cajero nunca las ve.
@@ -39,9 +40,10 @@ Orden y agrupación definidos por el dueño del negocio:
 ## 🧭 Decisiones Tomadas
 
 - Los modales de admin viven en `App.jsx` (estado elevado), no en SettingsModal:
-  `showTasa`, `showSalesReport`, `showLogs`, `showRamos`, `showCategories`, `showProducts`.
+  `showTasa`, `showSalesReport`, `showLogs`, `showCategories`, `showProducts`.
 - `Configuración de Sistema` quedó reducida a: empresa, ramo asignado (solo lectura), PIN + duración de sesión, colores y Backup.
-- Tasa BCV, Reporte de Ventas, Logs, Ramos, Categorías y Productos **no** están en Configuración; solo en el SideMenu.
+- Tasa BCV, Reporte de Ventas, Logs, Categorías y Productos **no** están en Configuración; solo en el SideMenu.
+- Categorías y Productos trabajan únicamente sobre el ramo elegido al instalar (sin selector de ramo).
 
 ---
 

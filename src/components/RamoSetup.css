@@ -1,0 +1,72 @@
+.ramo-setup {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f6f5;
+  padding: 16px;
+}
+
+.ramo-setup-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  max-width: 560px;
+  width: 100%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.ramo-setup-title {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+  color: #2c3e2f;
+}
+
+.ramo-setup-subtitle {
+  margin: 0 0 20px;
+  color: #5c6b5f;
+  font-size: 0.95rem;
+}
+
+.ramo-setup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.ramo-setup-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 10px;
+  border: 2px solid #e2e8e4;
+  border-radius: 12px;
+  background: #fafcfa;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.ramo-setup-btn:hover {
+  border-color: #4a8c5e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 140, 94, 0.2);
+}
+
+.ramo-setup-btn:active {
+  transform: translateY(0);
+}
+
+.ramo-setup-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.ramo-setup-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e2f;
+}

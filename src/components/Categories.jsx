@@ -1,14 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { getCategories, addCategory, updateCategory, deleteCategory, seedCategories } from '../utils/categories'
-import { getRamos, addRamo } from '../utils/ramos'
-import RamoSelector from './RamoSelector'
+import { getRamoPorId } from '../data/ramos'
 import './Products.css'
-
-const DEFAULT_CATEGORIES = [
-  { name: 'Frutas', icon: '🍊', id: 'frutas', order: 1, ramo: 'fruteria' },
-  { name: 'Verduras', icon: '🥬', id: 'verduras', order: 2, ramo: 'fruteria' },
-  { name: 'Ofertas', icon: '🏷️', id: 'ofertas', order: 3, ramo: 'fruteria' },
-]
 
 const EMPTY_CATEGORY = {
   name: '',
@@ -21,8 +14,6 @@ const ICONS = ['🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '
 
 export default function Categories({ onClose, ramoId }) {
   const [categories, setCategories] = useState([])
-  const [ramos, setRamos] = useState([])
-  const [selectedRamo, setSelectedRamo] = useState(ramoId || '')
   const [form, setForm] = useState(EMPTY_CATEGORY)
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -39,33 +30,11 @@ export default function Categories({ onClose, ramoId }) {
   async function loadData() {
     try {
       setLoading(true)
-      // 1. Ensure at least one ramo exists
-      let ramosList = await getRamos()
-      if (ramosList.length === 0) {
-        const defaultRamo = { id: 'fruteria', name: 'Fruteria', activo: true }
-        await addRamo(defaultRamo)
-        ramosList = [defaultRamo]
+      const ramo = getRamoPorId(ramoId)
+      if (ramo) {
+        await seedCategories(ramo.categories.map((c) => ({ ...c, ramo: ramo.id })))
       }
-      // Sort: "fruteria" first, then the rest alphabetically
-      ramosList.sort((a, b) => {
-        if (a.id === 'fruteria') return -1
-        if (b.id === 'fruteria') return 1
-        return a.name.localeCompare(b.name)
-      })
-      setRamos(ramosList)
-
-      // Pre-select ramo: prop global > first available
-      const ramoActual = ramoId || selectedRamo || ramosList[0].id
-      setSelectedRamo(ramoActual)
-
-      // 2. Seed default categories for this ramo
-      const defaultsForRamo = DEFAULT_CATEGORIES.filter((c) => c.ramo === ramoActual)
-      if (defaultsForRamo.length > 0) {
-        await seedCategories(defaultsForRamo)
-      }
-
-      // 3. Load all categories and filter by ramo
-      await loadCategories(ramoActual)
+      await loadCategories(ramoId)
     } catch (error) {
       alert('Error al cargar datos: ' + error.message)
     } finally {
@@ -76,23 +45,13 @@ export default function Categories({ onClose, ramoId }) {
   async function loadCategories(ramoId) {
     try {
       const list = await getCategories()
-      const filtered = list.filter((c) => c.ramo === (ramoId || selectedRamo))
+      const filtered = list.filter((c) => c.ramo === ramoId)
       setCategories(
         filtered.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name))
       )
     } catch (error) {
       alert('Error al cargar categorías: ' + error.message)
     }
-  }
-
-  const handleRamoChange = (e) => {
-    const ramoId = e.target.value
-    setSelectedRamo(ramoId)
-    loadCategories(ramoId)
-    // Reset form when switching ramo
-    setForm(EMPTY_CATEGORY)
-    setEditingId(null)
-    setShowForm(false)
   }
 
   const handleChange = (e) => {
@@ -106,15 +65,10 @@ export default function Categories({ onClose, ramoId }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!selectedRamo) {
-      alert('Debe seleccionar un Ramo Comercial.')
-      return
-    }
-
     const category = {
       ...form,
       id: form.id.trim().toLowerCase().replace(/\s+/g, '-'),
-      ramo: selectedRamo,
+      ramo: ramoId,
     }
 
     if (!category.id) {
@@ -132,7 +86,7 @@ export default function Categories({ onClose, ramoId }) {
           alert('Ya existe una categoría con ese identificador.')
           return
         }
-        category.order = existing.filter((c) => c.ramo === selectedRamo).length + 1
+        category.order = existing.filter((c) => c.ramo === ramoId).length + 1
         await addCategory(category)
       }
       await loadCategories()
@@ -265,12 +219,6 @@ export default function Categories({ onClose, ramoId }) {
       order: category.order ?? 0,
     })
     setEditingId(category.id)
-    // Switch ramo dropdown to the category's ramo
-    if (category.ramo && category.ramo !== selectedRamo) {
-      setSelectedRamo(category.ramo)
-      // Reload categories for that ramo
-      setTimeout(() => loadCategories(category.ramo), 0)
-    }
     setShowForm(true)
   }
 
@@ -307,14 +255,6 @@ export default function Categories({ onClose, ramoId }) {
         </div>
 
         <div className="products-body">
-          {/* Selector de Ramo Comercial */}
-          <RamoSelector
-            label="Ramo Comercial:"
-            value={selectedRamo}
-            onChange={handleRamoChange}
-            className="ramo-selector-select"
-          />
-
           {loading ? (
             <p className="products-empty">Cargando...</p>
           ) : categories.length === 0 ? (
@@ -366,7 +306,7 @@ export default function Categories({ onClose, ramoId }) {
                     <span className="products-item-avatar">{category.icon}</span>
                     <div>
                       <strong>{category.name}</strong>
-                      <span>ID: {category.id} · {ramos.find((r) => r.id === category.ramo)?.name || category.ramo || 'Sin ramo'}</span>
+                      <span>ID: {category.id} · {getRamoPorId(category.ramo)?.name || category.ramo || 'Sin ramo'}</span>
                     </div>
                   </div>
                   <button
@@ -412,7 +352,7 @@ export default function Categories({ onClose, ramoId }) {
               />
 
               <div className="categories-form-ramo">
-                Ramo: <strong>{ramos.find((r) => r.id === selectedRamo)?.name || selectedRamo}</strong>
+                Ramo: <strong>{getRamoPorId(ramoId)?.name || ramoId}</strong>
               </div>
 
               <div className="products-icons">

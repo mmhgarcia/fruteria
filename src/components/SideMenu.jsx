@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenLogs, onOpenRamos, onOpenCategories, onOpenProducts }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenLogs, onOpenCategories, onOpenProducts }) {
   const CONFIG_OPTION = { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' }
   const ADMIN_OPTIONS = [
-    { id: 'ramos', label: 'Ramos Comerciales', icon: '🏪', onClick: onOpenRamos },
     { id: 'categorias', label: 'Categorías de Producto', icon: '📂', onClick: onOpenCategories },
     { id: 'productos', label: 'Catálogo de Productos', icon: '📦', onClick: onOpenProducts },
     { type: 'separator', id: 'sep1' },

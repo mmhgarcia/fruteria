@@ -18,7 +18,6 @@ mindmap
       12-Arquitectura-Sistema
     Administracion
       05-Historico-Ventas
-      06-Unicidad-Ramo
       19-Modulo-Inventario
     Seguridad
       07-Control-Acceso
@@ -35,6 +34,7 @@ mindmap
       Done/01-PantallaPrincipal
       Done/02-Carrito-Ticket
       Done/03-Flujo-Cobranza
+      Done/06-Unicidad-Ramo
       Done/08-Gestion-Productos
       Done/09-Admin-Analitica
       Done/20-Funcionamiento-PIN
@@ -52,7 +52,6 @@ mindmap
 |---|------|--------|-----------|---------|
 | 04 | Atención Simultánea | 💡 Idea | Media | [📄](04-atencion-simultanea.md) |
 | 05 | Histórico de Ventas | 🔍 En análisis | Alta | [📄](05-historico-ventas.md) |
-| 06 | Unicidad de Ramo | 💡 Idea | Media | [📄](06-unicidad-ramo.md) |
 | 07 | Seguridad y Control de Acceso | 🛡️ Implementado parcial | Alta | [📄](07-seguridad-control-acceso.md) |
 | 10 | Persistencia y Base de Datos | 🗄️ Estable | Alta | [📄](10-persistencia-bases-datos.md) |
 | 11 | PouchDB y Sincronización | 💡 En evaluación | Baja | [📄](11-pouchdb-sincronizacion.md) |
@@ -73,6 +72,7 @@ mindmap
 | 01 | Pantalla Principal y UX | [📄](Done/01-pantalla-principal-ux.md) |
 | 02 | Carrito y Ticket de Venta | [📄](Done/02-carrito-ticket.md) |
 | 03 | Flujo de Cobranza | [📄](Done/03-flujo-cobranza.md) |
+| 06 | Unicidad de Ramo | [📄](Done/06-unicidad-ramo.md) |
 | 08 | Gestión de Productos y Categorías | [📄](Done/08-gestion-productos-categorias.md) |
 | 09 | Administración y Analítica | [📄](Done/09-administracion-analitica.md) |
 | 20 | Funcionamiento del PIN | [📄](Done/20-funcionamiento-pin.md) |

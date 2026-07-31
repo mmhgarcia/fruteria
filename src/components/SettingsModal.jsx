@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { getRamos } from '../utils/ramos'
+import { useState } from 'react'
+import { getRamoPorId } from '../data/ramos'
 // import RamoSelector from './RamoSelector'
 import { hashPin } from '../utils/hash'
 import { tiempoRestanteSesion, bloquearSesion } from '../utils/session'
@@ -24,24 +24,13 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
   const currentRamoId = settings.ramoId || ''
   const [pin, setPin] = useState('') // always start empty; hashed on save
   const hasPin = settings.pin ? true : false
-  const [ramoNombre, setRamoNombre] = useState('')
+  const ramoNombre = currentRamoId ? (getRamoPorId(currentRamoId)?.name || '') : ''
   const [showBackup, setShowBackup] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
   const [sessionHoras, setSessionHoras] = useState(settings.sessionHoras ?? 8)
   const [sessionMinutos, setSessionMinutos] = useState(settings.sessionMinutos ?? 0)
   const [sesionInfo, setSesionInfo] = useState(tiempoRestanteSesion)
-
-  useEffect(() => {
-    if (currentRamoId) {
-      getRamos()
-        .then((list) => {
-          const found = list.find((r) => r.id === currentRamoId)
-          if (found) setRamoNombre(found.name)
-        })
-        .catch(console.error)
-    }
-  }, [currentRamoId])
 
   const handleSave = async () => {
     // If pin is empty and there was one before, clear it. Otherwise hash the new one.
