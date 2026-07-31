@@ -2,16 +2,18 @@ import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
 export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenLogs, onOpenRamos, onOpenCategories, onOpenProducts }) {
-  const MENU_OPTIONS = [
-    { id: 'config', label: 'Configuración', icon: '⚙️' },
-  ]
+  const CONFIG_OPTION = { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' }
   const ADMIN_OPTIONS = [
-    { id: 'tasa', label: 'Tasa BCV', icon: '💱', onClick: onOpenTasa },
-    { id: 'sales', label: 'Resumen Ventas', icon: '📊', onClick: onOpenSalesReport },
-    { id: 'logs', label: 'Logs del Sistema', icon: '📋', onClick: onOpenLogs },
     { id: 'ramos', label: 'Ramos Comerciales', icon: '🏪', onClick: onOpenRamos },
-    { id: 'categorias', label: 'Categorías', icon: '📂', onClick: onOpenCategories },
-    { id: 'productos', label: 'Productos', icon: '📦', onClick: onOpenProducts },
+    { id: 'categorias', label: 'Categorías de Producto', icon: '📂', onClick: onOpenCategories },
+    { id: 'productos', label: 'Catálogo de Productos', icon: '📦', onClick: onOpenProducts },
+    { type: 'separator', id: 'sep1' },
+    { id: 'sales', label: 'Reporte de Ventas', icon: '📊', onClick: onOpenSalesReport },
+    { type: 'separator', id: 'sep2' },
+    { id: 'tasa', label: 'Tasa BCV', icon: '💱', onClick: onOpenTasa },
+    { type: 'separator', id: 'sep3' },
+    { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' },
+    { id: 'logs', label: 'Visor de Logs', icon: '📋', onClick: onOpenLogs },
   ]
   const verAdmin = sesionActiva
   const menuRef = useRef(null)
@@ -94,33 +96,36 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
         </div>
 
         <nav className="side-menu-nav">
-          {MENU_OPTIONS.map((option) =>
+          {!verAdmin && (
+            <button
+              className={`side-menu-option ${currentFilter === CONFIG_OPTION.id ? 'active' : ''}`}
+              onClick={() => handleOptionClick(CONFIG_OPTION.id)}
+            >
+              <span className="side-menu-icon">{CONFIG_OPTION.icon}</span>
+              <span className="side-menu-label">{CONFIG_OPTION.label}</span>
+            </button>
+          )}
+          {verAdmin && ADMIN_OPTIONS.map((option) =>
             option.type === 'separator' ? (
               <hr key={option.id} className="side-menu-separator" />
             ) : (
               <button
                 key={option.id}
                 className={`side-menu-option ${currentFilter === option.id ? 'active' : ''}`}
-                onClick={() => handleOptionClick(option.id)}
+                onClick={() => {
+                  onClose()
+                  if (option.id === 'config') {
+                    handleOptionClick(option.id)
+                  } else {
+                    option.onClick()
+                  }
+                }}
               >
                 <span className="side-menu-icon">{option.icon}</span>
                 <span className="side-menu-label">{option.label}</span>
               </button>
             )
           )}
-          {verAdmin && ADMIN_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              className="side-menu-option"
-              onClick={() => {
-                onClose()
-                option.onClick()
-              }}
-            >
-              <span className="side-menu-icon">{option.icon}</span>
-              <span className="side-menu-label">{option.label}</span>
-            </button>
-          ))}
           {hasPin && (
             <button
               className="side-menu-option side-menu-lock"
