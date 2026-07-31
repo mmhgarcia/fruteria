@@ -367,18 +367,6 @@ function App() {
             loadCategories()
           }}
           onAlertRead={handleAlertRead}
-          onOpenTasa={() => {
-            setSettingsOpen(false)
-            setShowTasa(true)
-          }}
-          onOpenSalesReport={() => {
-            setSettingsOpen(false)
-            setShowSalesReport(true)
-          }}
-          onOpenLogs={() => {
-            setSettingsOpen(false)
-            setShowLogs(true)
-          }}
         />
       )}
 

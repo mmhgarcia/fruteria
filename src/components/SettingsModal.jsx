@@ -20,7 +20,7 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup, onAlertRead, onOpenTasa, onOpenSalesReport, onOpenLogs }) {
+export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup, onAlertRead }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
@@ -212,18 +212,6 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
 
               <button
                 className="settings-admin-btn"
-                onClick={() => onOpenTasa()}
-              >
-                <span className="settings-admin-btn-icon">💱</span>
-                <div className="settings-admin-btn-text">
-                  <strong>Tasa BCV</strong>
-                  <span>Registrar y gestionar tasas de cambio</span>
-                </div>
-                <span className="settings-admin-btn-arrow">›</span>
-              </button>
-
-              <button
-                className="settings-admin-btn"
                 onClick={() => setShowRamos(true)}
               >
                 <span className="settings-admin-btn-icon">🏪</span>
@@ -254,25 +242,6 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
                 <div className="settings-admin-btn-text">
                   <strong>Productos</strong>
                   <span>Gestionar productos del ramo activo</span>
-                </div>
-                <span className="settings-admin-btn-arrow">›</span>
-              </button>
-            </div>
-
-            <hr className="settings-divider" />
-
-            <div className="settings-section-group">
-
-              <h3 className="settings-admin-title">Reportes</h3>
-
-              <button
-                className="settings-admin-btn"
-                onClick={() => onOpenSalesReport()}
-              >
-                <span className="settings-admin-btn-icon">📊</span>
-                <div className="settings-admin-btn-text">
-                  <strong>Resumen Ventas</strong>
-                  <span>Consultar ventas realizadas</span>
                 </div>
                 <span className="settings-admin-btn-arrow">›</span>
               </button>
@@ -378,20 +347,6 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
               <div className="settings-admin-btn-text">
                 <strong>Backup</strong>
                 <span>Exportar e importar datos del sistema</span>
-              </div>
-              <span className="settings-admin-btn-arrow">›</span>
-            </button>
-
-            <hr className="settings-divider" />
-
-            <button
-              className="settings-admin-btn"
-              onClick={() => onOpenLogs()}
-            >
-              <span className="settings-admin-btn-icon">📋</span>
-              <div className="settings-admin-btn-text">
-                <strong>Logs del Sistema</strong>
-                <span>Ver registro de eventos y alertas</span>
               </div>
               <span className="settings-admin-btn-arrow">›</span>
             </button>
