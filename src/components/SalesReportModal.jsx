@@ -176,14 +176,16 @@ export default function SalesReportModal({ onClose, companyName }) {
 
         {/* ── HEADER ── */}
         <div className="modal-header">
-          <span className="modal-icon">📊</span>
-          <h2>Resumen de Ventas</h2>
-          <div className="sr-header-actions">
-            <span className="sr-pdf-label">PDF:</span>
-            <button className="btn-action" onClick={() => descargarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>Descargar</button>
-            <button className="btn-action" onClick={() => compartirPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>Compartir</button>
-            <button className="btn-action" onClick={() => exportarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>Ver</button>
+          <div className="sr-header-top">
+            <span className="modal-icon">📊</span>
+            <h2>Resumen de Ventas</h2>
             <button className="btn-cancel" onClick={onClose}>✕</button>
+          </div>
+          <div className="sr-pdf-bar">
+            <span className="sr-pdf-label">PDF:</span>
+            <button className="btn-action" onClick={() => exportarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>VER</button>
+            <button className="btn-action" onClick={() => compartirPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>COMPARTIR</button>
+            <button className="btn-action" onClick={() => descargarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>DESCARGAR</button>
           </div>
         </div>
 

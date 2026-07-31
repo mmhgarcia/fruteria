@@ -18,28 +18,35 @@
 
 .sales-report-modal .modal-header {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
   flex-shrink: 0;
 }
 
-.sales-report-modal .modal-header h2 {
+.sr-header-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.sr-header-top h2 {
   flex: 1;
   font-size: 1.1rem;
   margin: 0;
 }
 
-/* ── BOTONES EN EL HEADER ── */
-
-.sr-header-actions {
+.sr-pdf-bar {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
+
+/* ── BOTONES EN EL HEADER ── */
 
 .sr-pdf-label {
   font-size: 0.8rem;
@@ -48,23 +55,25 @@
   margin-right: 2px;
 }
 
-.sr-header-actions .btn-action {
-  padding: 6px 12px;
+.sr-pdf-bar .btn-action {
+  padding: 5px 12px;
   border: 1px solid var(--border-color, #d1d5db);
   border-radius: 8px;
   background: var(--bg-secondary, #f9fafb);
   color: var(--text-primary, #111827);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
   cursor: pointer;
   transition: background 0.15s;
   white-space: nowrap;
 }
 
-.sr-header-actions .btn-action:hover {
+.sr-pdf-bar .btn-action:hover {
   background: var(--bg-hover, #e5e7eb);
 }
 
-.sr-header-actions .btn-cancel {
+.sr-header-top .btn-cancel {
   background: none;
   border: none;
   font-size: 1.2rem;
@@ -75,7 +84,7 @@
   line-height: 1;
 }
 
-.sr-header-actions .btn-cancel:hover {
+.sr-header-top .btn-cancel:hover {
   background: var(--bg-hover, #f3f4f6);
   color: var(--text-primary, #111827);
 }
