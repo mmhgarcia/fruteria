@@ -19,10 +19,11 @@ const ICONS = [
   '🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '🍈', '🍋', '🥑', '🥬', '🍅', '🧅', '🥕', '🥒', '🥔', '🫑', '🧄', '🏷️', '📦'
 ]
 
-export default function Products({ onClose, ramoId }) {
+export default function Products({ onClose, ramoId, tasa }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
-  const [form, setForm] = useState({ ...EMPTY_PRODUCT, ramo: ramoId || 'fruteria' })
+  const emptyForm = () => ({ ...EMPTY_PRODUCT, ramo: ramoId || 'fruteria', priceBs: '' })
+  const [form, setForm] = useState(emptyForm())
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -63,7 +64,16 @@ export default function Products({ onClose, ramoId }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    const num = parseFloat(value)
+    if (name === 'price') {
+      const priceBs = !Number.isNaN(num) && tasa > 0 ? Math.round(num * tasa * 100) / 100 : ''
+      setForm((prev) => ({ ...prev, price: value, priceBs }))
+    } else if (name === 'priceBs') {
+      const price = !Number.isNaN(num) && tasa > 0 ? Math.round((num / tasa) * 100) / 100 : ''
+      setForm((prev) => ({ ...prev, priceBs: value, price }))
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }))
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -72,8 +82,9 @@ export default function Products({ onClose, ramoId }) {
       alert('Debe seleccionar un Ramo Comercial.')
       return
     }
+    const { priceBs, ...rest } = form
     const product = {
-      ...form,
+      ...rest,
       price: parseFloat(form.price) || 0,
     }
 
@@ -84,7 +95,7 @@ export default function Products({ onClose, ramoId }) {
         await addProduct(product)
       }
       await loadProducts()
-      setForm(EMPTY_PRODUCT)
+      setForm(emptyForm())
       setEditingId(null)
     } catch (error) {
       alert('Error al guardar producto: ' + error.message)
@@ -98,6 +109,7 @@ export default function Products({ onClose, ramoId }) {
       group: product.group,
       um: product.um,
       price: product.price.toString(),
+      priceBs: tasa > 0 ? Math.round(product.price * tasa * 100) / 100 : '',
       ramo: product.ramo || '',
     })
     setEditingId(product.id)
@@ -116,13 +128,13 @@ export default function Products({ onClose, ramoId }) {
   }
 
   const handleCancel = () => {
-    setForm(EMPTY_PRODUCT)
+    setForm(emptyForm())
     setEditingId(null)
     setShowForm(false)
   }
 
   const handleAdd = () => {
-    setForm(EMPTY_PRODUCT)
+    setForm(emptyForm())
     setEditingId(null)
     setShowForm(true)
     setSearch('')
@@ -238,8 +250,9 @@ export default function Products({ onClose, ramoId }) {
         </button>
 
         {showForm && (
-          <div className="products-form-panel">
+          <div className="products-form-panel products-form-panel-top">
             <form className="products-form" onSubmit={handleSubmit}>
+              <label className="products-field-label">Nombre Producto</label>
               <input
                 name="name"
                 type="text"
@@ -249,34 +262,59 @@ export default function Products({ onClose, ramoId }) {
                 required
               />
 
-              <div className="products-form-row">
-                <select name="group" value={form.group} onChange={handleChange}>
-                  <option value="">Sin categoría</option>
-                  {categories
-                    .filter((cat) => cat.ramo === ramoId)
-                    .map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.icon} {cat.name}
-                      </option>
-                    ))}
-                </select>
+              <div className="products-field-grid">
+                <div className="products-field">
+                  <label className="products-field-label">Categoría</label>
+                  <select name="group" value={form.group} onChange={handleChange}>
+                    <option value="">Sin categoría</option>
+                    {categories
+                      .filter((cat) => cat.ramo === ramoId)
+                      .map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.icon} {cat.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
 
-                <select name="um" value={form.um} onChange={handleChange}>
-                  <option value="kg">kg</option>
-                  <option value="unidad">unidad</option>
-                </select>
+                <div className="products-field">
+                  <label className="products-field-label">Unidad Medida</label>
+                  <select name="um" value={form.um} onChange={handleChange}>
+                    <option value="kg">kg</option>
+                    <option value="unidad">unidad</option>
+                  </select>
+                </div>
 
-                <input
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  placeholder="Precio ($)"
-                  value={form.price}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="products-field">
+                  <label className="products-field-label">Precio UM ($)</label>
+                  <input
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    value={form.price}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="products-field">
+                  <label className="products-field-label">Precio UM (Bs)</label>
+                  <input
+                    name="priceBs"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    value={form.priceBs}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
 
+              <label className="products-field-label">Icono</label>
               <div className="products-icons">
                 {ICONS.map((icon) => (
                   <button
@@ -292,7 +330,7 @@ export default function Products({ onClose, ramoId }) {
 
               <div className="products-actions">
                 <button type="submit" className="products-btn products-btn-primary">
-                  {editingId ? 'Actualizar' : 'Añadir'}
+                  {editingId ? 'Actualizar' : 'Grabar'}
                 </button>
                 <button type="button" className="products-btn" onClick={handleCancel}>
                   Cancelar

@@ -280,6 +280,18 @@
   gap: 10px;
 }
 
+.products-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.products-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .products-icons {
   display: flex;
   flex-wrap: wrap;
@@ -511,6 +523,16 @@
   margin: 10px 0 4px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+/* ── Panel de formulario de productos: anclado arriba, sin scroll ── */
+
+.products-form-panel-top {
+  top: 0;
+  bottom: 0;
+  max-height: 100%;
+  border-radius: 0;
+  animation: slideDown 0.25s ease;
 }
 
 /* ── Panel de formulario de categorías: anclado arriba, sin scroll ── */

@@ -440,6 +440,7 @@ function App() {
       {showProducts && (
         <Products
           ramoId={ramoActivo}
+          tasa={tasa}
           onClose={() => {
             setShowProducts(false)
             loadProducts()
