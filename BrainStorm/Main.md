@@ -20,11 +20,13 @@ mindmap
       05-Historico-Ventas
       06-Unicidad-Ramo
       09-Administracion-Analitica
+      19-Modulo-Inventario
     Seguridad
       07-Control-Acceso
       13-Identificacion-App
       14-Proteccion-Copias
       15-Hasheo-Configuracion
+      20-Funcionamiento-PIN
     Proceso
       16-Estrategia-Testing
       17-Distribucion-Monetizacion
@@ -60,6 +62,8 @@ mindmap
 | 16 | Estrategia de Testing | 📋 Pendiente | Media | [📄](16-estrategia-testing.md) |
 | 17 | Distribución y Monetización | 💡 Idea | Baja | [📄](17-distribucion-monetizacion.md) |
 | 18 | Rendimiento y Optimización | ⚡ Pendiente | Media | [📄](18-rendimiento-optimizacion.md) |
+| 19 | Módulo de Inventario | 🔍 En análisis | Alta | [📄](19-modulo-inventario.md) |
+| 20 | Funcionamiento del PIN | 🛡️ Implementado | Alta | [📄](20-funcionamiento-pin.md) |
 
 ### ✅ Completados (archivados en `Done/`)
 
