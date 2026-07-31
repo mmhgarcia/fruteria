@@ -179,9 +179,10 @@ export default function SalesReportModal({ onClose, companyName }) {
           <span className="modal-icon">📊</span>
           <h2>Resumen de Ventas</h2>
           <div className="sr-header-actions">
-            <button className="btn-action" onClick={() => exportarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>📄 Ver PDF</button>
-            <button className="btn-action" onClick={() => descargarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>📥 Descargar</button>
-            <button className="btn-action" onClick={() => compartirPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>📤 Compartir</button>
+            <span className="sr-pdf-label">PDF:</span>
+            <button className="btn-action" onClick={() => descargarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>Descargar</button>
+            <button className="btn-action" onClick={() => compartirPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>Compartir</button>
+            <button className="btn-action" onClick={() => exportarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, modalidad: presetActivo, reporte })}>Ver</button>
             <button className="btn-cancel" onClick={onClose}>✕</button>
           </div>
         </div>
