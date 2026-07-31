@@ -12,7 +12,29 @@ Proveer herramientas de administración y cierre de caja: reportes financieros, 
 
 ---
 
+## ✅ Implementado
+
+### Selector de Fechas con Calendario
+- Inputs `<input type="date">` con calendario nativo en Desde y Hasta
+- Presets funcionales: Hoy, Ayer, Semana, Mes calculan el rango real
+- Modo Personalizado se activa al editar manualmente una fecha
+- Lógica en `calcularRango()` dentro de `SalesReportModal.jsx`
+
+### Interfaz Visual
+- Tarjetas de resumen (Total Ventas, Ticket Promedio, Total USD, Total Bs)
+- Tabla de desglose por método de pago (sin columna Total)
+- Tabla paginada de productos vendidos con búsqueda
+- Botones de acción: Exportar CSV, Imprimir
+- Secciones colapsables (Dashboard abierto por defecto)
+
+---
+
 ## Pendiente / Ideas
+
+### Conectar con Datos Reales
+- Reemplazar MOCK_TARJETAS, MOCK_METODOS, MOCK_PRODUCTOS con consultas a IndexedDB
+- Implementar filtro real por rango de fechas
+- Calcular totales reales desde la base de datos
 
 ### Desglose Financiero en Resumen
 - El resumen de ventas debe totalizar el dinero clasificado por cada método de pago:
@@ -21,11 +43,6 @@ Proveer herramientas de administración y cierre de caja: reportes financieros, 
   - Pago Móvil
   - Punto/Divisa
 - Mostrar subtotales por método y gran total
-
-### Filtro de Fechas
-- Selector de calendario en el resumen diario
-- Presets: Hoy, Ayer, Esta Semana, Este Mes, Personalizado
-- Permitir auditorías de días anteriores, semanas o meses
 
 ### Validación de Decimales y Ceros
 - Corregir errores de truncado: ítems con 0 unidades pero con ingresos generados
@@ -37,7 +54,6 @@ Proveer herramientas de administración y cierre de caja: reportes financieros, 
 - [ ] Ventas por categoría
 - [ ] Ventas por hora del día (picos de atención)
 - [ ] Comparativa vs semana anterior
-- [ ] Ticket promedio
 - [ ] Exportar a PDF (descargable)
 
 ---
