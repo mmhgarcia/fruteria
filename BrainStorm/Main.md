@@ -25,7 +25,8 @@ mindmap
       13-Identificacion-App
       14-Proteccion-Copias
       15-Hasheo-Configuracion
-      20-Funcionamiento-PIN
+    UX & Navegacion
+      21-SideMenu-Navegacion
     Proceso
       16-Estrategia-Testing
       17-Distribucion-Monetizacion
@@ -36,6 +37,7 @@ mindmap
       Done/03-Flujo-Cobranza
       Done/08-Gestion-Productos
       Done/09-Admin-Analitica
+      Done/20-Funcionamiento-PIN
 ```
 
 ---
@@ -62,7 +64,7 @@ mindmap
 | 17 | Distribución y Monetización | 💡 Idea | Baja | [📄](17-distribucion-monetizacion.md) |
 | 18 | Rendimiento y Optimización | ⚡ Pendiente | Media | [📄](18-rendimiento-optimizacion.md) |
 | 19 | Módulo de Inventario | 🔍 En análisis | Alta | [📄](19-modulo-inventario.md) |
-| 20 | Funcionamiento del PIN | 🛡️ Implementado | Alta | [📄](20-funcionamiento-pin.md) |
+| 21 | Navegación del SideMenu | 🔄 Tema abierto | Media | [📄](21-sidemenu-navegacion.md) |
 
 ### ✅ Completados (archivados en `Done/`)
 
@@ -73,6 +75,7 @@ mindmap
 | 03 | Flujo de Cobranza | [📄](Done/03-flujo-cobranza.md) |
 | 08 | Gestión de Productos y Categorías | [📄](Done/08-gestion-productos-categorias.md) |
 | 09 | Administración y Analítica | [📄](Done/09-administracion-analitica.md) |
+| 20 | Funcionamiento del PIN | [📄](Done/20-funcionamiento-pin.md) |
 
 **Leyenda:**
 - ✅ Completado = Implementado en código, archivado en `Done/`

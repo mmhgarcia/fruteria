@@ -165,5 +165,5 @@ correcto = (enteredHash === pin) || (entered === pin)  // hash o legacy
 
 ## Relacionado
 
-- Ver [07-seguridad-control-acceso.md](07-seguridad-control-acceso.md) — control de acceso general
-- Ver [15-hasheo-configuracion.md](15-hasheo-configuracion.md) — cifrado de settings
+- Ver [07-seguridad-control-acceso.md](../07-seguridad-control-acceso.md) — control de acceso general
+- Ver [15-hasheo-configuracion.md](../15-hasheo-configuracion.md) — cifrado de settings
