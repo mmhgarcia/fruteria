@@ -3,13 +3,10 @@ import { getRamos } from '../utils/ramos'
 // import RamoSelector from './RamoSelector'
 import { hashPin } from '../utils/hash'
 import { tiempoRestanteSesion, bloquearSesion } from '../utils/session'
-import TasaBcv from '../features/TasaBcv/components/TasaBcv'
 import RamosComerciales from './RamosComerciales'
 import Products from './Products'
 import Categories from './Categories'
 import BackupModal from './BackupModal'
-import SalesReportModal from './SalesReportModal'
-import LogsViewerModal from './LogsViewerModal'
 import './SettingsModal.css'
 
 const COLOR_PRESETS = [
@@ -23,7 +20,7 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup, onAlertRead }) {
+export default function SettingsModal({ settings, onSave, onClose, onTasaChange, ramoId, onRefreshProducts, onRefreshCategories, onRefreshBackup, onAlertRead, onOpenTasa, onOpenSalesReport, onOpenLogs }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
@@ -31,13 +28,10 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
   const [pin, setPin] = useState('') // always start empty; hashed on save
   const hasPin = settings.pin ? true : false
   const [ramoNombre, setRamoNombre] = useState('')
-  const [showTasa, setShowTasa] = useState(false)
   const [showRamos, setShowRamos] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
   const [showBackup, setShowBackup] = useState(false)
-  const [showSalesReport, setShowSalesReport] = useState(false)
-  const [showLogs, setShowLogs] = useState(false)
   const [showColors, setShowColors] = useState(false)
   const [showPin, setShowPin] = useState(false)
   const [sessionHoras, setSessionHoras] = useState(settings.sessionHoras ?? 8)
@@ -218,7 +212,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
 
               <button
                 className="settings-admin-btn"
-                onClick={() => setShowTasa(true)}
+                onClick={() => onOpenTasa()}
               >
                 <span className="settings-admin-btn-icon">💱</span>
                 <div className="settings-admin-btn-text">
@@ -273,7 +267,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
 
               <button
                 className="settings-admin-btn"
-                onClick={() => setShowSalesReport(true)}
+                onClick={() => onOpenSalesReport()}
               >
                 <span className="settings-admin-btn-icon">📊</span>
                 <div className="settings-admin-btn-text">
@@ -392,7 +386,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
 
             <button
               className="settings-admin-btn"
-              onClick={() => setShowLogs(true)}
+              onClick={() => onOpenLogs()}
             >
               <span className="settings-admin-btn-icon">📋</span>
               <div className="settings-admin-btn-text">
@@ -412,13 +406,6 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
             </button>
           </div>
         </div>
-
-        {showTasa && (
-          <TasaBcv
-            onClose={() => setShowTasa(false)}
-            onTasaChange={onTasaChange}
-          />
-        )}
 
         {showRamos && (
           <RamosComerciales
@@ -457,21 +444,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
             }}
           />
         )}
-
-        {showSalesReport && (
-          <SalesReportModal
-            companyName={settings.companyName}
-            onClose={() => setShowSalesReport(false)}
-          />
-        )}
       </div>
-
-      {showLogs && (
-        <LogsViewerModal
-          onClose={() => setShowLogs(false)}
-          onAlertRead={onAlertRead}
-        />
-      )}
     </>
   )
 }

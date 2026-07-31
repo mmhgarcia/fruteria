@@ -12,6 +12,9 @@ import TicketPreview from './components/TicketPreview'
 import SideMenu from './components/SideMenu'
 import SettingsModal from './components/SettingsModal'
 import PinPrompt from './components/PinPrompt'
+import TasaBcv from './features/TasaBcv/components/TasaBcv'
+import SalesReportModal from './components/SalesReportModal'
+import LogsViewerModal from './components/LogsViewerModal'
 import { getLogs, LOG_TYPES } from './utils/logService'
 import { estaDesbloqueado, crearSesion, bloquearSesion } from './utils/session'
 import './App.css'
@@ -43,6 +46,9 @@ function App() {
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
   const [alertCount, setAlertCount] = useState(0)
   const [sesionActiva, setSesionActiva] = useState(() => estaDesbloqueado())
+  const [showTasa, setShowTasa] = useState(false)
+  const [showSalesReport, setShowSalesReport] = useState(false)
+  const [showLogs, setShowLogs] = useState(false)
 
   // Lee de localStorage cuándo fue la última vez que se marcaron leídas
   const [lastAlertReadAt, setLastAlertReadAt] = useState(
@@ -68,7 +74,7 @@ function App() {
   }, [pinPromptOpen, lastAlertReadAt])
 
   const handleAlertBadgeClick = () => {
-    if (settings.pin) {
+    if (settings.pin && !sesionActiva) {
       setPinPromptOpen(true)
     } else {
       setSettingsOpen(true)
@@ -269,7 +275,11 @@ function App() {
           }
         }}
         hasPin={!!settings.pin}
+        sesionActiva={sesionActiva}
         onLockNow={handleLockNow}
+        onOpenTasa={() => setShowTasa(true)}
+        onOpenSalesReport={() => setShowSalesReport(true)}
+        onOpenLogs={() => setShowLogs(true)}
       />
       <Header
         cartCount={totals.count}
@@ -356,6 +366,39 @@ function App() {
             loadProducts()
             loadCategories()
           }}
+          onAlertRead={handleAlertRead}
+          onOpenTasa={() => {
+            setSettingsOpen(false)
+            setShowTasa(true)
+          }}
+          onOpenSalesReport={() => {
+            setSettingsOpen(false)
+            setShowSalesReport(true)
+          }}
+          onOpenLogs={() => {
+            setSettingsOpen(false)
+            setShowLogs(true)
+          }}
+        />
+      )}
+
+      {showTasa && (
+        <TasaBcv
+          onClose={() => setShowTasa(false)}
+          onTasaChange={setTasa}
+        />
+      )}
+
+      {showSalesReport && (
+        <SalesReportModal
+          companyName={settings.companyName}
+          onClose={() => setShowSalesReport(false)}
+        />
+      )}
+
+      {showLogs && (
+        <LogsViewerModal
+          onClose={() => setShowLogs(false)}
           onAlertRead={handleAlertRead}
         />
       )}

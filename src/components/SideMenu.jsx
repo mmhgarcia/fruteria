@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, onLockNow }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenLogs }) {
   const MENU_OPTIONS = [
     { id: 'config', label: 'Configuración', icon: '⚙️' },
   ]
+  const ADMIN_OPTIONS = [
+    { id: 'tasa', label: 'Tasa BCV', icon: '💱', onClick: onOpenTasa },
+    { id: 'sales', label: 'Resumen Ventas', icon: '📊', onClick: onOpenSalesReport },
+    { id: 'logs', label: 'Logs del Sistema', icon: '📋', onClick: onOpenLogs },
+  ]
+  const verAdmin = sesionActiva
   const menuRef = useRef(null)
   const edgeRef = useRef(null)
   const [dragX, setDragX] = useState(0)
@@ -99,6 +105,19 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
               </button>
             )
           )}
+          {verAdmin && ADMIN_OPTIONS.map((option) => (
+            <button
+              key={option.id}
+              className="side-menu-option"
+              onClick={() => {
+                onClose()
+                option.onClick()
+              }}
+            >
+              <span className="side-menu-icon">{option.icon}</span>
+              <span className="side-menu-label">{option.label}</span>
+            </button>
+          ))}
           {hasPin && (
             <button
               className="side-menu-option side-menu-lock"
