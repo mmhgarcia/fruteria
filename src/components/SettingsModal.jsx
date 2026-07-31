@@ -403,6 +403,7 @@ export default function SettingsModal({ settings, onSave, onClose, onTasaChange,
 
         {showSalesReport && (
           <SalesReportModal
+            companyName={settings.companyName}
             onClose={() => setShowSalesReport(false)}
           />
         )}

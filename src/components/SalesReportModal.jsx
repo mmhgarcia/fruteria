@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { getSalesByDateRange } from '../utils/db'
 import { formatCurrency, formatQty } from '../utils/format'
+import { exportarPDF } from '../utils/pdfExport'
 import './SalesReportModal.css'
 
 // ═══════════════════════════════════════════════════════════
@@ -56,7 +57,7 @@ function rangoAIntervalo(desde, hasta) {
   }
 }
 
-export default function SalesReportModal({ onClose }) {
+export default function SalesReportModal({ onClose, companyName }) {
   const rangoInicial = calcularRango('Hoy')
   const [fechaDesde, setFechaDesde] = useState(rangoInicial.desde)
   const [fechaHasta, setFechaHasta] = useState(rangoInicial.hasta)
@@ -178,8 +179,7 @@ export default function SalesReportModal({ onClose }) {
           <span className="modal-icon">📊</span>
           <h2>Resumen de Ventas</h2>
           <div className="sr-header-actions">
-            <button className="btn-action">📥 CSV</button>
-            <button className="btn-action">🖨️ Imprimir</button>
+            <button className="btn-action" onClick={() => exportarPDF({ companyName, desde: fechaDesde, hasta: fechaHasta, reporte })}>📄 Exportar a PDF</button>
             <button className="btn-cancel" onClick={onClose}>✕</button>
           </div>
         </div>

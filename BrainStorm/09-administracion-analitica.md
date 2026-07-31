@@ -32,17 +32,18 @@ Proveer herramientas de administración y cierre de caja: reportes financieros, 
 - Tarjetas de resumen (Total Ventas, Ticket Promedio, Total USD, Total Bs)
 - Tabla de desglose por método de pago (sin columna Total)
 - Tabla paginada de productos vendidos con búsqueda
-- Botones de acción: Exportar CSV, Imprimir
+- Botones de acción: Exportar a PDF (funcional)
 - Secciones colapsables (Dashboard abierto por defecto)
 
 ---
 
 ## Pendiente / Ideas
 
-### ⚠️ **Exportación Funcional — PENDIENTE**
-- [ ] **Exportar CSV e imprimir siguen siendo solo visuales (botones sin funcionalidad)**
-- [ ] Implementar descarga CSV real de las ventas del rango
-- [ ] Implementar impresión del reporte
+### ~~Exportación a PDF~~
+- ~~Botón "Exportar a PDF" genera el reporte con jsPDF (offline, sin servidor)~~
+- ~~Incluye: encabezado con empresa y período, tarjetas de resumen, desglose por método, productos vendidos~~
+- ~~Se abre en pestaña nueva en el móvil; si el navegador lo bloquea, descarga el archivo~~
+- ~~`src/utils/pdfExport.js`~~
 
 ### Desglose Financiero en Resumen
 - El resumen de ventas debe totalizar el dinero clasificado por cada método de pago:
