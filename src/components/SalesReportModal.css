@@ -95,16 +95,17 @@
   color: var(--text-secondary, #6b7280);
 }
 
+.sr-filtros-fechas label span {
+  white-space: nowrap;
+}
+
 .sr-input-fecha {
-  width: 110px;
-  padding: 6px 10px;
+  width: 150px;
+  padding: 5px 8px;
   border: 1px solid var(--border-color, #d1d5db);
   border-radius: 6px;
   background: var(--bg-secondary, #f9fafb);
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.9rem;
-  text-align: center;
-  cursor: default;
+  font-size: 0.85rem;
 }
 
 .sr-presets {

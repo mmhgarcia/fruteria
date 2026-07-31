@@ -2,12 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import './SalesReportModal.css'
 
 // ═══════════════════════════════════════════════════════════
-// 🎨 MOCK ESTÁTICO — Solo interfaz visual, cero lógica.
+// 🎨 MOCK ESTÁTICO — Data mock visual, lógica de fechas real.
 //    Diseño basado en BrainStorm/09-administracion-analitica.md
 // ═══════════════════════════════════════════════════════════
-
-const MOCK_FECHA_DESDE = '01/07/2026'
-const MOCK_FECHA_HASTA = '30/07/2026'
 
 const MOCK_TARJETAS = [
   { label: 'Total Ventas', valor: '150 operaciones', icon: '🧾' },
@@ -37,9 +34,48 @@ const MOCK_PRODUCTOS = [
 
 const PRESETS = ['Hoy', 'Ayer', 'Semana', 'Mes']
 
+function toDateStr(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function calcularRango(preset) {
+  const hoy = new Date()
+  const fin = new Date(hoy)
+  let inicio
+
+  switch (preset) {
+    case 'Hoy':
+      inicio = hoy
+      break
+    case 'Ayer':
+      inicio = new Date(hoy)
+      inicio.setDate(hoy.getDate() - 1)
+      fin.setDate(hoy.getDate() - 1)
+      break
+    case 'Semana': {
+      const diaSem = hoy.getDay()
+      const diff = diaSem === 0 ? 6 : diaSem - 1
+      inicio = new Date(hoy)
+      inicio.setDate(hoy.getDate() - diff)
+      break
+    }
+    case 'Mes':
+      inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1)
+      break
+    default:
+      return null
+  }
+
+  return { desde: toDateStr(inicio), hasta: toDateStr(fin) }
+}
+
 export default function SalesReportModal({ onClose }) {
-  const [fechaDesde, setFechaDesde] = useState(MOCK_FECHA_DESDE)
-  const [fechaHasta, setFechaHasta] = useState(MOCK_FECHA_HASTA)
+  const rangoInicial = calcularRango('Mes')
+  const [fechaDesde, setFechaDesde] = useState(rangoInicial.desde)
+  const [fechaHasta, setFechaHasta] = useState(rangoInicial.hasta)
   const [presetActivo, setPresetActivo] = useState('Mes')
   const [pagina, setPagina] = useState(1)
   const totalPaginas = 3
@@ -82,11 +118,21 @@ export default function SalesReportModal({ onClose }) {
           <div className="sr-filtros-fechas">
             <label>
               <span>Desde</span>
-              <input type="text" value={fechaDesde} readOnly className="sr-input-fecha" />
+              <input
+                type="date"
+                value={fechaDesde}
+                onChange={(e) => { setFechaDesde(e.target.value); setPresetActivo('Personalizado') }}
+                className="sr-input-fecha"
+              />
             </label>
             <label>
               <span>Hasta</span>
-              <input type="text" value={fechaHasta} readOnly className="sr-input-fecha" />
+              <input
+                type="date"
+                value={fechaHasta}
+                onChange={(e) => { setFechaHasta(e.target.value); setPresetActivo('Personalizado') }}
+                className="sr-input-fecha"
+              />
             </label>
           </div>
           <div className="sr-presets">
@@ -94,7 +140,14 @@ export default function SalesReportModal({ onClose }) {
               <button
                 key={p}
                 className={`sr-preset-btn ${presetActivo === p ? 'active' : ''}`}
-                onClick={() => setPresetActivo(p)}
+                onClick={() => {
+                  setPresetActivo(p)
+                  const rango = calcularRango(p)
+                  if (rango) {
+                    setFechaDesde(rango.desde)
+                    setFechaHasta(rango.hasta)
+                  }
+                }}
               >
                 {p}
               </button>
