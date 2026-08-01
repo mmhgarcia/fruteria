@@ -1,0 +1,254 @@
+/* ═══════════════════════════════════════════════════════════
+   DailyTicketsModal — Lista de tickets del día
+   ═══════════════════════════════════════════════════════════ */
+
+.daily-tickets-modal {
+  max-width: 640px;
+  width: 92vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow-y: auto;
+  align-self: flex-start;
+  margin-top: 2vh;
+}
+
+.daily-tickets-modal .modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  flex-shrink: 0;
+}
+
+.dt-header-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.dt-header-top h2 {
+  flex: 1;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.dt-pdf-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.dt-pdf-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary, #6b7280);
+  margin-right: 2px;
+}
+
+.dt-pdf-bar .btn-action {
+  padding: 5px 12px;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 8px;
+  background: var(--bg-secondary, #f9fafb);
+  color: var(--text-primary, #111827);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.dt-pdf-bar .btn-action:hover {
+  background: var(--bg-hover, #e5e7eb);
+}
+
+.dt-header-top .btn-cancel {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-secondary, #6b7280);
+  padding: 4px 10px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.dt-header-top .btn-cancel:hover {
+  background: var(--bg-hover, #f3f4f6);
+  color: var(--text-primary, #111827);
+}
+
+/* ── RESUMEN ── */
+
+.dt-resumen {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 16px;
+  background: var(--bg-secondary, #f9fafb);
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  flex-shrink: 0;
+}
+
+.dt-resumen-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.dt-resumen-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary, #6b7280);
+}
+
+.dt-resumen-valor {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--text-primary, #111827);
+}
+
+/* ── ESTADOS ── */
+
+.dt-cargando,
+.dt-vacio {
+  padding: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* ── LISTA DE TICKETS ── */
+
+.dt-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.dt-ticket-card {
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dt-ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border-color, #d1d5db);
+}
+
+.dt-ticket-id {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--header-bg, #4a8c5e);
+}
+
+.dt-ticket-time {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary, #111827);
+}
+
+.dt-ticket-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  font-size: 0.85rem;
+}
+
+.dt-ticket-label {
+  color: var(--text-secondary, #6b7280);
+}
+
+.dt-ticket-value {
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--text-primary, #111827);
+}
+
+.dt-ticket-separator {
+  border: none;
+  border-top: 1px dashed var(--border-color, #d1d5db);
+  margin: 8px 0;
+}
+
+/* ── ITEMS DEL TICKET ── */
+
+.dt-ticket-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dt-ticket-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 2px 0;
+}
+
+.dt-item-qty {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+  min-width: 20px;
+}
+
+.dt-item-name {
+  flex: 1;
+  color: var(--text-primary, #111827);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dt-item-subt {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 500;
+  color: var(--text-primary, #111827);
+}
+
+/* ── TOTALES ── */
+
+.dt-ticket-totals {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dt-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+}
+
+@media (max-width: 480px) {
+  .daily-tickets-modal {
+    width: 95vw;
+    max-height: 90vh;
+  }
+
+  .dt-ticket-item {
+    font-size: 0.8rem;
+  }
+}
