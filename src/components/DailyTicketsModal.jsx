@@ -87,26 +87,112 @@ export default function DailyTicketsModal({ onClose, companyName, tasa }) {
     doc.text(`Total de ventas: ${ventas.length}`, margin, y)
     doc.text(`Total USD: $${formatCurrency(totalUSD)}`, pageWidth / 2, y)
     doc.text(`Total Bs: Bs ${formatCurrency(totalBS)}`, pageWidth - margin, y, { align: 'right' })
-    y += 8
+    y += 10
+
+    const ticketWidth = pageWidth - margin * 2
+    const lineHeight = 5
+    const ticketPadding = 4
 
     for (const sale of ventas) {
-      if (y > 260) {
+      const items = sale.items || []
+      const ticketHeight = 52 + items.length * lineHeight
+
+      if (y + ticketHeight > 270) {
         doc.addPage()
         y = 20
       }
 
-      doc.setFillColor(245, 247, 250)
-      doc.roundedRect(margin, y, pageWidth - margin * 2, 12, 1, 1, 'F')
-      doc.setFontSize(8)
+      doc.setDrawColor(200, 200, 200)
+      doc.setFillColor(255, 255, 255)
+      doc.roundedRect(margin, y, ticketWidth, ticketHeight, 2, 2, 'FD')
+
+      let ty = y + ticketPadding
+
+      doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(30, 30, 30)
-      doc.text(`Ticket #${formatTransactionId(sale.date)}`, margin + 3, y + 5)
+      doc.text(companyName?.toUpperCase() || 'FRUTERÍA POS', margin + ticketPadding, ty)
+      ty += 4
+      doc.setFontSize(7)
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(100, 100, 100)
-      doc.text(`${new Date(sale.date).toLocaleDateString('es-VE')} ${formatTime(sale.date)}`, margin + 3, y + 9)
-      doc.text(`$${formatCurrency(sale.totalUSD)}`, pageWidth - margin - 3, y + 5, { align: 'right' })
-      doc.text(`Bs ${formatCurrency(sale.totalBS)}`, pageWidth - margin - 3, y + 9, { align: 'right' })
-      y += 16
+      doc.text('TICKET DE VENTA', margin + ticketPadding, ty)
+      ty += 6
+
+      doc.setDrawColor(180, 180, 180)
+      doc.line(margin + ticketPadding, ty, margin + ticketWidth - ticketPadding, ty)
+      ty += 5
+
+      const infoLeft = margin + ticketPadding
+      const infoRight = margin + ticketWidth - ticketPadding
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(60, 60, 60)
+
+      doc.text('Transacción:', infoLeft, ty)
+      doc.text(formatTransactionId(sale.date), infoRight, ty, { align: 'right' })
+      ty += 4.5
+
+      doc.text('Fecha:', infoLeft, ty)
+      doc.text(new Date(sale.date).toLocaleDateString('es-VE'), infoRight, ty, { align: 'right' })
+      ty += 4.5
+
+      doc.text('Hora:', infoLeft, ty)
+      doc.text(formatTime(sale.date), infoRight, ty, { align: 'right' })
+      ty += 4.5
+
+      doc.text('Pago:', infoLeft, ty)
+      doc.text(getPaymentMethod(sale), infoRight, ty, { align: 'right' })
+      ty += 4.5
+
+      doc.text('Tasa BCV:', infoLeft, ty)
+      doc.text(`Bs. ${formatCurrency(sale.tasa || 0)}`, infoRight, ty, { align: 'right' })
+      ty += 5
+
+      doc.setDrawColor(180, 180, 180)
+      doc.line(margin + ticketPadding, ty, margin + ticketWidth - ticketPadding, ty)
+      ty += 5
+
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(7.5)
+      doc.setTextColor(80, 80, 80)
+      doc.text('CANT', infoLeft, ty)
+      doc.text('PRODUCTO', infoLeft + 14, ty)
+      doc.text('SUBT.', infoRight, ty, { align: 'right' })
+      ty += 4.5
+
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8)
+      doc.setTextColor(40, 40, 40)
+      for (const item of items) {
+        doc.text(String(item.qty), infoLeft, ty)
+        doc.text(item.name, infoLeft + 14, ty)
+        doc.text(`$${formatCurrency(item.totalUSD)}`, infoRight, ty, { align: 'right' })
+        ty += lineHeight
+      }
+
+      ty += 1
+      doc.setDrawColor(180, 180, 180)
+      doc.line(margin + ticketPadding, ty, margin + ticketWidth - ticketPadding, ty)
+      ty += 5
+
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8.5)
+      doc.setTextColor(30, 30, 30)
+      doc.text('TOTAL USD', infoLeft, ty)
+      doc.text(`$${formatCurrency(sale.totalUSD)}`, infoRight, ty, { align: 'right' })
+      ty += 5
+
+      doc.text('TOTAL BS', infoLeft, ty)
+      doc.text(`Bs. ${formatCurrency(sale.totalBS)}`, infoRight, ty, { align: 'right' })
+      ty += 6
+
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(7)
+      doc.setTextColor(120, 120, 120)
+      doc.text('¡Gracias por su compra!', pageWidth / 2, ty, { align: 'center' })
+
+      y += ticketHeight + 8
     }
 
     const pages = doc.getNumberOfPages()
