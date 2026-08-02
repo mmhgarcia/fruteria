@@ -5,6 +5,15 @@
 
 ---
 
+## [Unreleased]
+
+### Añadido
+- Reporte **Productos Más Vendidos** 🏆 con ranking por cantidad vendida.
+  - Filtros rápidos: Hoy, Semana, Mes (y selector manual de rango).
+  - Tarjeta destacada del producto estrella (🥇) y podio 🥇🥈🥉.
+  - Tarjetas de resumen: productos, unidades, ingresos USD.
+  - Exportar PDF (Ver / Compartir / Descargar).
+
 ## [1.0.0] — 2026-07-30 🚀
 
 ### Añadido

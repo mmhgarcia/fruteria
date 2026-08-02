@@ -14,6 +14,7 @@ import PinPrompt from './components/PinPrompt'
 import RamoSetup from './components/RamoSetup'
 import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import SalesReportModal from './components/SalesReportModal'
+import BestSellingProductsModal from './components/BestSellingProductsModal'
 import DailyTicketsModal from './components/DailyTicketsModal'
 import LogsViewerModal from './components/LogsViewerModal'
 import Categories from './components/Categories'
@@ -52,6 +53,7 @@ function App() {
   const [sesionActiva, setSesionActiva] = useState(() => estaDesbloqueado())
   const [showTasa, setShowTasa] = useState(false)
   const [showSalesReport, setShowSalesReport] = useState(false)
+  const [showBestSelling, setShowBestSelling] = useState(false)
   const [showDailyTickets, setShowDailyTickets] = useState(false)
   const [showLogs, setShowLogs] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
@@ -320,6 +322,7 @@ function App() {
         onLockNow={handleLockNow}
         onOpenTasa={() => setShowTasa(true)}
         onOpenSalesReport={() => setShowSalesReport(true)}
+        onOpenBestSelling={() => setShowBestSelling(true)}
         onOpenDailyTickets={() => setShowDailyTickets(true)}
         onOpenLogs={() => setShowLogs(true)}
         onOpenCategories={() => setShowCategories(true)}
@@ -420,6 +423,13 @@ function App() {
         <SalesReportModal
           companyName={settings.companyName}
           onClose={() => setShowSalesReport(false)}
+        />
+      )}
+
+      {showBestSelling && (
+        <BestSellingProductsModal
+          companyName={settings.companyName}
+          onClose={() => setShowBestSelling(false)}
         />
       )}
 

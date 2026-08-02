@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenDailyTickets, onOpenLogs, onOpenCategories, onOpenProducts }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenBestSelling, onOpenDailyTickets, onOpenLogs, onOpenCategories, onOpenProducts }) {
   const CONFIG_OPTION = { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' }
   const ADMIN_OPTIONS = [
     { id: 'categorias', label: 'Categorías de Producto', icon: '📂', onClick: onOpenCategories },
     { id: 'productos', label: 'Catálogo de Productos', icon: '📦', onClick: onOpenProducts },
     { type: 'separator', id: 'sep1' },
     { id: 'sales', label: 'Reporte de Ventas', icon: '📊', onClick: onOpenSalesReport },
+    { id: 'best-selling', label: 'Productos Más Vendidos', icon: '🏆', onClick: onOpenBestSelling },
     { id: 'daily-tickets', label: 'Tickets del Día', icon: '🧾', onClick: onOpenDailyTickets },
     { type: 'separator', id: 'sep2' },
     { id: 'tasa', label: 'Tasa BCV', icon: '💱', onClick: onOpenTasa },
