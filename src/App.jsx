@@ -19,6 +19,7 @@ import DailyTicketsModal from './components/DailyTicketsModal'
 import LogsViewerModal from './components/LogsViewerModal'
 import Categories from './components/Categories'
 import Products from './components/Products'
+import Inventory from './components/Inventory'
 import { getRamoPorId } from './data/ramos'
 import { getLogs, addLog, LOG_TYPES } from './utils/logService'
 import { estaDesbloqueado, crearSesion, bloquearSesion } from './utils/session'
@@ -58,6 +59,7 @@ function App() {
   const [showLogs, setShowLogs] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
+  const [showInventory, setShowInventory] = useState(false)
 
   // Lee de localStorage cuándo fue la última vez que se marcaron leídas
   const [lastAlertReadAt, setLastAlertReadAt] = useState(
@@ -327,6 +329,7 @@ function App() {
         onOpenLogs={() => setShowLogs(true)}
         onOpenCategories={() => setShowCategories(true)}
         onOpenProducts={() => setShowProducts(true)}
+        onOpenInventory={() => setShowInventory(true)}
       />
       <Header
         cartCount={totals.count}
@@ -467,6 +470,10 @@ function App() {
             loadProducts()
           }}
         />
+      )}
+
+      {showInventory && (
+        <Inventory onClose={() => setShowInventory(false)} />
       )}
 
       {pinPromptOpen && (
