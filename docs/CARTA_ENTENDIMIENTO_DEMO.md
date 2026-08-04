@@ -135,9 +135,9 @@ Durante la prueba puedes ingresar datos en el software. Respecto a esos datos:
 
 ## ¿De quién es el software?
 
-El software **Frutería POS** es propiedad intelectual nuestra. Esto incluye el código, el diseño, la interfaz, los íconos, todo. Esta prueba no te da ningún derecho de propiedad sobre el software, solo te da derecho a usarlo temporalmente para evaluarlo.
+El software **Frutería POS** es propiedad intelectual nuestra. Esto incluye el código, el diseño, la interfaz, los íconos, todo. Esta prueba no da derecho de propiedad sobre el software en modo alguno, solo da derecho a usarlo temporalmente para fines de evaluaciòn.
 
-Si al final decides adquirir una licencia comercial, eso lo conversamos aparte y firmamos un acuerdo de licencia formal.
+Si al final de la demo decides adquirir una licencia comercial, eso lo conversamos aparte y firmamos un acuerdo de formal.
 
 ---
 
