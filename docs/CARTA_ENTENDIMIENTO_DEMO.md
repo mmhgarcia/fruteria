@@ -4,23 +4,23 @@
 
 ---
 
-Hola,
+Estimado(a) cliente,
 
-Gracias por tu interés en **Frutería POS**. Antes de comenzar con la prueba, queremos que conozcas los términos básicos de esta demostración. Este documento no es un contrato ni genera obligación de compra; es simplemente una carta de entendimiento para que ambos tengamos claro qué estamos haciendo y cómo lo estamos haciendo.
+Agradecemos su interés en **Frutería POS**. Antes de iniciar la prueba, deseamos que conozca los términos básicos de esta demostración. Este documento no constituye un contrato ni genera obligación de compra; se trata de una carta de entendimiento para que ambas partes tengamos claros los alcances y compromisos de esta prueba.
 
 ---
 
-## ¿Qué te estamos ofreciendo?
+## ¿Qué le estamos ofreciendo?
 
-Te estamos dando acceso temporal al software **Frutería POS**, una aplicación de punto de venta diseñada para comercios como el tuyo (fruterías, carnicerías, charcuterías). La idea es que lo uses, lo conozcas, veas si te sirve, y decidas libremente si quieres adquirirlo o no.
+Le otorgamos acceso temporal al software **Frutería POS**, una aplicación de punto de venta diseñada para comercios minoristas de alimentos como fruterías, carnicerías y charcuterías. El propósito es que pueda conocerlo, probarlo en su operación diaria, evaluar si se ajusta a sus necesidades y decidir libremente si desea adquirirlo.
 
-**No hay compromiso de compra.** Si al final de la prueba decides que no es para ti, simplemente nos lo dices y retiramos el software. Sin multas, sin penalidades, sin problema.
+**No existe compromiso de compra.** Si al finalizar la prueba considera que el software no es adecuado para su negocio, simplemente nos lo comunica y procedemos a retirarlo. Sin multas, sin penalidades, sin inconveniente alguno.
 
 ---
 
 ## ¿Qué incluye la demo?
 
-Durante el período de prueba tendrás acceso a las siguientes funcionalidades:
+Durante el período de prueba tendrá acceso a las siguientes funcionalidades:
 
 **Gestión de productos:**
 - Catálogo de productos organizado por categorías
@@ -47,142 +47,142 @@ Durante el período de prueba tendrás acceso a las siguientes funcionalidades:
 **Lo que NO incluye:**
 - Personalizaciones o adaptaciones a medida
 - Soporte técnico prioritario o presencial
-- Capacitación formal (te daremos una guía básica de uso)
-- Módulos que aún estén en desarrollo
+- Capacitación formal (se entregará una guía básica de uso)
+- Módulos que se encuentren en fase de desarrollo
 
 ---
 
-## ¿Cómo funciona la app?
+## ¿Cómo funciona la aplicación?
 
-Queremos que entiendas algo muy importante sobre **Frutería POS**: la app funciona bajo una arquitectura **LOCAL-FIRST** (primero lo local). Esto significa que:
+Es importante que conozca un aspecto fundamental de **Frutería POS**: la aplicación opera bajo una arquitectura **LOCAL-FIRST** (primero lo local). Esto significa lo siguiente:
 
-**Tu información está segura en tu dispositivo:**
-- Toda la información que ingreses (productos, ventas, clientes, reportes) se guarda **únicamente en el dispositivo móvil** donde está instalada la app.
-- **La data nunca sale de tu dispositivo hacia servidores externos**, ni nuestros ni de terceros. No hay "nube" involucrada en el manejo de tu información.
-- **No necesitamos internet para funcionar.** La app sigue operando perfectamente aunque tu teléfono no tenga conexión a internet, esté en modo avión o simplemente no haya señal. Todas las funciones están disponibles offline.
+**Su información permanece segura en su dispositivo:**
+- Toda la información que ingrese (productos, ventas, clientes, reportes) se almacena **exclusivamente en el dispositivo móvil** donde se encuentra instalada la aplicación.
+- **Los datos nunca salen de su dispositivo hacia servidores externos**, ni propios ni de terceros. No intervienen servicios en la nube para el manejo de su información.
+- **No se requiere conexión a internet para operar.** La aplicación continúa funcionando correctamente aunque el dispositivo no tenga conexión a internet, se encuentre en modo avión o no haya señal disponible. Todas las funciones permanecen operativas en modo offline.
 
 **Requisitos técnicos:**
-- La app está diseñada para funcionar en **dispositivos móviles con sistema operativo Android**.
-- No requiere instalación de software adicional ni configuraciones especiales más allá de las que nosotros realicemos al momento de la instalación.
-- Funciona como una aplicación instalable (PWA), lo que significa que se comporta como una app nativa de Android aunque se instale desde el navegador.
+- La aplicación está diseñada para funcionar en **dispositivos móviles con sistema operativo Android**.
+- No requiere instalación de software adicional ni configuraciones especiales más allá de las que se realicen al momento de la instalación.
+- Funciona como una aplicación instalable (PWA), lo que significa que se comporta como una aplicación nativa de Android aun cuando se instale desde el navegador.
 
-**¿Qué significa esto para ti?**
-- **Privacidad total:** Tu información comercial (ventas, precios, productos, movimientos) es exclusivamente tuya y nunca abandona tu teléfono.
-- **Independencia:** No dependes de conexión a internet para vender. Si se va la luz o el internet, sigues operando.
-- **Control:** Tú tienes el control absoluto de tu información. Nosotros no tenemos acceso a ella ni forma de verla remotamente.
+**¿Qué significa esto para usted?**
+- **Privacidad total:** Su información comercial (ventas, precios, productos, movimientos) es exclusivamente suya y nunca abandona su dispositivo.
+- **Independencia operativa:** No depende de conexión a internet para vender. Ante cortes de electricidad o de internet, su operación continúa sin interrupciones.
+- **Control absoluto:** Usted tiene el control total de su información. Nosotros no tenemos acceso a ella ni posibilidad de consultarla de forma remota.
 
 ---
 
 ## ¿Cuánto dura la prueba?
 
-La prueba tiene una duración de **30 días calendario**, contados desde el día que te instalemos el software o te demos acceso al mismo.
+La prueba tiene una duración de **30 días calendario**, contados a partir del día en que se realice la instalación del software o se otorgue acceso al mismo.
 
 - **Fecha de inicio:** [____/____/________]
 - **Fecha de finalización:** [____/____/________]
 
-Si al final de los 30 días necesitas un poco más de tiempo para decidir, podemos extender la prueba por 15 días adicionales, pero eso lo conversamos cuando llegue el momento.
+Si al cumplirse los 30 días requiere un tiempo adicional para tomar una decisión, es posible extender la prueba por 15 días más, previa coordinación entre ambas partes.
 
-Cuando se cumpla el plazo (o si decides terminar antes), simplemente retiramos el software y listo.
+Una vez cumplido el plazo (o si decide finalizar antes), simplemente procedemos al retiro del software.
 
 ---
 
-## ¿Qué esperamos de ti?
+## ¿Qué esperamos de su parte?
 
-Para que esta prueba funcione bien para ambos, te pedimos que te comprometas a lo siguiente:
+Para que esta prueba resulte beneficiosa para ambas partes, le solicitamos comprometerse con lo siguiente:
 
 **Uso adecuado del software:**
-- Usa el software solo para evaluar si te sirve para tu negocio.
-- Durante la prueba, ingresa datos de prueba o ficticios, no datos reales de clientes o transacciones comerciales reales.
-- Úsalo solo en el dispositivo donde te lo instalamos, no lo copies a otros equipos.
+- Utilizar el software exclusivamente para evaluar su utilidad en el negocio.
+- Durante la prueba, ingresar datos de prueba o ficticios, evitando el uso de datos reales de clientes o transacciones comerciales efectivas.
+- Limitar el uso al dispositivo donde se realizó la instalación, sin copiarlo a otros equipos.
 
 **Respeto al software:**
-- No copies, distribuyas ni compartas el software con otras personas o negocios.
-- No intentes desarmar, descompilar o hacer ingeniería inversa del código fuente.
-- No modifiques ni alteres los archivos del software.
-- No lo uses para prestar servicios a terceros ni para operar múltiples sucursales.
+- No copiar, distribuir ni compartir el software con otras personas o negocios.
+- No realizar ingeniería inversa, descompilar ni intentar acceder al código fuente.
+- No modificar ni alterar los archivos del software.
+- No utilizarlo para prestar servicios a terceros ni para operar múltiples sucursales.
 
 **Confidencialidad:**
-- Mantén en reserva la información técnica del software (cómo está hecho, su código, su arquitectura).
-- No compartas capturas de pantalla, videos o información detallada del funcionamiento interno del software con terceros.
-- Esta confidencialidad aplica durante la prueba y por 2 años después de que termine.
+- Mantener en reserva la información técnica del software (arquitectura, código, funcionamiento interno).
+- No compartir capturas de pantalla, videos ni información detallada sobre el funcionamiento interno del software con terceros.
+- Este compromiso de confidencialidad aplica durante la prueba y se extiende por 2 años posteriores a su finalización.
 
-**Al finalizar:**
-- Cuando termine la prueba, deja de usar el software y permite que lo desinstalemos de tu equipo.
-- Si ingresaste datos que quieres conservar, avísanos dentro de los 15 días siguientes al final de la prueba para darte una copia de respaldo. Después de ese plazo, eliminaremos los datos.
+**Al finalizar la prueba:**
+- Cesar el uso del software y permitir su desinstalación del dispositivo.
+- Si desea conservar datos ingresados durante la prueba, le solicitamos notificarnos dentro de los 15 días siguientes a la finalización para facilitarle una copia de respaldo. Transcurrido ese plazo, los datos serán eliminados.
 
 ---
 
-## ¿Qué pasa con los datos que ingreses?
+## ¿Qué ocurre con los datos que ingrese?
 
-Durante la prueba puedes ingresar datos en el software. Respecto a esos datos:
+Durante la prueba podrá ingresar datos en el software. Respecto a esa información:
 
-**Tu información es tuya y solo tuya:**
-- Los datos que ingreses en la app (productos, ventas, precios, reportes, tickets) son de uso **exclusivo para tu negocio**. Nosotros no los utilizaremos para ningún otro fin.
-- Como la app funciona en modalidad LOCAL-FIRST, **toda tu información permanece en tu dispositivo**. Nosotros no tenemos acceso a ella ni la almacenamos en ningún servidor.
-- **La confidencialidad de tu data está garantizada por diseño**: al no salir del dispositivo, no existe riesgo de filtración por transmisión a servidores externos.
+**Su información le pertenece exclusivamente:**
+- Los datos que ingrese en la aplicación (productos, ventas, precios, reportes, tickets) son de uso **exclusivo para su negocio**. Nosotros no los utilizaremos para ningún otro fin.
+- Al funcionar en modalidad LOCAL-FIRST, **toda su información permanece en su dispositivo**. Nosotros no tenemos acceso a ella ni la almacenamos en ningún servidor.
+- **La confidencialidad de sus datos está garantizada por diseño**: al no existir transmisión hacia servidores externos, no hay riesgo de filtración por esa vía.
 
-**Tus responsabilidades:**
-- Tú eres responsable de los datos que ingreses. Te recomendamos usar datos ficticios o de prueba durante la evaluación.
-- Tú eres responsable de realizar tus propias copias de seguridad usando la función de backup incluida en la app.
+**Sus responsabilidades:**
+- Usted es responsable de los datos que ingrese. Recomendamos utilizar datos ficticios o de prueba durante la evaluación.
+- Es su responsabilidad realizar copias de seguridad mediante la función de backup incluida en la aplicación.
 
 **Al finalizar la prueba:**
-- Nosotros no nos hacemos responsables por pérdida, alteración o problemas con esos datos, ya que no tenemos acceso a ellos.
-- Si quieres conservar tu información después de la prueba, usa la función de backup de la app antes de que retiremos el software.
-- Si necesitas ayuda con la exportación de datos, avísanos dentro de los 15 días siguientes al final de la prueba.
-- Nosotros **no vamos a usar, copiar ni compartir** tus datos bajo ninguna circunstancia. La información que manejes en la app es confidencial y sirve únicamente a los fines operativos de tu negocio.
+- No nos hacemos responsables por pérdida, alteración o problemas con esos datos, dado que no tenemos acceso a ellos.
+- Si desea conservar su información después de la prueba, utilice la función de backup de la aplicación antes de que retiremos el software.
+- Si requiere asistencia con la exportación de datos, notifíquenos dentro de los 15 días siguientes a la finalización de la prueba.
+- **No utilizaremos, copiaremos ni compartiremos** sus datos bajo ninguna circunstancia. La información que maneje en la aplicación es confidencial y sirve únicamente a los fines operativos de su negocio.
 
 ---
 
 ## ¿De quién es el software?
 
-El software **Frutería POS** es propiedad intelectual nuestra. Esto incluye el código, el diseño, la interfaz, los íconos, todo. Esta prueba no da derecho de propiedad sobre el software en modo alguno, solo da derecho a usarlo temporalmente para fines de evaluaciòn.
+El software **Frutería POS** es propiedad intelectual nuestra. Esto abarca el código fuente, el diseño, la interfaz, los íconos y todos sus componentes. Esta prueba no otorga derecho de propiedad alguno sobre el software; únicamente concede el derecho a utilizarlo de forma temporal con fines de evaluación.
 
-Si al final de la demo decides adquirir una licencia comercial, eso lo conversamos aparte y firmamos un acuerdo de formal.
-
----
-
-## ¿Hay garantías?
-
-Te entregamos el software **"tal cual"** está en este momento. Es una versión funcional, pero puede tener algunos errores menores o funcionalidades en mejora. No te garantizamos que va a funcionar perfecto, sin interrupciones o sin errores, porque es una versión de evaluación.
-
-Como se trata de una prueba gratuita y el software se entrega en su estado actual, nuestra responsabilidad frente a cualquier inconveniente que pudiera surgir durante el período de evaluación es de carácter limitado. Esto es algo habitual en cualquier demostración de software: la idea es que lo pruebes con tranquilidad, sabiendo que es una versión de evaluación y no un producto en producción con soporte completo.
+Si al concluir la prueba decide adquirir una licencia comercial, lo conversaremos de forma separada y formalizaremos un acuerdo de licencia.
 
 ---
 
-## ¿Qué pasa si quieres comprarlo?
+## ¿Existen garantías?
 
-Si al final de la prueba te gusta el software y quieres adquirirlo para usarlo comercialmente, conversamos sobre las condiciones: precio, tipo de licencia, soporte, actualizaciones, etc. Eso sería un acuerdo separado, un contrato de licencia comercial formal.
+El software se entrega **"tal cual"** se encuentra en este momento. Es una versión funcional, pero puede presentar errores menores o funcionalidades sujetas a mejora. No se garantiza un funcionamiento perfecto, ininterrumpido o libre de errores, por tratarse de una versión de evaluación.
 
-Si no te interesa, no pasa absolutamente nada. Retiramos el software y tan amigos como siempre.
-
----
-
-## ¿Qué pasa si alguna de las partes no cumple?
-
-Si alguna de las dos partes no cumple con lo acordado en esta carta, la otra parte le notifica y le da 5 días hábiles para corregir. Si no se corrige, se puede dar por terminada la prueba de inmediato.
-
-Cualquiera de las dos partes puede terminar la prueba en cualquier momento, avisando con 5 días de anticipación. Sin drama, sin penalidades.
+Como se trata de una prueba gratuita y el software se entrega en su estado actual, nuestra responsabilidad frente a cualquier inconveniente que pudiera surgir durante el período de evaluación es de carácter limitado. Esto es una práctica habitual en cualquier demostración de software: la intención es que pueda evaluarlo con tranquilidad, teniendo presente que se trata de una versión de evaluación y no de un producto en producción con soporte completo.
 
 ---
 
-## Otras cosas importantes
+## ¿Qué sucede si desea adquirirlo?
 
-- **Cambios a esta carta:** Si queremos cambiar algo de esta carta, lo hacemos por escrito y ambos firmamos el cambio.
-- **Notificaciones:** Las comunicaciones las hacemos por correo electrónico o mensajería a los contactos que dejamos abajo.
-- **Buena fe:** Confiamos en que ambos actuamos de buena fe. Esta carta es un acuerdo de caballeros (o de damas, o de quienes sean) para que todo salga bien.
-- **Si algo no está claro:** Si tienes dudas sobre cualquier punto, pregúntanos antes de firmar. Mejor aclarar ahora que tener problemas después.
+Si al finalizar la prueba el software resulta de su interés para uso comercial, conversaremos sobre las condiciones: precio, tipo de licencia, soporte, actualizaciones, entre otros aspectos. Esto se formalizaría mediante un acuerdo separado, un contrato de licencia comercial.
+
+Si no resulta de su interés, no hay inconveniente alguno. Retiramos el software y mantenemos una buena relación comercial.
+
+---
+
+## ¿Qué ocurre si alguna de las partes no cumple?
+
+Si alguna de las dos partes incumple lo establecido en esta carta, la otra parte lo notificará y otorgará un plazo de 5 días hábiles para su corrección. De no subsanarse, se podrá dar por terminada la prueba de forma inmediata.
+
+Cualquiera de las dos partes puede dar por terminada la prueba en cualquier momento, comunicándolo con 5 días de anticipación. Sin penalidades ni consecuencias adicionales.
+
+---
+
+## Aspectos adicionales
+
+- **Modificaciones a esta carta:** Cualquier cambio se realizará por escrito y será firmado por ambas partes.
+- **Notificaciones:** Las comunicaciones se realizarán por correo electrónico o mensajería a los contactos indicados al final de este documento.
+- **Buena fe:** Ambas partes actuamos de buena fe. Esta carta refleja un compromiso mutuo para que la prueba se desarrolle de la mejor manera.
+- **Consultas:** Si tiene dudas sobre cualquier punto, le invitamos a consultarlas antes de firmar. Es preferible aclarar ahora que enfrentar inconvenientes después.
 
 ---
 
 ## En resumen
 
-Te damos el software gratis por 30 días para que lo pruebes. La app funciona 100% en tu dispositivo Android, sin enviar información a ningún servidor, así que tu data es privada y solo tuya. Tú la usas con responsabilidad, respetas que el software es nuestro, mantienes confidencialidad sobre cómo funciona internamente, y al final decides si lo compras o no. Si lo compras, hacemos un contrato formal. Si no lo compras, retiramos el software y seguimos siendo amigos.
+Le otorgamos el software de forma gratuita por 30 días para su evaluación. La aplicación opera íntegramente en su dispositivo Android, sin enviar información a servidores externos, por lo que sus datos permanecen privados y bajo su control exclusivo. El compromiso de su parte consiste en hacer un uso responsable, respetar la propiedad intelectual del software y mantener la confidencialidad sobre su funcionamiento interno. Al finalizar, usted decide si desea adquirirlo. De ser así, formalizamos un contrato. De no ser así, retiramos el software y la relación comercial continúa en buenos términos.
 
-Así de simple.
+Así de sencillo.
 
 ---
 
-En señal de que leíste esta carta, entendiste los términos y estás de acuerdo con ellos, firmamos abajo:
+En señal de haber leído esta carta, comprendido sus términos y estar de acuerdo con ellos, firmamos a continuación:
 
 <br>
 
@@ -211,4 +211,4 @@ En señal de que leíste esta carta, entendiste los términos y estás de acuerd
 
 ---
 
-*Esta carta de entendimiento es un documento orientativo sobre los terminos bajo los cuales se desaarrollarà esta DEMO.*
+*Esta carta de entendimiento es un documento orientativo sobre los términos bajo los cuales se desarrollará esta DEMO.*
