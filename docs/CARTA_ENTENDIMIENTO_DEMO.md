@@ -14,7 +14,7 @@ Agradecemos su interés en **Frutería POS**. Antes de iniciar la prueba, deseam
 
 Le otorgamos acceso temporal al software **Frutería POS**, una aplicación de punto de venta diseñada para comercios minoristas de alimentos como fruterías, carnicerías y charcuterías. El propósito es que pueda conocerlo, probarlo en su operación diaria, evaluar si se ajusta a sus necesidades y decidir libremente si desea adquirirlo.
 
-**No existe compromiso de compra.** Si al finalizar la prueba considera que el software no es adecuado para su negocio, simplemente nos lo comunica y procedemos a retirarlo. Sin multas, sin penalidades, sin inconveniente alguno.
+**No existe compromiso de compra.** Si al finalizar la prueba considera que el software no es adecuado para su negocio, simplemente nos lo comunica y procedemos a retirarlo sin inconveniente ni costo alguno.
 
 ---
 
@@ -102,9 +102,8 @@ Para que esta prueba resulte beneficiosa para ambas partes, le solicitamos compr
 - No utilizarlo para prestar servicios a terceros ni para operar múltiples sucursales.
 
 **Confidencialidad:**
-- Mantener en reserva la información técnica del software (arquitectura, código, funcionamiento interno).
+- Mantener en reserva la información técnica del software (arquitectura, funcionamiento interno).
 - No compartir capturas de pantalla, videos ni información detallada sobre el funcionamiento interno del software con terceros.
-- Este compromiso de confidencialidad aplica durante la prueba y se extiende por 2 años posteriores a su finalización.
 
 **Al finalizar la prueba:**
 - Cesar el uso del software y permitir su desinstalación del dispositivo.
@@ -128,16 +127,16 @@ Durante la prueba podrá ingresar datos en el software. Respecto a esa informaci
 **Al finalizar la prueba:**
 - No nos hacemos responsables por pérdida, alteración o problemas con esos datos, dado que no tenemos acceso a ellos.
 - Si desea conservar su información después de la prueba, utilice la función de backup de la aplicación antes de que retiremos el software.
-- Si requiere asistencia con la exportación de datos, notifíquenos dentro de los 15 días siguientes a la finalización de la prueba.
+- Si requiere asistencia con la exportación de datos, notifíquenos dentro de los 5 días siguientes a la finalización de la prueba.
 - **No utilizaremos, copiaremos ni compartiremos** sus datos bajo ninguna circunstancia. La información que maneje en la aplicación es confidencial y sirve únicamente a los fines operativos de su negocio.
 
 ---
 
 ## ¿De quién es el software?
 
-El software **Frutería POS** es propiedad intelectual nuestra. Esto abarca el código fuente, el diseño, la interfaz, los íconos y todos sus componentes. Esta prueba no otorga derecho de propiedad alguno sobre el software; únicamente concede el derecho a utilizarlo de forma temporal con fines de evaluación.
+El software **Frutería POS** constituye una obra original protegida por las leyes de propiedad intelectual, siendo de nuestra exclusiva titularidad. Esta protección abarca de manera integral su código fuente, diseño, interfaz, elementos gráficos y la totalidad de sus componentes. La presente prueba demostrativa no implica transferencia, cesión ni otorgamiento de derecho alguno de propiedad sobre el software; se limita exclusivamente a conceder un derecho de uso temporal y restringido, con el único propósito de permitir su evaluación funcional.
 
-Si al concluir la prueba decide adquirir una licencia comercial, lo conversaremos de forma separada y formalizaremos un acuerdo de licencia.
+Si al concluir la prueba decide adquirir una licencia comercial, lo conversaremos de forma separada y formalizaremos el acuerdo correspondiente.
 
 ---
 
