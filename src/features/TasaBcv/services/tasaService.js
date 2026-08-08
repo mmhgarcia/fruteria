@@ -1,22 +1,6 @@
-const DB_NAME = 'fruteria-db'
-const DB_VERSION = 4
+import { openDB } from '../../../utils/db'
+
 const TASA_STORE_NAME = 'historico_tasas'
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
-
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result
-      if (!db.objectStoreNames.contains(TASA_STORE_NAME)) {
-        db.createObjectStore(TASA_STORE_NAME, { keyPath: 'id', autoIncrement: true })
-      }
-    }
-  })
-}
 
 export async function getTasas() {
   const db = await openDB()
@@ -29,7 +13,10 @@ export async function getTasas() {
       list.sort((a, b) => b.id - a.id)
       resolve(list)
     }
-    request.onerror = () => reject(request.error)
+    request.onerror = () => {
+      console.error('getTasas error', request.error)
+      reject(request.error)
+    }
   })
 }
 
@@ -38,9 +25,26 @@ export async function addTasa({ fecha_tasa, tasa }) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(TASA_STORE_NAME, 'readwrite')
     const store = tx.objectStore(TASA_STORE_NAME)
-    const request = store.add({ fecha_tasa, tasa: parseFloat(tasa) })
+    const payload = { fecha_tasa, tasa: parseFloat(tasa) }
+    const request = store.add(payload)
+
     request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
+
+    request.onerror = () => {
+      console.warn('addTasa.add failed, attempting put fallback', request.error)
+      // If add failed due to constraint, try put as a fallback
+      try {
+        const putReq = store.put(payload)
+        putReq.onsuccess = () => resolve(putReq.result)
+        putReq.onerror = () => {
+          console.error('addTasa.put fallback failed', putReq.error)
+          reject(putReq.error)
+        }
+      } catch (err) {
+        console.error('addTasa unexpected error', err)
+        reject(err)
+      }
+    }
   })
 }
 
@@ -51,7 +55,10 @@ export async function updateTasa(id, { fecha_tasa, tasa }) {
     const store = tx.objectStore(TASA_STORE_NAME)
     const request = store.put({ id, fecha_tasa, tasa: parseFloat(tasa) })
     request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
+    request.onerror = () => {
+      console.error('updateTasa error', request.error)
+      reject(request.error)
+    }
   })
 }
 
@@ -62,7 +69,10 @@ export async function deleteTasa(id) {
     const store = tx.objectStore(TASA_STORE_NAME)
     const request = store.delete(id)
     request.onsuccess = () => resolve()
-    request.onerror = () => reject(request.error)
+    request.onerror = () => {
+      console.error('deleteTasa error', request.error)
+      reject(request.error)
+    }
   })
 }
 

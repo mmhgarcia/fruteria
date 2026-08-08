@@ -6,32 +6,67 @@ const SALES_STORE_NAME = 'sales'
 const RAMOS_STORE_NAME = 'ramos'
 const LOG_STORE_NAME = 'logs'
 
+const REQUIRED_STORES = [
+  STORE_NAME,
+  'categories',
+  TASA_STORE_NAME,
+  SALES_STORE_NAME,
+  RAMOS_STORE_NAME,
+  LOG_STORE_NAME,
+]
+
+function createMissingStores(db) {
+  if (!db.objectStoreNames.contains(STORE_NAME)) {
+    db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true })
+  }
+  if (!db.objectStoreNames.contains('categories')) {
+    db.createObjectStore('categories', { keyPath: 'id' })
+  }
+  if (!db.objectStoreNames.contains(TASA_STORE_NAME)) {
+    db.createObjectStore(TASA_STORE_NAME, { keyPath: 'id', autoIncrement: true })
+  }
+  if (!db.objectStoreNames.contains(SALES_STORE_NAME)) {
+    db.createObjectStore(SALES_STORE_NAME, { keyPath: 'id', autoIncrement: true })
+  }
+  if (!db.objectStoreNames.contains(RAMOS_STORE_NAME)) {
+    db.createObjectStore(RAMOS_STORE_NAME, { keyPath: 'id' })
+  }
+  if (!db.objectStoreNames.contains(LOG_STORE_NAME)) {
+    db.createObjectStore(LOG_STORE_NAME, { keyPath: 'id', autoIncrement: true })
+  }
+}
+
 export function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
+    // Open without explicit version to avoid VersionError when DB already has a higher version.
+    const request = indexedDB.open(DB_NAME)
 
     request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains('categories')) {
-        db.createObjectStore('categories', { keyPath: 'id' })
-      }
-      if (!db.objectStoreNames.contains(TASA_STORE_NAME)) {
-        db.createObjectStore(TASA_STORE_NAME, { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains(SALES_STORE_NAME)) {
-        db.createObjectStore(SALES_STORE_NAME, { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains(RAMOS_STORE_NAME)) {
-        db.createObjectStore(RAMOS_STORE_NAME, { keyPath: 'id' })
-      }
-      if (!db.objectStoreNames.contains(LOG_STORE_NAME)) {
-        db.createObjectStore(LOG_STORE_NAME, { keyPath: 'id', autoIncrement: true })
+      createMissingStores(db)
+    }
+
+    request.onsuccess = (event) => {
+      const db = event.target.result
+
+      // If some required stores are missing (possible when DB was created by older code),
+      // close and reopen with an incremented version to trigger onupgradeneeded and create them.
+      const missing = REQUIRED_STORES.filter((s) => !db.objectStoreNames.contains(s))
+      if (missing.length > 0) {
+        db.close()
+        const newVersion = db.version + 1
+        const upgradeReq = indexedDB.open(DB_NAME, newVersion)
+
+        upgradeReq.onerror = () => reject(upgradeReq.error)
+        upgradeReq.onupgradeneeded = (ev) => {
+          const db2 = ev.target.result
+          createMissingStores(db2)
+        }
+        upgradeReq.onsuccess = () => resolve(upgradeReq.result)
+      } else {
+        resolve(db)
       }
     }
   })
