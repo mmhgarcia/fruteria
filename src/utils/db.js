@@ -38,7 +38,8 @@ function createMissingStores(db) {
 
 export function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
+    // Open without explicit version to avoid VersionError when DB already has a higher version.
+    const request = indexedDB.open(DB_NAME)
 
     request.onerror = () => reject(request.error)
 
