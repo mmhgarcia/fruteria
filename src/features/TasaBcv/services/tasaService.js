@@ -1,22 +1,6 @@
-const DB_NAME = 'fruteria-db'
-const DB_VERSION = 4
+import { openDB } from '../../../utils/db'
+
 const TASA_STORE_NAME = 'historico_tasas'
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
-
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result
-      if (!db.objectStoreNames.contains(TASA_STORE_NAME)) {
-        db.createObjectStore(TASA_STORE_NAME, { keyPath: 'id', autoIncrement: true })
-      }
-    }
-  })
-}
 
 export async function getTasas() {
   const db = await openDB()
