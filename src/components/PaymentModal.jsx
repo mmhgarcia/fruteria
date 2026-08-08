@@ -25,7 +25,8 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
     return pm + pt + dv + ef
   }, [pmMonto, puntoMonto, divisaUSD, efectivoBS, tasa])
 
-  const saldo = totals.totalBS - totalPagado
+  const saldo = Math.round((totals.totalBS - totalPagado) * 100) / 100
+  const saldoDisplay = saldo <= 0 ? 0 : saldo
 
   const handleConfirm = () => {
     if (totalPagado <= 0) {
@@ -67,7 +68,7 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
             MONTO BS: {formatCurrency(totals.totalBS)}
           </div>
           <div className="pu-saldo-header">
-            Saldo Bs. {formatCurrency(Math.max(0, saldo))}
+            Saldo Bs. {formatCurrency(saldoDisplay)}
           </div>
           <hr className="pu-divider" />
         </div>
