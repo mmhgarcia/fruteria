@@ -7,7 +7,6 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
     { id: 'categorias', label: 'Categorías de Producto', icon: '📂', onClick: onOpenCategories },
     { id: 'productos', label: 'Catálogo de Productos', icon: '📦', onClick: onOpenProducts },
     { type: 'separator', id: 'sep0' },
-    { id: 'inventory', label: 'Inventario', icon: '📊', onClick: onOpenInventory },
     { type: 'separator', id: 'sep1' },
     { id: 'sales', label: 'Reporte de Ventas', icon: '📈', onClick: onOpenSalesReport },
     { id: 'best-selling', label: 'Productos Más Vendidos', icon: '🏆', onClick: onOpenBestSelling },
