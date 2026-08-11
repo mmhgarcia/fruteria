@@ -134,7 +134,7 @@ Durante la prueba podrá ingresar datos en el software. Respecto a esa informaci
 
 ## ¿De quién es el software?
 
-El software **Frutería POS** constituye una obra original protegida por las leyes de propiedad intelectual, siendo de nuestra exclusiva titularidad. Esta protección abarca de manera integral su código fuente, diseño, interfaz, elementos gráficos y la totalidad de sus componentes. La presente prueba demostrativa no implica transferencia, cesión ni otorgamiento de derecho alguno de propiedad sobre el software; se limita exclusivamente a conceder un derecho de uso temporal y restringido, con el único propósito de permitir su evaluación funcional.
+El software **Frutería POS** es una herramienta de nuestra titularidad. Esta titularidad abarca de manera integral su código fuente, diseño, interfaz, elementos gráficos y la totalidad de sus componentes. La presente prueba demostrativa (DEMO) no implica transferencia, cesión ni otorgamiento de derecho alguno de propiedad sobre el software; se limita exclusivamente a conceder un derecho de uso temporal y restringido, con el único propósito de permitir su evaluación funcional.
 
 Si al concluir la prueba decide adquirir una licencia comercial, lo conversaremos de forma separada y formalizaremos el acuerdo correspondiente.
 
@@ -142,7 +142,7 @@ Si al concluir la prueba decide adquirir una licencia comercial, lo conversaremo
 
 ## ¿Existen garantías?
 
-El software se entrega **"tal cual"** se encuentra en este momento. Es una versión funcional, pero puede presentar errores menores o funcionalidades sujetas a mejora. No se garantiza un funcionamiento perfecto, ininterrumpido o libre de errores, por tratarse de una versión de evaluación.
+El software se entrega **"tal cual"** se encuentra en este momento. Es una versión funcional, pero pudiese eventualmente presentar algun error menor en funcionalidades en desarrollo o sujetas a mejora. No se garantiza un funcionamiento perfecto, ininterrumpido o libre de errores, por tratarse de una versión de evaluación.
 
 Como se trata de una prueba gratuita y el software se entrega en su estado actual, nuestra responsabilidad frente a cualquier inconveniente que pudiera surgir durante el período de evaluación es de carácter limitado. Esto es una práctica habitual en cualquier demostración de software: la intención es que pueda evaluarlo con tranquilidad, teniendo presente que se trata de una versión de evaluación y no de un producto en producción con soporte completo.
 
@@ -150,9 +150,9 @@ Como se trata de una prueba gratuita y el software se entrega en su estado actua
 
 ## ¿Qué sucede si desea adquirirlo?
 
-Si al finalizar la prueba el software resulta de su interés para uso comercial, conversaremos sobre las condiciones: precio, tipo de licencia, soporte, actualizaciones, entre otros aspectos. Esto se formalizaría mediante un acuerdo separado, un contrato de licencia comercial.
+Si al finalizar la prueba el software resulta de su interés para uso comercial, conversaremos sobre las condiciones: precio, soporte, actualizaciones, entre otros aspectos. Esto se formalizaría mediante un acuerdo entre las partes.
 
-Si no resulta de su interés, no hay inconveniente alguno. Retiramos el software y mantenemos una buena relación comercial.
+Si no resulta de su interés, no hay inconveniente alguno. Retiramos el software y mantenemos de igual forma una buena relación comercial.
 
 ---
 
@@ -160,7 +160,7 @@ Si no resulta de su interés, no hay inconveniente alguno. Retiramos el software
 
 Si alguna de las dos partes incumple lo establecido en esta carta, la otra parte lo notificará y otorgará un plazo de 5 días hábiles para su corrección. De no subsanarse, se podrá dar por terminada la prueba de forma inmediata.
 
-Cualquiera de las dos partes puede dar por terminada la prueba en cualquier momento, comunicándolo con 5 días de anticipación. Sin penalidades ni consecuencias adicionales.
+Cualquiera de las dos partes puede dar por terminada la prueba (DEMO) en cualquier momento, comunicándolo con 5 días de anticipación sin penalidad ni indemnizacion de ningun tipo.
 
 ---
 
@@ -168,16 +168,14 @@ Cualquiera de las dos partes puede dar por terminada la prueba en cualquier mome
 
 - **Modificaciones a esta carta:** Cualquier cambio se realizará por escrito y será firmado por ambas partes.
 - **Notificaciones:** Las comunicaciones se realizarán por correo electrónico o mensajería a los contactos indicados al final de este documento.
-- **Buena fe:** Ambas partes actuamos de buena fe. Esta carta refleja un compromiso mutuo para que la prueba se desarrolle de la mejor manera.
-- **Consultas:** Si tiene dudas sobre cualquier punto, le invitamos a consultarlas antes de firmar. Es preferible aclarar ahora que enfrentar inconvenientes después.
+- **Buena fe:** Ambas partes actuamos de buena fe. Esta carta refleja un compromiso mutuo para que la prueba (DEMO) se desarrolle de la mejor manera.
+- **Consultas:** Si tiene dudas sobre cualquier punto, le invitamos a consultarlas antes de firmar. Es preferible aclarar bien cualquier duda o inquietud antes de formalizar el inicio de la DEMO. 
 
 ---
 
 ## En resumen
 
 Le otorgamos el software de forma gratuita por 30 días para su evaluación. La aplicación opera íntegramente en su dispositivo Android, sin enviar información a servidores externos, por lo que sus datos permanecen privados y bajo su control exclusivo. El compromiso de su parte consiste en hacer un uso responsable, respetar la propiedad intelectual del software y mantener la confidencialidad sobre su funcionamiento interno. Al finalizar, usted decide si desea adquirirlo. De ser así, formalizamos un contrato. De no ser así, retiramos el software y la relación comercial continúa en buenos términos.
-
-Así de sencillo.
 
 ---
 

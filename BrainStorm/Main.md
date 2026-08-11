@@ -23,6 +23,7 @@ mindmap
       07-Control-Acceso
       13-Identificacion-App
       14-Proteccion-Copias
+      14.1-Licenciamiento-Remoto-FastAPI
       15-Hasheo-Configuracion
     UX & Navegacion
       21-SideMenu-Navegacion
@@ -58,6 +59,7 @@ mindmap
 | 12 | Arquitectura del Sistema (PWA) | ⚡ En evolución | Alta | [📄](12-arquitectura-sistema.md) |
 | 13 | Identificación de la App | 💡 Idea | Baja | [📄](13-identificacion-app.md) |
 | 14 | Protección contra Copias | 🔍 En análisis | Media | [📄](14-proteccion-copias.md) |
+| 14.1 | Licenciamiento Remoto (FastAPI SaaS) | 💡 Idea | Alta | [📄](14.1-licenciamiento-remoto-fastapi.md) |
 | 15 | Hasheo de Configuración | 💡 Idea | Baja | [📄](15-hasheo-configuracion.md) |
 | 16 | Estrategia de Testing | 📋 Pendiente | Media | [📄](16-estrategia-testing.md) |
 | 17 | Distribución y Monetización | 💡 Idea | Baja | [📄](17-distribucion-monetizacion.md) |

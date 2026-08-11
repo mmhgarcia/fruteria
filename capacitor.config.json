@@ -1,0 +1,9 @@
+{
+  "appId": "com.fruteriapos.app",
+  "appName": "Frutería POS",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -15,7 +15,7 @@ const KEYS = [
   ['', '0', '⌫'],
 ]
 
-export default function PinPrompt({ pin, onSuccess, onClose }) {
+export default function PinPrompt({ pin, mode = 'config', required = false, onSuccess, onClose }) {
   const [digits, setDigits] = useState([])
   const [error, setError] = useState(false)
   const [shake, setShake] = useState(false)
@@ -114,6 +114,7 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
   }
 
   const handleClose = () => {
+    if (required) return
     setFailedAttempts(0)
     loggedRef.current = false
     onClose()
@@ -127,14 +128,18 @@ export default function PinPrompt({ pin, onSuccess, onClose }) {
       <div className="pin-prompt" onClick={(e) => e.stopPropagation()}>
         <div className="pin-prompt-header">
           <span className="pin-prompt-icon">🔒</span>
-          <h2>Acceso a Configuración</h2>
-          <button className="pin-prompt-close" onClick={handleClose} aria-label="Cerrar">
-            ✕
-          </button>
+          <h2>{mode === 'login' ? 'Inicio de sesión' : 'Acceso a Configuración'}</h2>
+          {!required && (
+            <button className="pin-prompt-close" onClick={handleClose} aria-label="Cerrar">
+              ✕
+            </button>
+          )}
         </div>
 
         <div className="pin-prompt-body">
-          <p className="pin-prompt-desc">Ingrese el PIN de administrador</p>
+          <p className="pin-prompt-desc">
+            {mode === 'login' ? 'Ingrese su PIN para continuar' : 'Ingrese el PIN de administrador'}
+          </p>
 
           {bloqueadoHasta ? (
             <>

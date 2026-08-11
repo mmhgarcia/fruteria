@@ -50,6 +50,7 @@ function App() {
   })
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
+  const [pinPromptMode, setPinPromptMode] = useState('config')
   const [alertCount, setAlertCount] = useState(0)
   const [sesionActiva, setSesionActiva] = useState(() => estaDesbloqueado())
   const [showTasa, setShowTasa] = useState(false)
@@ -84,8 +85,16 @@ function App() {
     refreshAlertCount()
   }, [pinPromptOpen, lastAlertReadAt])
 
+  useEffect(() => {
+    if (settings.pin && !sesionActiva) {
+      setPinPromptMode('login')
+      setPinPromptOpen(true)
+    }
+  }, [settings.pin, sesionActiva])
+
   const handleAlertBadgeClick = () => {
     if (settings.pin && !sesionActiva) {
+      setPinPromptMode('config')
       setPinPromptOpen(true)
     } else {
       setSettingsOpen(true)
@@ -95,6 +104,7 @@ function App() {
   // Abre Configuración: con PIN pedido solo si no hay sesión activa
   const abrirConfiguracion = () => {
     if (settings.pin && !sesionActiva) {
+      setPinPromptMode('config')
       setPinPromptOpen(true)
     } else {
       setSettingsOpen(true)
@@ -479,11 +489,15 @@ function App() {
       {pinPromptOpen && (
         <PinPrompt
           pin={settings.pin}
+          mode={pinPromptMode}
+          required={pinPromptMode === 'login'}
           onSuccess={() => {
             crearSesion(settings.sessionHoras ?? 8, settings.sessionMinutos ?? 0)
             setSesionActiva(true)
             setPinPromptOpen(false)
-            setSettingsOpen(true)
+            if (pinPromptMode === 'config') {
+              setSettingsOpen(true)
+            }
           }}
           onClose={() => setPinPromptOpen(false)}
         />

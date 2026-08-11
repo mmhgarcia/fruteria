@@ -1,0 +1,221 @@
+ANÁLISIS DEL PROYECTO FRUTERÍA POS
+===================================
+
+NOMBRE DEL PROYECTO: fruteria-pos-pwa
+VERSIÓN: 1.0.0
+AUTOR: Cognition (según estructura)
+LICENCIA: Comercial (ver LICENSE)
+
+DESCRIPCIÓN:
+Punto de Venta táctil para fruterías, carnicerías y charcuterías en Venezuela.
+100% offline-first. Sin internet. Sin backend. Solo tu negocio.
+
+ESTADO: 🚧 En desarrollo activo
+
+TECNOLOGÍAS PRINCIPALES:
+- Frontend: React 18.2.0
+- Build Tool: Vite 5.0.8
+- PWA: vite-plugin-pwa 0.19.0
+- Generación PDF: jsPDF 4.2.1, jsPDF-autotable 5.0.8
+- TypeScript: @types/react, @types/react-dom
+- Mobile: Capacitor 8.5.0 (Android, iOS)
+
+ESTRUCTURA DEL PROYECTO:
+=======================
+
+Directorios principales:
+- src/ - Código fuente de la aplicación
+  - components/ - Componentes React (30+ archivos)
+  - data/ - Datos estáticos (products.js, ramos.js)
+  - features/ - Funcionalidades organizadas por feature
+    - TasaBcv/ - Gestión de tasa de cambio BCV
+  - hooks/ - Custom hooks React
+  - utils/ - Utilidades y servicios (db, logService, session, etc.)
+- public/ - Recursos estáticos
+- dist/ - Build de producción
+- docs/ - Documentación del proyecto
+- BrainStorm/ - Roadmap y análisis de features
+
+COMPONENTES PRINCIPALES:
+=======================
+
+Componentes de UI:
+- App.jsx - Componente principal (509 líneas)
+- Header.jsx - Cabecera con carrito y búsqueda
+- ProductGrid.jsx - Grid de productos
+- ProductCard.jsx - Tarjeta de producto individual
+- Ticket.jsx - Ticket de compra
+- SideMenu.jsx - Menú lateral de navegación
+
+Modales:
+- PaymentModal.jsx - Modal de pagos mixtos
+- TicketPreview.jsx - Vista previa de ticket
+- WeightModal.jsx - Modal para productos por peso
+- SettingsModal.jsx - Configuración del sistema
+- PinPrompt.jsx - Prompt de PIN de seguridad
+- SalesReportModal.jsx - Reporte de ventas
+- BestSellingProductsModal.jsx - Productos más vendidos
+- DailyTicketsModal.jsx - Tickets diarios
+- LogsViewerModal.jsx - Visor de logs del sistema
+- Categories.jsx - Gestión de categorías
+- Products.jsx - Gestión de productos
+- Inventory.jsx - Inventario
+- BackupModal.jsx - Backup y restauración
+
+Configuración:
+- RamoSetup.jsx - Configuración inicial de ramo comercial
+- RamoSelector.jsx - Selector de ramo
+- RamosComerciales.jsx - Gestión de ramos comerciales
+
+CARACTERÍSTICAS FUNCIONALES:
+============================
+
+Core:
+- Interfaz 100% táctil con grandes botones
+- Gestión de productos por categorías
+- Carrito de compras con edición de cantidades
+- Pagos mixtos: Pago Móvil, Punto, Efectivo ($ y Bs), Divisa
+- Tasa de cambio BCV actualizable
+- Ticket digital imprimible con desglose por método de pago
+
+Seguridad:
+- PIN de administrador con hash SHA-256
+- Sistema de sesiones con tiempo configurable
+- Bloqueo tras 3 intentos fallidos
+- Badge de alertas para logs no leídos
+
+Gestión:
+- Ramos comerciales: frutería, carnicería, charcutería
+- CRUD de categorías jerárquicas por ramo
+- CRUD de productos
+- Histórico de tasas BCV
+- Sistema de logs (INFO, WARNING, ERROR, FATAL, ALERT)
+- Backup y restauración de datos
+
+Reportes:
+- Reporte de ventas
+- Productos más vendidos con ranking
+- Tickets diarios
+- Exportación a PDF
+
+PWA:
+- Instalable como app nativa
+- Funciona completamente offline
+- Service Worker con Workbox
+
+ARQUITECTURA TÉCNICA:
+====================
+
+Persistencia de datos:
+- IndexedDB para datos principales (productos, ventas, logs)
+- localStorage para carrito, tasa, configuración y sesión
+
+Servicios:
+- db.js - Operaciones IndexedDB (getProducts, addSale, updateProduct, etc.)
+- categories.js - Gestión de categorías
+- logService.js - Sistema de logging
+- session.js - Gestión de sesiones de seguridad
+
+Custom Hooks:
+- useLocalStorage - Hook para localStorage con persistencia
+
+Configuración Vite:
+- watch con polling para WSL (intervalo 300ms)
+- PWA con autoUpdate
+- Manifest para instalación standalone
+
+DEPENDENCIAS:
+=============
+
+Producción:
+- react: ^18.2.0
+- react-dom: ^18.2.0
+- jspdf: ^4.2.1
+- jspdf-autotable: ^5.0.8
+- @capacitor/core: ^8.5.0
+- @capacitor/cli: ^8.5.0
+
+Desarrollo:
+- @types/react: ^18.2.43
+- @types/react-dom: ^18.2.17
+- @vitejs/plugin-react: ^4.2.1
+- vite: ^5.0.8
+- vite-plugin-pwa: ^0.19.0
+- @capacitor/android: ^8.5.0
+- @capacitor/ios: ^8.5.0
+- typescript: ^5.0.0
+
+COMANDOS DISPONIBLES:
+=====================
+
+Desarrollo:
+- npm run dev - Servidor de desarrollo (Vite)
+- npm run build - Build de producción
+- npm run preview - Preview del build
+
+Capacitor (Mobile):
+- npm run cap:sync - Sincronizar con plataformas nativas
+- npm run cap:android - Abrir proyecto Android
+- npm run cap:ios - Abrir proyecto iOS
+- npm run cap:build:android - Build y sync para Android
+- npm run cap:build:ios - Build y sync para iOS
+
+Despliegue:
+- Configurado para Vercel
+- Build command: npm run build
+- Output directory: dist
+- NO usar GitHub Pages
+
+NOTAS ESPECIALES:
+=================
+
+- WSL: Vite a veces no detecta cambios en archivos en /mnt/d, reiniciar dev server si es necesario
+- Los _headers en /public fuerzan no-cache para JS/CSS/HTML
+- Documentación en construcción según README.md
+- Roadmap en BrainStorm/Main.md
+- Capacitor configurado para builds nativos de Android e iOS
+- Configuración de Capacitor en capacitor.config.ts
+
+ÚLTIMA ACTUALIZACIÓN (CHANGELOG):
+==================================
+
+[Unreleased]:
+- Reporte Productos Más Vendidos con ranking y filtros
+- Filtros rápidos: Hoy, Semana, Mes
+- Tarjeta destacada del producto estrella y podio
+- Exportar PDF (Ver / Compartir / Descargar)
+
+[1.0.0] — 2026-07-30:
+- Lanzamiento inicial del producto
+- Sistema POS táctil offline-first
+- Gestión de productos, categorías y ramos comerciales
+- Pagos mixtos multimoneda (USD + Bs)
+- PIN de administrador con hasheo SHA-256
+- Sistema de logs con visor y alertas
+- Backup y restauración de datos
+- Instalable como PWA
+
+DOCUMENTACIÓN DISPONIBLE:
+=========================
+
+- docs/MANUAL-USUARIO.md - Manual del Cajero
+- docs/MANUAL-ADMIN.md - Manual del Administrador
+- docs/TROUBLESHOOTING.md - Solución de problemas
+- docs/ARQUITECTURA.md - Arquitectura del sistema
+- docs/MODELO-DATOS.md - Modelo de datos
+- docs/DEPLOYMENT.md - Despliegue
+- docs/SEGURIDAD.md - Seguridad
+
+AUTORIZACIONES (AGENTS.md):
+===========================
+
+- El asistente está autorizado a ejecutar tareas de git: commits, push, creación y modificación de archivos
+- Las eliminaciones o reemplazos de archivos deben ser consultadas al usuario antes de ejecutarse
+
+RESUMEN:
+=========
+
+Proyecto POS moderno, reactivo y PWA para comercio minorista venezolano.
+Arquitectura basada en componentes React con estado gestionado localmente.
+Enfoque fuerte en experiencia táctil, trabajo offline y seguridad.
+Stack tecnológico actual con Vite como herramienta de build.
