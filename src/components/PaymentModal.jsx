@@ -75,8 +75,8 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
 
         <div className="pu-body">
           {/* PAGO MOVIL */}
-          <div className="pu-section">
-            <div className="pu-section-title">PAGO MOVIL:</div>
+          <div className="pu-section" data-method="pagomovil">
+            <div className="pu-section-title">PAGO MOVIL</div>
             <div className="pu-field">
               <label className="pu-label">Referencia:</label>
               <input
@@ -112,8 +112,8 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
           </div>
 
           {/* PUNTO */}
-          <div className="pu-section">
-            <div className="pu-section-title">PUNTO:</div>
+          <div className="pu-section" data-method="punto">
+            <div className="pu-section-title">PUNTO DE VENTA</div>
             <div className="pu-field">
               <label className="pu-label">Tarjeta (6 ult. digitos):</label>
               <input
@@ -150,8 +150,8 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
           </div>
 
           {/* DIVISA */}
-          <div className="pu-section">
-            <div className="pu-section-title">DIVISA:</div>
+          <div className="pu-section" data-method="divisa">
+            <div className="pu-section-title">DIVISA (USD)</div>
             <div className="pu-field">
               <label className="pu-label">Monto $:</label>
               <input
@@ -167,8 +167,8 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
           </div>
 
           {/* EFECTIVO */}
-          <div className="pu-section">
-            <div className="pu-section-title">EFECTIVO:</div>
+          <div className="pu-section" data-method="efectivo">
+            <div className="pu-section-title">EFECTIVO BS</div>
             <div className="pu-field">
               <label className="pu-label">Monto Bs:</label>
               <input
