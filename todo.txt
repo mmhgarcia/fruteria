@@ -1,6 +1,38 @@
 MISIONES YA CUMPLIDAS
 
 -----------------------------------
+= SIDEMENU ORDEN EXACTO Y SEPARADORES
+
+  categorias de productos
+  catalogo de productos
+  -----------------------------------
+  inventario
+  -----------------------------------
+  > Reportes del sistema (acordeon)
+    Reporte de Ventas
+    Productos mas vendidos
+    Tickets del dia
+  ------------------------------------
+  Tasa BCV
+  ------------------------------------
+  Configuracion del Sistema
+  Visor de Logs
+  -----------------------------------
+  Bloquear ahora
+
+
+-----------------------------------
+= SIDEMENU
+
+En Sidemenu, añade un acordeon LLAMADO 
+REPORTES DEL SISTEMA
+y mueve al acordeon los reportes:
+Reporte de Ventas
+Productos mas vendidos
+Tickets del dia.
+
+
+-----------------------------------
 = INTERFAZ CONFIGIRACION DEL SISTEMA  
 
 Todo lo referente al PIN del administrador 

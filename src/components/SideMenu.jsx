@@ -3,21 +3,8 @@ import './SideMenu.css'
 
 export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenBestSelling, onOpenDailyTickets, onOpenLogs, onOpenCategories, onOpenProducts, onOpenInventory }) {
   const CONFIG_OPTION = { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' }
-  const ADMIN_OPTIONS = [
-    { id: 'categorias', label: 'Categorías de Producto', icon: '📂', onClick: onOpenCategories },
-    { id: 'productos', label: 'Catálogo de Productos', icon: '📦', onClick: onOpenProducts },
-    { type: 'separator', id: 'sep0' },
-    { id: 'inventario', label: 'Inventario', icon: '🛒', onClick: onOpenInventory },
-    { type: 'separator', id: 'sep1' },
-    { id: 'sales', label: 'Reporte de Ventas', icon: '📈', onClick: onOpenSalesReport },
-    { id: 'best-selling', label: 'Productos Más Vendidos', icon: '🏆', onClick: onOpenBestSelling },
-    { id: 'daily-tickets', label: 'Tickets del Día', icon: '🧾', onClick: onOpenDailyTickets },
-    { type: 'separator', id: 'sep2' },
-    { id: 'tasa', label: 'Tasa BCV', icon: '💱', onClick: onOpenTasa },
-    { type: 'separator', id: 'sep3' },
-    { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' },
-    { id: 'logs', label: 'Visor de Logs', icon: '📋', onClick: onOpenLogs },
-  ]
+
+  const [reportsOpen, setReportsOpen] = useState(false)
   const verAdmin = sesionActiva
   const menuRef = useRef(null)
   const edgeRef = useRef(null)
@@ -25,6 +12,28 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
   const [menuWidth, setMenuWidth] = useState(0)
   const startX = useRef(0)
   const isDragging = useRef(false)
+
+  // Opciones de administración superiores (antes de Reportes)
+  const ADMIN_TOP_OPTIONS = [
+    { id: 'categorias', label: 'Categorías de Producto', icon: '📂', onClick: onOpenCategories },
+    { id: 'productos', label: 'Catálogo de Productos', icon: '📦', onClick: onOpenProducts },
+    { type: 'separator', id: 'sep0' },
+    { id: 'inventario', label: 'Inventario', icon: '🛒', onClick: onOpenInventory },
+  ]
+
+  // Opciones de administración inferiores (después de Reportes)
+  const ADMIN_BOTTOM_OPTIONS = [
+    { id: 'tasa', label: 'Tasa BCV', icon: '💱', onClick: onOpenTasa },
+    { type: 'separator', id: 'sep3' },
+    { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' },
+    { id: 'logs', label: 'Visor de Logs', icon: '📋', onClick: onOpenLogs },
+  ]
+
+  const REPORT_OPTIONS = [
+    { id: 'sales', label: 'Reporte de Ventas', icon: '📈', onClick: onOpenSalesReport },
+    { id: 'best-selling', label: 'Productos Más Vendidos', icon: '🏆', onClick: onOpenBestSelling },
+    { id: 'daily-tickets', label: 'Tickets del Día', icon: '🧾', onClick: onOpenDailyTickets },
+  ]
 
   useEffect(() => {
     if (menuRef.current) {
@@ -108,38 +117,117 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
               <span className="side-menu-label">{CONFIG_OPTION.label}</span>
             </button>
           )}
-          {verAdmin && ADMIN_OPTIONS.map((option) =>
-            option.type === 'separator' ? (
-              <hr key={option.id} className="side-menu-separator" />
-            ) : (
+          {verAdmin && (
+            <>
+              {/* Categorías de producto y catálogo */}
               <button
-                key={option.id}
-                className={`side-menu-option ${currentFilter === option.id ? 'active' : ''}`}
+                className={`side-menu-option ${currentFilter === 'categorias' ? 'active' : ''}`}
+                onClick={() => { onClose(); onOpenCategories(); }}
+              >
+                <span className="side-menu-icon">📂</span>
+                <span className="side-menu-label">Categorías de Producto</span>
+              </button>
+
+              <button
+                className={`side-menu-option ${currentFilter === 'productos' ? 'active' : ''}`}
+                onClick={() => { onClose(); onOpenProducts(); }}
+              >
+                <span className="side-menu-icon">📦</span>
+                <span className="side-menu-label">Catálogo de Productos</span>
+              </button>
+
+              <hr className="side-menu-separator" />
+
+              {/* Inventario */}
+              <button
+                className={`side-menu-option ${currentFilter === 'inventario' ? 'active' : ''}`}
+                onClick={() => { onClose(); onOpenInventory(); }}
+              >
+                <span className="side-menu-icon">🛒</span>
+                <span className="side-menu-label">Inventario</span>
+              </button>
+
+              <hr className="side-menu-separator" />
+
+              {/* Acordeón de Reportes */}
+              <div className="side-menu-accordion">
+                <button
+                  type="button"
+                  className={`side-menu-option side-menu-accordion-trigger ${reportsOpen ? 'open' : ''}`}
+                  onClick={() => setReportsOpen(!reportsOpen)}
+                >
+                  <span className="side-menu-icon">📊</span>
+                  <span className="side-menu-label">REPORTES DEL SISTEMA</span>
+                  <span className="side-menu-arrow">{reportsOpen ? '▼' : '▶'}</span>
+                </button>
+
+                {reportsOpen && (
+                  <div className="side-menu-accordion-content">
+                    {REPORT_OPTIONS.map((option) => (
+                      <button
+                        key={option.id}
+                        className="side-menu-option side-menu-sub-option"
+                        onClick={() => {
+                          onClose()
+                          option.onClick()
+                        }}
+                      >
+                        <span className="side-menu-icon">{option.icon}</span>
+                        <span className="side-menu-label">{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <hr className="side-menu-separator" />
+
+              {/* Tasa BCV */}
+              <button
+                className={`side-menu-option ${currentFilter === 'tasa' ? 'active' : ''}`}
+                onClick={() => { onClose(); onOpenTasa(); }}
+              >
+                <span className="side-menu-icon">💱</span>
+                <span className="side-menu-label">Tasa BCV</span>
+              </button>
+
+              <hr className="side-menu-separator" />
+
+              {/* Configuración y Visor de logs */}
+              <button
+                className={`side-menu-option ${currentFilter === CONFIG_OPTION.id ? 'active' : ''}`}
                 onClick={() => {
                   onClose()
-                  if (option.id === 'config') {
-                    handleOptionClick(option.id)
-                  } else {
-                    option.onClick()
-                  }
+                  handleOptionClick(CONFIG_OPTION.id)
                 }}
               >
-                <span className="side-menu-icon">{option.icon}</span>
-                <span className="side-menu-label">{option.label}</span>
+                <span className="side-menu-icon">{CONFIG_OPTION.icon}</span>
+                <span className="side-menu-label">{CONFIG_OPTION.label}</span>
               </button>
-            )
+
+              <button
+                className={`side-menu-option ${currentFilter === 'logs' ? 'active' : ''}`}
+                onClick={() => { onClose(); onOpenLogs(); }}
+              >
+                <span className="side-menu-icon">📋</span>
+                <span className="side-menu-label">Visor de Logs</span>
+              </button>
+            </>
           )}
           {hasPin && (
-            <button
-              className="side-menu-option side-menu-lock"
-              onClick={() => {
-                onLockNow()
-                onClose()
-              }}
-            >
-              <span className="side-menu-icon">🔒</span>
-              <span className="side-menu-label">Bloquear ahora</span>
-            </button>
+            <>
+              <hr className="side-menu-separator" />
+              <button
+                className="side-menu-option side-menu-lock"
+                onClick={() => {
+                  onLockNow()
+                  onClose()
+                }}
+              >
+                <span className="side-menu-icon">🔒</span>
+                <span className="side-menu-label">Bloquear ahora</span>
+              </button>
+            </>
           )}
         </nav>
 
