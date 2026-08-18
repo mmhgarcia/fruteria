@@ -1,0 +1,67 @@
+MISIONES YA CUMPLIDAS
+
+-----------------------------------
+= INTERFAZ CONFIGIRACION DEL SISTEMA  
+
+Todo lo referente al PIN del administrador 
+va en una card.
+El mensaje que aparece a la derecha del OJO
+debe aparecer debajo del textbox del pin.
+
+Todo lo referente a durecion de la sesion
+debe ir en una card independiente y separada verticalmente de la del pin por
+35px
+
+-----------------------------------
+
+-----------------------------------
+En la UI CONFIGURACION DEL SISTEMA,
+en el  panel de seguridad,
+
+REDUCE al textbox del PIN su longitud 
+25% para que el OJO quede dentro de la card y a la 
+derecha del textbox.
+
+-----------------------------------
+Añade un acordeon en CONFIGURACION DEL SISTEMA. 
+
+Nuevo acordeon ubicado debajo del acordeon "tasas bcv"
+y nombralo SEGURIDAD
+
+EN EL NUEVO ACORDEON COLOCA el PIN de administrador 
+y la duracion de la sesion ACTUALMENTE UBICADAS EN UTILITARIOS.
+
+
+-----------------------------------
+
+> LA EMPRESA
+   
+  UNA CARD
+
+    Nombre
+    | textbox |
+
+    Direccion Fiscal
+    | text area de 3 lineas|
+
+    Contacto
+    | textbox |
+
+
+    Movil
+    | textbox |
+
+    Ramo comercial
+    | textbox |
+
+ 
+              GRABAR
+
+----------------------------------
+
+
+NOTA IMPORTANTE:
+
+El pin del administrador y la duracion de la sesion
+van en el acordeon UTILITARIOS
+

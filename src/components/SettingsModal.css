@@ -10,7 +10,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border, #e5e7eb);
   flex-shrink: 0;
 }
 
@@ -32,6 +34,42 @@
   overflow-y: auto;
   min-height: 0;
   padding-right: 4px;
+}
+
+.settings-accordion {
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 14px;
+  background: var(--card, #f8f9fa);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.settings-accordion-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--text, #1f2937);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.settings-accordion-trigger strong { flex: 1; font-size: 15px; letter-spacing: 0.3px; }
+.settings-accordion-trigger > span { color: var(--text-light, #888); font-size: 20px; transition: transform 0.2s; }
+.settings-accordion-trigger > span.open { transform: rotate(180deg); }
+.settings-accordion-trigger:active { background: rgba(0, 0, 0, 0.04); }
+
+.settings-accordion-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border, #e5e7eb);
+  animation: fadeIn 0.15s ease;
 }
 
 .settings-field {
@@ -56,6 +94,42 @@
 
 .settings-field input[type="text"]:focus {
   border-color: var(--primary);
+}
+
+.settings-field input[type="tel"],
+.settings-field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+  resize: vertical;
+}
+
+.settings-field input[type="tel"]:focus,
+.settings-field textarea:focus {
+  border-color: var(--primary);
+}
+
+.company-settings-card,
+.utility-pin-settings,
+.utility-session-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  background: var(--bg, #fff);
+}
+
+.utility-session-settings {
+  margin-top: 35px;
 }
 
 .settings-field-readonly {
@@ -86,6 +160,7 @@
 }
 
 .pin-input {
+  max-width: 135px;
   flex: 1;
   padding: 10px 14px;
   border: 1px solid var(--border);
@@ -143,9 +218,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--border, #e5e7eb);
 }
 
 .pin-duration {

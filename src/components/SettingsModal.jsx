@@ -17,8 +17,11 @@ const COLOR_PRESETS = [
   { label: 'Verde oliva', bg: '#556b2f', text: '#ffffff' },
 ]
 
-export default function SettingsModal({ settings, onSave, onClose, onRefreshBackup }) {
+export default function SettingsModal({ settings, onSave, onClose, onRefreshBackup, onOpenTasa }) {
   const [companyName, setCompanyName] = useState(settings.companyName || '')
+  const [companyAddress, setCompanyAddress] = useState(settings.companyAddress || '')
+  const [companyContact, setCompanyContact] = useState(settings.companyContact || '')
+  const [companyMobile, setCompanyMobile] = useState(settings.companyMobile || '')
   const [bgColor, setBgColor] = useState(settings.bgColor || '#4a8c5e')
   const [textColor, setTextColor] = useState(settings.textColor || '#ffffff')
   const currentRamoId = settings.ramoId || ''
@@ -27,6 +30,7 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
   const ramoNombre = currentRamoId ? (getRamoPorId(currentRamoId)?.name || '') : ''
   const [showBackup, setShowBackup] = useState(false)
   const [showColors, setShowColors] = useState(false)
+  const [openSection, setOpenSection] = useState(null)
   const [showPin, setShowPin] = useState(false)
   const [sessionHoras, setSessionHoras] = useState(settings.sessionHoras ?? 8)
   const [sessionMinutos, setSessionMinutos] = useState(settings.sessionMinutos ?? 0)
@@ -37,6 +41,9 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
     const hashedPin = pin ? await hashPin(pin) : (settings.pin || '')
     onSave({
       companyName: companyName.trim() || 'Mi Negocio',
+      companyAddress: companyAddress.trim(),
+      companyContact: companyContact.trim(),
+      companyMobile: companyMobile.trim(),
       bgColor,
       textColor,
       ramoId: settings.ramoId || '',
@@ -57,137 +64,98 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
           </div>
 
           <div className="settings-body">
-            <label className="settings-field">
-              <span>Nombre de la empresa</span>
-              <input
-                type="text"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="Ej: Frutería Doña Ana"
-                autoFocus
-              />
-            </label>
-
-            <label className="settings-field">
-              <span>Ramo Comercial Asignado</span>
-              <input
-                type="text"
-                value={ramoNombre || currentRamoId || 'No establecido.'}
-                readOnly
-                className="settings-field-readonly"
-              />
-              {/* ↓ dropdown comentado
-              <RamoSelector
-                value={ramoId}
-                onChange={setRamoId}
-                ramos={ramos}
-                className="settings-select"
-              />
-              */}
-            </label>
-
-            <label className="settings-field">
-              <span>PIN de administrador {hasPin ? <span className="pin-set-badge">✓ Configurado</span> : ''}</span>
-              <div className="pin-input-row">
-                <input
-                  type={showPin ? 'text' : 'password'}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={6}
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder={hasPin ? 'Escriba para cambiar el PIN' : "Mín. 4, máx. 6 dig."}
-                  className="pin-input"
-                />
-                <button
-                  type="button"
-                  className="pin-toggle-btn"
-                  onClick={() => setShowPin(!showPin)}
-                  aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
-                >
-                  {showPin ? '🙈' : '👁️'}
-                </button>
-                {pin && pin.length < 4 && (
-                  <span className="pin-hint">Mín. 4 dig.</span>
-                )}
-              </div>
-              <span className="settings-field-desc">
-                Solo para entrar a Configuración.
-              </span>
-
-              <div className="pin-session-row">
-                <div className="pin-duration">
-                  <label>
-                    <span>Horas</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      min={0}
-                      max={24}
-                      value={sessionHoras}
-                      onChange={(e) => setSessionHoras(Math.max(0, Math.min(24, Number(e.target.value) || 0)))}
-                      className="pin-duration-input"
-                    />
-                  </label>
-                  <label>
-                    <span>Minutos</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      min={0}
-                      max={59}
-                      value={sessionMinutos}
-                      onChange={(e) => setSessionMinutos(Math.max(0, Math.min(59, Number(e.target.value) || 0)))}
-                      className="pin-duration-input"
-                    />
-                  </label>
-                </div>
-                <div className="pin-duration-hint">
-                  {sessionHoras === 0 && sessionMinutos === 0
-                    ? 'Mínimo 1 minuto'
-                    : `La sesión dura ${sessionHoras}h ${sessionMinutos}m desde el PIN`}
-                </div>
-                {sesionInfo && (
-                  <div className="pin-session-active">
-                    <span>🔓 Desbloqueado: {sesionInfo.horas}h {sesionInfo.minutos}m restantes</span>
-                    <button
-                      type="button"
-                      className="pin-lock-now-btn"
-                      onClick={() => {
-                        bloquearSesion()
-                        setSesionInfo(null)
-                      }}
-                    >
-                      🔒 Bloquear ahora
-                    </button>
-                  </div>
-                )}
-              </div>
-            </label>
-
-            <hr className="settings-divider" />
-
-            <div className="settings-section-group">
-
-              <h3 className="settings-admin-title">Administración</h3>
-
+            <section className="settings-accordion">
               <button
-                className="settings-admin-btn"
-                onClick={() => setShowBackup(true)}
+                type="button"
+                className="settings-accordion-trigger"
+                onClick={() => setOpenSection(openSection === 'empresa' ? null : 'empresa')}
+                aria-expanded={openSection === 'empresa'}
               >
-                <span className="settings-admin-btn-icon">💾</span>
-                <div className="settings-admin-btn-text">
-                  <strong>Backup</strong>
-                  <span>Exportar e importar datos del sistema</span>
-                </div>
-                <span className="settings-admin-btn-arrow">›</span>
+                <strong>LA EMPRESA</strong><span className={openSection === 'empresa' ? 'open' : ''}>⌄</span>
               </button>
-            </div>
+              {openSection === 'empresa' && (
+                <div className="settings-accordion-content">
+                  <div className="company-settings-card">
+                    <label className="settings-field">
+                      <span>Nombre</span>
+                      <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Ej: Frutería Doña Ana" autoFocus />
+                    </label>
+                    <label className="settings-field">
+                      <span>Dirección fiscal</span>
+                      <textarea value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} rows={3} placeholder="Dirección fiscal de la empresa" />
+                    </label>
+                    <label className="settings-field">
+                      <span>Contacto</span>
+                      <input type="text" value={companyContact} onChange={(e) => setCompanyContact(e.target.value)} placeholder="Persona de contacto" />
+                    </label>
+                    <label className="settings-field">
+                      <span>Móvil</span>
+                      <input type="tel" value={companyMobile} onChange={(e) => setCompanyMobile(e.target.value)} placeholder="Ej: 0412-1234567" />
+                    </label>
+                    <label className="settings-field">
+                      <span>Ramo comercial</span>
+                      <input type="text" value={ramoNombre || currentRamoId || 'No establecido.'} readOnly className="settings-field-readonly" />
+                    </label>
+                  </div>
+                </div>
+              )}
+            </section>
 
-            <hr className="settings-divider" />
+            <section className="settings-accordion">
+              <button type="button" className="settings-accordion-trigger" onClick={() => setOpenSection(openSection === 'tasas' ? null : 'tasas')} aria-expanded={openSection === 'tasas'}><strong>TASAS BCV</strong><span className={openSection === 'tasas' ? 'open' : ''}>⌄</span></button>
+              {openSection === 'tasas' && <div className="settings-accordion-content"><button type="button" className="settings-admin-btn" onClick={onOpenTasa}><span className="settings-admin-btn-icon">📈</span><div className="settings-admin-btn-text"><strong>Gestionar tasas BCV</strong><span>Registrar y consultar el histórico de tasas</span></div><span className="settings-admin-btn-arrow">›</span></button></div>}
+            </section>
 
-            <div className="settings-section-group">
+            <section className="settings-accordion">
+              <button type="button" className="settings-accordion-trigger" onClick={() => setOpenSection(openSection === 'seguridad' ? null : 'seguridad')} aria-expanded={openSection === 'seguridad'}><strong>SEGURIDAD</strong><span className={openSection === 'seguridad' ? 'open' : ''}>⌄</span></button>
+              {openSection === 'seguridad' && <div className="settings-accordion-content">
+                <div className="utility-pin-settings">
+                  <label className="settings-field">
+                    <span>PIN de administrador {hasPin ? <span className="pin-set-badge">✓ Configurado</span> : ''}</span>
+                    <div className="pin-input-row">
+                      <input type={showPin ? 'text' : 'password'} inputMode="numeric" pattern="[0-9]*" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder={hasPin ? 'Escriba para cambiar el PIN' : 'Mín. 4, máx. 6 dig.'} className="pin-input" />
+                      <button type="button" className="pin-toggle-btn" onClick={() => setShowPin(!showPin)} aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}>{showPin ? '🙈' : '👁️'}</button>
+                    </div>
+                    {pin && pin.length < 4 && <span className="pin-hint">Mín. 4 dig.</span>}
+                    <span className="settings-field-desc">Solo para entrar a Configuración.</span>
+                  </label>
+                </div>
+                
+                <div className="utility-session-settings">
+                  <label className="settings-field">
+                    <span>Duración de la sesión</span>
+                    <div className="pin-session-row">
+                      <div className="pin-duration">
+                        <label>
+                          <span>Horas</span>
+                          <input type="number" inputMode="numeric" min={0} max={24} value={sessionHoras} onChange={(e) => setSessionHoras(Math.max(0, Math.min(24, Number(e.target.value) || 0)))} className="pin-duration-input" />
+                        </label>
+                        <label>
+                          <span>Minutos</span>
+                          <input type="number" inputMode="numeric" min={0} max={59} value={sessionMinutos} onChange={(e) => setSessionMinutos(Math.max(0, Math.min(59, Number(e.target.value) || 0)))} className="pin-duration-input" />
+                        </label>
+                      </div>
+                      <div className="pin-duration-hint">
+                        {sessionHoras === 0 && sessionMinutos === 0 ? 'Mínimo 1 minuto' : `La sesión dura ${sessionHoras}h ${sessionMinutos}m desde el PIN`}
+                      </div>
+                      {sesionInfo && (
+                        <div className="pin-session-active">
+                          <span>🔓 Desbloqueado: {sesionInfo.horas}h {sesionInfo.minutos}m restantes</span>
+                          <button type="button" className="pin-lock-now-btn" onClick={() => { bloquearSesion(); setSesionInfo(null) }}>🔒 Bloquear ahora</button>
+                        </div>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>}
+            </section>
+
+            <section className="settings-accordion">
+              <button type="button" className="settings-accordion-trigger" onClick={() => setOpenSection(openSection === 'utilitarios' ? null : 'utilitarios')} aria-expanded={openSection === 'utilitarios'}><strong>UTILITARIOS</strong><span className={openSection === 'utilitarios' ? 'open' : ''}>⌄</span></button>
+              {openSection === 'utilitarios' && <div className="settings-accordion-content">
+                <button type="button" className="settings-admin-btn" onClick={() => setShowBackup(true)}><span className="settings-admin-btn-icon">💾</span><div className="settings-admin-btn-text"><strong>Backup</strong><span>Exportar e importar datos del sistema</span></div><span className="settings-admin-btn-arrow">›</span></button>
               <button
+                type="button"
                 className="settings-toggle-btn"
                 onClick={() => setShowColors(!showColors)}
               >
@@ -270,9 +238,10 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
                       <span>💱 36,50</span>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
+                  </div>
+                )}
+              </div>}
+            </section>
           </div>
 
           <div className="modal-actions">
@@ -280,7 +249,7 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
               Cancelar
             </button>
             <button className="btn-confirm" onClick={handleSave}>
-              Guardar configuración
+              Grabar
             </button>
           </div>
         </div>
