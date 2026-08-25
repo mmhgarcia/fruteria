@@ -3,6 +3,8 @@ import { getRamoPorId } from '../data/ramos'
 // import RamoSelector from './RamoSelector'
 import { hashPin } from '../utils/hash'
 import { tiempoRestanteSesion, bloquearSesion } from '../utils/session'
+import { VALUATION_METHODS, VALUATION_LABELS } from '../utils/inventory'
+import { addLog, LOG_TYPES } from '../utils/logService'
 import BackupModal from './BackupModal'
 import './SettingsModal.css'
 
@@ -35,10 +37,26 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
   const [sessionHoras, setSessionHoras] = useState(settings.sessionHoras ?? 8)
   const [sessionMinutos, setSessionMinutos] = useState(settings.sessionMinutos ?? 0)
   const [sesionInfo, setSesionInfo] = useState(tiempoRestanteSesion)
+  const [valuationMethod, setValuationMethod] = useState(
+    settings.valuationMethod || VALUATION_METHODS.WEIGHTED_AVG,
+  )
+  const previousValuationMethod = settings.valuationMethod || VALUATION_METHODS.WEIGHTED_AVG
 
   const handleSave = async () => {
     // If pin is empty and there was one before, clear it. Otherwise hash the new one.
     const hashedPin = pin ? await hashPin(pin) : (settings.pin || '')
+    // Trazabilidad contable: registrar cambio de método de valoración.
+    if (valuationMethod !== previousValuationMethod) {
+      try {
+        await addLog(LOG_TYPES.WARNING, 'Método de valoración de inventario cambiado', {
+          anterior: previousValuationMethod,
+          nuevo: valuationMethod,
+          nota: 'El cambio aplica a entradas con costo registradas a partir de este momento. El histórico de movimientos no se recalcula.',
+        })
+      } catch (_) {
+        // No bloqueamos el guardado por un fallo de log.
+      }
+    }
     onSave({
       companyName: companyName.trim() || 'Mi Negocio',
       companyAddress: companyAddress.trim(),
@@ -50,6 +68,7 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
       pin: hashedPin,
       sessionHoras,
       sessionMinutos,
+      valuationMethod,
     })
     onClose()
   }
@@ -104,6 +123,61 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
             <section className="settings-accordion">
               <button type="button" className="settings-accordion-trigger" onClick={() => setOpenSection(openSection === 'tasas' ? null : 'tasas')} aria-expanded={openSection === 'tasas'}><strong>TASAS BCV</strong><span className={openSection === 'tasas' ? 'open' : ''}>⌄</span></button>
               {openSection === 'tasas' && <div className="settings-accordion-content"><button type="button" className="settings-admin-btn" onClick={onOpenTasa}><span className="settings-admin-btn-icon">📈</span><div className="settings-admin-btn-text"><strong>Gestionar tasas BCV</strong><span>Registrar y consultar el histórico de tasas</span></div><span className="settings-admin-btn-arrow">›</span></button></div>}
+            </section>
+
+            <section className="settings-accordion">
+              <button type="button" className="settings-accordion-trigger" onClick={() => setOpenSection(openSection === 'inventario' ? null : 'inventario')} aria-expanded={openSection === 'inventario'}><strong>GESTIÓN DE INVENTARIO</strong><span className={openSection === 'inventario' ? 'open' : ''}>⌄</span></button>
+              {openSection === 'inventario' && (
+                <div className="settings-accordion-content">
+                  <div className="inventory-valuation-card" role="group" aria-label="Método de valoración de inventario">
+                    <div className="inventory-valuation-card-header">
+                      <span className="inventory-valuation-card-icon">📊</span>
+                      <div>
+                        <strong>Método de valoración</strong>
+                        <p className="inventory-valuation-card-subtitle">
+                          Define cómo se calcula el costo unitario del inventario al registrar entradas con costo.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="inventory-valuation-options">
+                      {Object.values(VALUATION_METHODS).map((m) => {
+                        const info = VALUATION_LABELS[m]
+                        const active = valuationMethod === m
+                        return (
+                          <label
+                            key={m}
+                            className={`inventory-valuation-option ${active ? 'active' : ''}`}
+                          >
+                            <input
+                              type="radio"
+                              name="valuationMethod"
+                              value={m}
+                              checked={active}
+                              onChange={() => setValuationMethod(m)}
+                            />
+                            <span className="inventory-valuation-radio" aria-hidden="true" />
+                            <span className="inventory-valuation-option-text">
+                              <strong>{info.label}</strong>
+                              <span>{info.hint}</span>
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
+
+                    <div className="inventory-valuation-warning" role="note">
+                      <span className="inventory-valuation-warning-icon">⚠️</span>
+                      <p>
+                        <strong>Buena práctica contable:</strong> una vez establecido, este método
+                        se mantiene a lo largo del ejercicio económico (principio de uniformidad).
+                        El cambio aplica únicamente a las nuevas entradas con costo; el historial
+                        de movimientos anteriores no se recalcula.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </section>
 
             <section className="settings-accordion">

@@ -1,10 +1,11 @@
 const DB_NAME = 'fruteria-db'
-const DB_VERSION = 6
+const DB_VERSION = 7
 const STORE_NAME = 'products'
 const TASA_STORE_NAME = 'historico_tasas'
 const SALES_STORE_NAME = 'sales'
 const RAMOS_STORE_NAME = 'ramos'
 const LOG_STORE_NAME = 'logs'
+const STOCK_MOVEMENTS_STORE_NAME = 'stock_movements'
 
 const REQUIRED_STORES = [
   STORE_NAME,
@@ -13,6 +14,7 @@ const REQUIRED_STORES = [
   SALES_STORE_NAME,
   RAMOS_STORE_NAME,
   LOG_STORE_NAME,
+  STOCK_MOVEMENTS_STORE_NAME,
 ]
 
 function createMissingStores(db) {
@@ -33,6 +35,9 @@ function createMissingStores(db) {
   }
   if (!db.objectStoreNames.contains(LOG_STORE_NAME)) {
     db.createObjectStore(LOG_STORE_NAME, { keyPath: 'id', autoIncrement: true })
+  }
+  if (!db.objectStoreNames.contains(STOCK_MOVEMENTS_STORE_NAME)) {
+    db.createObjectStore(STOCK_MOVEMENTS_STORE_NAME, { keyPath: 'id', autoIncrement: true })
   }
 }
 

@@ -20,6 +20,8 @@ import LogsViewerModal from './components/LogsViewerModal'
 import Categories from './components/Categories'
 import Products from './components/Products'
 import Inventory from './components/Inventory'
+import { descontarStockVenta } from './utils/inventory'
+import { computeStockAlerts } from './utils/stockAlerts'
 import { getRamoPorId } from './data/ramos'
 import { getLogs, addLog, LOG_TYPES } from './utils/logService'
 import { estaDesbloqueado, crearSesion, bloquearSesion } from './utils/session'
@@ -41,6 +43,9 @@ function App() {
   const [loadingCategories, setLoadingCategories] = useState(true)
   const [settings, setSettings] = useLocalStorage('fruteria-settings', {
     companyName: 'Frutería POS',
+    companyAddress: '',
+    companyContact: '',
+    companyMobile: '',
     bgColor: '#4a8c5e',
     textColor: '#ffffff',
     ramoId: '',
@@ -52,6 +57,7 @@ function App() {
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
   const [pinPromptMode, setPinPromptMode] = useState('config')
   const [alertCount, setAlertCount] = useState(0)
+  const [stockAlerts, setStockAlerts] = useState({ agotados: 0, bajos: 0, sinDefinir: 0, total: 0, items: [] })
   const [sesionActiva, setSesionActiva] = useState(() => estaDesbloqueado())
   const [showTasa, setShowTasa] = useState(false)
   const [showSalesReport, setShowSalesReport] = useState(false)
@@ -76,6 +82,19 @@ function App() {
         ? logs.filter((l) => new Date(l.timestamp) > new Date(readAt)).length
         : logs.length
       setAlertCount(unread)
+    } catch (e) {
+      // silencio
+    }
+  }
+
+  // Recalcula el resumen de stock (agotados/bajos) para el Header.
+  // Usa el catálogo completo en IndexedDB (no filtrado por ramo) para que
+  // las alertas sean visibles incluso si el filtro del grid difiere.
+  async function refreshStockAlerts() {
+    try {
+      const all = await getProducts()
+      const summary = computeStockAlerts(all, settings.ramoId || ramoActivo)
+      setStockAlerts(summary)
     } catch (e) {
       // silencio
     }
@@ -116,6 +135,16 @@ function App() {
     setSesionActiva(false)
   }
 
+  // Click en el badge de stock: abre Inventario (con PIN si corresponde).
+  const handleStockBadgeClick = () => {
+    if (settings.pin && !sesionActiva) {
+      setPinPromptMode('config')
+      setPinPromptOpen(true)
+    } else {
+      setShowInventory(true)
+    }
+  }
+
   const handleAlertRead = () => {
     const now = new Date().toISOString()
     localStorage.setItem('fruteria-alert-read-at', now)
@@ -136,6 +165,7 @@ function App() {
     setSettings((prev) => ({ ...prev, ramoId: ramo.id }))
     loadProducts(ramo.id)
     loadCategories(ramo.id)
+    refreshStockAlerts()
   }
 
   // El ramo activo siempre disponible sin consultar BD
@@ -145,6 +175,7 @@ function App() {
     loadProducts()
     loadCategories()
     refreshAlertCount()
+    refreshStockAlerts()
   }, [])
 
   // Aplica los colores del theme al :root del documento
@@ -299,6 +330,25 @@ function App() {
     try {
       const saleId = await addSale(sale)
       console.log('Venta guardada con id:', saleId, sale)
+      // Descontar stock por cada item del carrito. Si falta stock, se descuenta
+      // hasta 0 y se registra un log WARNING con el faltante.
+      const itemsParaStock = cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        qty: item.qty,
+      }))
+      try {
+        const { faltantes } = await descontarStockVenta(itemsParaStock)
+        if (faltantes.length > 0) {
+          console.warn('Items con stock insuficiente al cobrar:', faltantes)
+        }
+        // Refrescar productos en memoria para reflejar el nuevo stock.
+        const updatedProducts = await getProducts()
+        setProducts(updatedProducts)
+        await refreshStockAlerts()
+      } catch (stockErr) {
+        console.error('Error descontando stock:', stockErr)
+      }
     } catch (error) {
       console.error('Error guardando la venta:', error)
     }
@@ -356,6 +406,8 @@ function App() {
         onEditItem={editCartItem}
         alertCount={alertCount}
         onAlertClick={handleAlertBadgeClick}
+        stockAlerts={stockAlerts}
+        onStockBadgeClick={handleStockBadgeClick}
       />
       <main className="main">
         {loadingProducts ? (
@@ -418,6 +470,10 @@ function App() {
           settings={settings}
           onSave={setSettings}
           onClose={() => setSettingsOpen(false)}
+          onOpenTasa={() => {
+            setSettingsOpen(false)
+            setShowTasa(true)
+          }}
           onRefreshBackup={() => {
             loadProducts()
             loadCategories()
@@ -483,7 +539,13 @@ function App() {
       )}
 
       {showInventory && (
-        <Inventory onClose={() => setShowInventory(false)} />
+        <Inventory
+          onClose={() => {
+            setShowInventory(false)
+            refreshStockAlerts()
+          }}
+          ramoId={settings.ramoId}
+        />
       )}
 
       {pinPromptOpen && (

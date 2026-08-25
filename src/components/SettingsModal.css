@@ -132,6 +132,160 @@
   margin-top: 35px;
 }
 
+/* ────────────────────────────────────────────────────────────────
+   Card: Método de valoración de inventario (GESTIÓN DE INVENTARIO)
+   Card dedicada, aislada visualmente, claramente identificada.
+   ──────────────────────────────────────────────────────────────── */
+.inventory-valuation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  border: 2px solid var(--primary, #2d6a4f);
+  border-radius: 12px;
+  background: var(--bg, #fff);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.06);
+}
+
+.inventory-valuation-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.inventory-valuation-card-icon {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.inventory-valuation-card-header strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.inventory-valuation-card-subtitle {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-light, #888);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.inventory-valuation-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inventory-valuation-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  background: var(--bg, #fff);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.inventory-valuation-option:hover {
+  border-color: var(--primary, #2d6a4f);
+  background: rgba(45, 106, 79, 0.03);
+}
+
+.inventory-valuation-option.active {
+  border-color: var(--primary, #2d6a4f);
+  background: rgba(45, 106, 79, 0.08);
+  box-shadow: inset 0 0 0 1px var(--primary, #2d6a4f);
+}
+
+.inventory-valuation-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.inventory-valuation-radio {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border, #cbd5e1);
+  background: var(--bg, #fff);
+  position: relative;
+  margin-top: 2px;
+  transition: all 0.15s ease;
+}
+
+.inventory-valuation-option.active .inventory-valuation-radio {
+  border-color: var(--primary, #2d6a4f);
+}
+
+.inventory-valuation-option.active .inventory-valuation-radio::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--primary, #2d6a4f);
+}
+
+.inventory-valuation-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.inventory-valuation-option-text strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.inventory-valuation-option-text span {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-light, #888);
+  line-height: 1.35;
+}
+
+.inventory-valuation-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(230, 159, 60, 0.10);
+  border: 1px solid rgba(230, 159, 60, 0.45);
+}
+
+.inventory-valuation-warning-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.inventory-valuation-warning p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.inventory-valuation-warning strong {
+  font-weight: 700;
+  color: var(--text);
+}
+
 .settings-field-readonly {
   padding: 10px 14px;
   border: 1px solid var(--border);

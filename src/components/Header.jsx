@@ -18,6 +18,8 @@ function Header({
   companyName,
   alertCount,
   onAlertClick,
+  stockAlerts,
+  onStockBadgeClick,
 }) {
   const [cartOpen, setCartOpen] = useState(false)
 
@@ -43,6 +45,27 @@ function Header({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
+          {stockAlerts && (stockAlerts.agotados > 0 || stockAlerts.bajos > 0) && (
+            <button
+              className={`stock-badge ${stockAlerts.agotados > 0 ? 'stock-badge-danger' : 'stock-badge-warn'}`}
+              onClick={onStockBadgeClick}
+              aria-label={`Alerta de stock: ${stockAlerts.agotados} agotados, ${stockAlerts.bajos} con stock bajo`}
+              title={`${stockAlerts.agotados} agotado(s) · ${stockAlerts.bajos} con stock bajo`}
+            >
+              {stockAlerts.agotados > 0 && (
+                <span className="stock-badge-chip stock-badge-chip-danger">
+                  <span className="stock-badge-icon">⛔</span>
+                  <span className="stock-badge-count">{stockAlerts.agotados}</span>
+                </span>
+              )}
+              {stockAlerts.bajos > 0 && (
+                <span className="stock-badge-chip stock-badge-chip-warn">
+                  <span className="stock-badge-icon">⚠️</span>
+                  <span className="stock-badge-count">{stockAlerts.bajos}</span>
+                </span>
+              )}
+            </button>
+          )}
           {alertCount > 0 && (
             <button className="alert-badge" onClick={onAlertClick} aria-label="Alertas del sistema">
               <span className="alert-badge-count">{alertCount}</span>

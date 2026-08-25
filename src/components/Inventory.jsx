@@ -1,32 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './Inventory.css'
-
-const MOCK_PRODUCTS = [
-  { id: 1, icon: '🍎', name: 'Manzana',     um: 'kg',     stock: 12.5, stockMin: 5,  costoPromedio: 1.20 },
-  { id: 2, icon: '🍌', name: 'Plátano',     um: 'kg',     stock: 3.2,  stockMin: 5,  costoPromedio: 0.80 },
-  { id: 3, icon: '🍊', name: 'Naranja',     um: 'kg',     stock: 25.0, stockMin: 8,  costoPromedio: 0.60 },
-  { id: 4, icon: '🥑', name: 'Aguacate',    um: 'kg',     stock: 0.8,  stockMin: 3,  costoPromedio: 2.50 },
-  { id: 5, icon: '🍓', name: 'Fresa',       um: 'kg',     stock: 1.1,  stockMin: 2,  costoPromedio: 3.00 },
-  { id: 6, icon: '🍇', name: 'Uva',         um: 'kg',     stock: 7.0,  stockMin: 3,  costoPromedio: 2.10 },
-  { id: 7, icon: '🥬', name: 'Lechuga',     um: 'unidad', stock: 18,   stockMin: 10, costoPromedio: 0.50 },
-  { id: 8, icon: '🍅', name: 'Tomate',      um: 'kg',     stock: 0,    stockMin: 5,  costoPromedio: 1.40 },
-  { id: 9, icon: '🥕', name: 'Zanahoria',   um: 'kg',     stock: 9.5,  stockMin: 4,  costoPromedio: 0.70 },
-  { id: 10, icon: '🍉', name: 'Patilla',    um: 'unidad', stock: 4,    stockMin: 2,  costoPromedio: 3.50 },
-]
-
-const MOCK_HISTORY = [
-  { id: 1, productId: 1, tipo: 'entrada', cantidad: 20, motivo: 'Compra al mayorista',  timestamp: '2026-08-01T08:30:00.000Z' },
-  { id: 2, productId: 2, tipo: 'venta',   cantidad: 1.8, motivo: 'Venta #042',          timestamp: '2026-08-01T10:15:00.000Z' },
-  { id: 3, productId: 4, tipo: 'merma',   cantidad: 0.5, motivo: 'Dañada',              timestamp: '2026-08-01T11:00:00.000Z' },
-  { id: 4, productId: 5, tipo: 'merma',   cantidad: 0.9, motivo: 'Vencida',             timestamp: '2026-08-01T12:20:00.000Z' },
-  { id: 5, productId: 7, tipo: 'entrada', cantidad: 24,  motivo: 'Compra al mayorista', timestamp: '2026-08-01T14:00:00.000Z' },
-  { id: 6, productId: 8, tipo: 'venta',   cantidad: 2,   motivo: 'Venta #058',          timestamp: '2026-08-01T15:45:00.000Z' },
-]
+import { getProducts } from '../utils/db'
+import {
+  registrarMovimiento,
+  getMovimientosRecientes,
+  setStockMinimo,
+  MOVEMENT_TYPES,
+} from '../utils/inventory'
 
 const FILTERS = [
   { id: 'todo',    label: 'Todo' },
   { id: 'bajo',    label: 'Bajo' },
   { id: 'agotado', label: 'Agotado' },
+  { id: 'sin_definir', label: 'Sin definir' },
 ]
 
 const TIPO_BADGE = {
@@ -37,14 +23,22 @@ const TIPO_BADGE = {
 }
 
 function statusOf(p) {
+  if (p.stock == null) return { id: 'sin_definir', label: 'Sin definir', cls: 'status-undef' }
   if (p.stock === 0) return { id: 'agotado', label: 'Agotado', cls: 'status-out' }
-  if (p.stock < p.stockMin) return { id: 'bajo', label: 'Stock bajo', cls: 'status-low' }
+  const min = p.stockMin ?? 0
+  if (p.stock < min) return { id: 'bajo', label: 'Stock bajo', cls: 'status-low' }
   return { id: 'ok', label: 'OK', cls: 'status-ok' }
 }
 
 function formatQty(n, um) {
+  if (n == null) return '—'
   if (um === 'unidad') return String(Math.round(n))
-  return n.toFixed(1)
+  return Number(n).toFixed(1)
+}
+
+function formatMoney(n) {
+  if (n == null) return '—'
+  return `$${Number(n).toFixed(2)}`
 }
 
 function formatDateTime(iso) {
@@ -62,11 +56,34 @@ function MovementForm({ type, products, onSubmit, onClose }) {
   const [cantidad, setCantidad] = useState('')
   const [costo, setCosto] = useState('')
   const [motivo, setMotivo] = useState(config.reasonDefault)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const selected = products.find((p) => String(p.id) === String(productId))
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     if (!productId || !cantidad) return
-    onSubmit({ type, productId: Number(productId), cantidad: parseFloat(cantidad), costo: costo ? parseFloat(costo) : null, motivo })
+    const c = parseFloat(cantidad)
+    if (!c || c <= 0) {
+      setError('La cantidad debe ser mayor a 0')
+      return
+    }
+    setSubmitting(true)
+    try {
+      await onSubmit({
+        type,
+        productId: Number(productId),
+        cantidad: c,
+        costo: costo ? parseFloat(costo) : null,
+        motivo,
+      })
+    } catch (err) {
+      setError(err.message || 'Error al registrar')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -81,29 +98,59 @@ function MovementForm({ type, products, onSubmit, onClose }) {
             <span>Producto</span>
             <select value={productId} onChange={(e) => setProductId(e.target.value)} required>
               {products.map((p) => (
-                <option key={p.id} value={p.id}>{p.icon} {p.name} ({formatQty(p.stock, p.um)} {p.um})</option>
+                <option key={p.id} value={p.id}>
+                  {p.icon} {p.name} (stock: {formatQty(p.stock, p.um)} {p.um})
+                </option>
               ))}
             </select>
           </label>
+          {selected && selected.stock != null && (
+            <div className="inventory-hint">
+              Stock actual: <strong>{formatQty(selected.stock, selected.um)} {selected.um}</strong>
+            </div>
+          )}
           <label className="inventory-field">
             <span>{config.qtyLabel}</span>
-            <input type="number" step="0.1" min="0" value={cantidad} onChange={(e) => setCantidad(e.target.value)} required autoFocus />
+            <input
+              type="number"
+              step={selected?.um === 'unidad' ? '1' : '0.01'}
+              min="0"
+              value={cantidad}
+              onChange={(e) => setCantidad(e.target.value)}
+              required
+              autoFocus
+            />
           </label>
           {config.showCost && (
             <label className="inventory-field">
-              <span>Costo total ($)</span>
-              <input type="number" step="0.01" min="0" value={costo} onChange={(e) => setCosto(e.target.value)} placeholder="Opcional, actualiza costo promedio" />
+              <span>Costo total de la compra ($)</span>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={costo}
+                onChange={(e) => setCosto(e.target.value)}
+                placeholder="Opcional, recalcula costo promedio"
+              />
             </label>
           )}
           {config.showReason && (
             <label className="inventory-field">
               <span>Motivo</span>
-              <input type="text" value={motivo} onChange={(e) => setMotivo(e.target.value)} placeholder={type === 'merma' ? 'Dañada, vencida, regalo...' : 'Corrección, conteo físico...'} />
+              <input
+                type="text"
+                value={motivo}
+                onChange={(e) => setMotivo(e.target.value)}
+                placeholder={type === 'merma' ? 'Dañada, vencida, regalo...' : 'Corrección, conteo físico...'}
+              />
             </label>
           )}
+          {error && <div className="inventory-error">{error}</div>}
           <div className="inventory-form-actions">
-            <button type="button" className="inventory-btn inventory-btn-ghost" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="inventory-btn inventory-btn-primary">Registrar</button>
+            <button type="button" className="inventory-btn inventory-btn-ghost" onClick={onClose} disabled={submitting}>Cancelar</button>
+            <button type="submit" className="inventory-btn inventory-btn-primary" disabled={submitting}>
+              {submitting ? 'Registrando…' : 'Registrar'}
+            </button>
           </div>
         </form>
       </div>
@@ -111,13 +158,41 @@ function MovementForm({ type, products, onSubmit, onClose }) {
   )
 }
 
-export default function Inventory({ onClose }) {
-  const [products, setProducts] = useState(MOCK_PRODUCTS)
-  const [history, setHistory] = useState(MOCK_HISTORY)
+export default function Inventory({ onClose, ramoId }) {
+  const [products, setProducts] = useState([])
+  const [history, setHistory] = useState([])
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('todo')
   const [actionType, setActionType] = useState(null)
   const [showHistory, setShowHistory] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [editingMin, setEditingMin] = useState(null)
+  const [minInput, setMinInput] = useState('')
+
+  async function refresh() {
+    const [prods, movs] = await Promise.all([
+      getProducts(),
+      getMovimientosRecientes(300),
+    ])
+    const list = ramoId ? prods.filter((p) => !p.ramo || p.ramo === ramoId) : prods
+    setProducts(list)
+    setHistory(movs)
+  }
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        await refresh()
+      } catch (err) {
+        console.error('Inventory load error', err)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ramoId])
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase()
@@ -127,8 +202,10 @@ export default function Inventory({ onClose }) {
         return p.name.toLowerCase().includes(term)
       })
       .filter((p) => {
-        if (filter === 'bajo') return p.stock > 0 && p.stock < p.stockMin
-        if (filter === 'agotado') return p.stock === 0
+        const s = statusOf(p)
+        if (filter === 'bajo') return s.id === 'bajo'
+        if (filter === 'agotado') return s.id === 'agotado'
+        if (filter === 'sin_definir') return s.id === 'sin_definir'
         return true
       })
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -136,28 +213,49 @@ export default function Inventory({ onClose }) {
 
   const counts = useMemo(() => ({
     todo: products.length,
-    bajo: products.filter((p) => p.stock > 0 && p.stock < p.stockMin).length,
-    agotado: products.filter((p) => p.stock === 0).length,
+    bajo: products.filter((p) => statusOf(p).id === 'bajo').length,
+    agotado: products.filter((p) => statusOf(p).id === 'agotado').length,
+    sin_definir: products.filter((p) => statusOf(p).id === 'sin_definir').length,
   }), [products])
 
-  const handleSubmitAction = ({ type, productId, cantidad, motivo }) => {
-    setProducts((prev) => prev.map((p) => {
-      if (p.id !== productId) return p
-      let next = p.stock
-      if (type === 'entrada') next = p.stock + cantidad
-      else if (type === 'merma') next = Math.max(0, p.stock - cantidad)
-      else if (type === 'ajuste') next = Math.max(0, p.stock + cantidad)
-      return { ...p, stock: next }
-    }))
-    setHistory((prev) => [
-      { id: Date.now(), productId, tipo: type, cantidad, motivo: motivo || '—', timestamp: new Date().toISOString() },
-      ...prev,
-    ])
+  const handleSubmitAction = async ({ type, productId, cantidad, motivo, costo }) => {
+    const tipoMap = {
+      entrada: MOVEMENT_TYPES.ENTRADA,
+      merma: MOVEMENT_TYPES.MERMA,
+      ajuste: MOVEMENT_TYPES.AJUSTE,
+    }
+    const tipo = tipoMap[type]
+    await registrarMovimiento({
+      productId,
+      tipo,
+      cantidad,
+      motivo: motivo || (type === 'entrada' ? 'Compra al mayorista' : ''),
+      costoUnitario: type === 'entrada' && costo != null ? Number(costo) : null,
+    })
+    await refresh()
     setActionType(null)
   }
 
-  const productName = (id) => products.find((p) => p.id === id)?.name ?? '—'
-  const productIcon = (id) => products.find((p) => p.id === id)?.icon ?? '📦'
+  const handleSaveMin = async (productId) => {
+    const value = minInput === '' ? null : Number(minInput)
+    if (value != null && (Number.isNaN(value) || value < 0)) return
+    await setStockMinimo(productId, value)
+    setEditingMin(null)
+    setMinInput('')
+    await refresh()
+  }
+
+  const productById = (id) => products.find((p) => p.id === id)
+  const productName = (id) => productById(id)?.name ?? '—'
+  const productIcon = (id) => productById(id)?.icon ?? '📦'
+  const productUm = (id) => productById(id)?.um ?? 'kg'
+
+  const historyDecorated = useMemo(() => history.map((m) => ({
+    ...m,
+    productName: productName(m.productId),
+    productIcon: productIcon(m.productId),
+    productUm: productUm(m.productId),
+  })), [history, products])
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -203,12 +301,16 @@ export default function Inventory({ onClose }) {
                   <th>U/M</th>
                   <th className="num">Stock</th>
                   <th>Estado</th>
-                  <th className="num">Costo</th>
+                  <th className="num">Costo prom.</th>
+                  <th className="num">Mín.</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 && (
-                  <tr><td colSpan="5" className="inventory-empty">Sin resultados</td></tr>
+                {loading && (
+                  <tr><td colSpan="6" className="inventory-empty">Cargando…</td></tr>
+                )}
+                {!loading && filtered.length === 0 && (
+                  <tr><td colSpan="6" className="inventory-empty">Sin resultados</td></tr>
                 )}
                 {filtered.map((p) => {
                   const s = statusOf(p)
@@ -218,7 +320,31 @@ export default function Inventory({ onClose }) {
                       <td>{p.um}</td>
                       <td className="num"><strong>{formatQty(p.stock, p.um)}</strong></td>
                       <td><span className={`inventory-status ${s.cls}`}>{s.label}</span></td>
-                      <td className="num">${p.costoPromedio.toFixed(2)}</td>
+                      <td className="num">{formatMoney(p.costoPromedio)}</td>
+                      <td className="num inventory-min-cell">
+                        {editingMin === p.id ? (
+                          <span className="inventory-min-edit">
+                            <input
+                              type="number"
+                              min="0"
+                              step={p.um === 'unidad' ? '1' : '0.1'}
+                              value={minInput}
+                              onChange={(e) => setMinInput(e.target.value)}
+                              autoFocus
+                            />
+                            <button className="inventory-min-save" onClick={() => handleSaveMin(p.id)}>✓</button>
+                            <button className="inventory-min-cancel" onClick={() => { setEditingMin(null); setMinInput('') }}>✕</button>
+                          </span>
+                        ) : (
+                          <button
+                            className="inventory-min-button"
+                            onClick={() => { setEditingMin(p.id); setMinInput(p.stockMin ?? '') }}
+                            title="Editar stock mínimo"
+                          >
+                            {p.stockMin ?? '—'}
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   )
                 })}
@@ -228,19 +354,22 @@ export default function Inventory({ onClose }) {
 
           <div className="inventory-history-section">
             <button className="inventory-history-toggle" onClick={() => setShowHistory((v) => !v)}>
-              {showHistory ? '▼' : '▶'} 📜 Historial de movimientos ({history.length})
+              {showHistory ? '▼' : '▶'} 📜 Historial de movimientos ({historyDecorated.length})
             </button>
             {showHistory && (
               <ul className="inventory-history">
-                {history.map((m) => {
-                  const badge = TIPO_BADGE[m.tipo]
+                {historyDecorated.length === 0 && (
+                  <li className="inventory-empty">Aún no hay movimientos registrados.</li>
+                )}
+                {historyDecorated.map((m) => {
+                  const badge = TIPO_BADGE[m.tipo] || { label: m.tipo, icon: '·' }
                   const sign = m.tipo === 'entrada' ? '+' : '−'
                   return (
                     <li key={m.id} className={`inventory-history-item history-${m.tipo}`}>
                       <span className="history-badge">{badge.icon} {badge.label}</span>
-                      <span className="history-product">{productIcon(m.productId)} {productName(m.productId)}</span>
-                      <span className="history-qty">{sign}{formatQty(m.cantidad, products.find((p) => p.id === m.productId)?.um || 'kg')}</span>
-                      <span className="history-motivo">{m.motivo}</span>
+                      <span className="history-product">{m.productIcon} {m.productName}</span>
+                      <span className="history-qty">{sign}{formatQty(m.cantidad, m.productUm)} {m.productUm}</span>
+                      <span className="history-motivo">{m.motivo || '—'}</span>
                       <span className="history-time">{formatDateTime(m.timestamp)}</span>
                     </li>
                   )
@@ -249,8 +378,6 @@ export default function Inventory({ onClose }) {
             )}
           </div>
         </div>
-
-        <div className="inventory-footer-note">UI mock — datos no persistidos</div>
 
         {actionType && (
           <MovementForm

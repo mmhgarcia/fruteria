@@ -241,6 +241,11 @@
   color: #c62828;
 }
 
+.status-undef {
+  background: rgba(158, 158, 158, 0.15);
+  color: #616161;
+}
+
 .inventory-history-section {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   padding-top: 8px;
@@ -333,6 +338,78 @@
   font-style: italic;
   margin-top: 8px;
   flex-shrink: 0;
+}
+
+.inventory-hint {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #555);
+}
+
+.inventory-error {
+  background: rgba(244, 67, 54, 0.1);
+  color: #c62828;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.inventory-min-cell {
+  white-space: nowrap;
+}
+
+.inventory-min-button {
+  background: transparent;
+  border: 1px dashed rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text-primary, #1a1a1a);
+  min-width: 44px;
+  text-align: center;
+}
+
+.inventory-min-button:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.inventory-min-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.inventory-min-edit input {
+  width: 70px;
+  padding: 4px 8px;
+  border: 1px solid var(--accent, #4caf50);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.inventory-min-save,
+.inventory-min-cancel {
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.inventory-min-save {
+  background: var(--accent, #4caf50);
+  color: #fff;
+}
+
+.inventory-min-cancel {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-primary, #1a1a1a);
 }
 
 /* Action sub-modal */
