@@ -45,12 +45,12 @@ function Header({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
-          {stockAlerts && (stockAlerts.agotados > 0 || stockAlerts.bajos > 0) && (
+          {stockAlerts && (stockAlerts.agotados > 0 || stockAlerts.pedidos > 0) && (
             <button
               className={`stock-badge ${stockAlerts.agotados > 0 ? 'stock-badge-danger' : 'stock-badge-warn'}`}
               onClick={onStockBadgeClick}
-              aria-label={`Alerta de stock: ${stockAlerts.agotados} agotados, ${stockAlerts.bajos} con stock bajo`}
-              title={`${stockAlerts.agotados} agotado(s) · ${stockAlerts.bajos} con stock bajo`}
+              aria-label={`Alerta de stock: ${stockAlerts.agotados} agotados, ${stockAlerts.pedidos} para pedir`}
+              title={`${stockAlerts.agotados} agotado(s) · ${stockAlerts.pedidos} para pedir`}
             >
               {stockAlerts.agotados > 0 && (
                 <span className="stock-badge-chip stock-badge-chip-danger">
@@ -58,10 +58,10 @@ function Header({
                   <span className="stock-badge-count">{stockAlerts.agotados}</span>
                 </span>
               )}
-              {stockAlerts.bajos > 0 && (
+              {stockAlerts.pedidos > 0 && (
                 <span className="stock-badge-chip stock-badge-chip-warn">
                   <span className="stock-badge-icon">⚠️</span>
-                  <span className="stock-badge-count">{stockAlerts.bajos}</span>
+                  <span className="stock-badge-count">{stockAlerts.pedidos}</span>
                 </span>
               )}
             </button>

@@ -9,13 +9,21 @@ import {
   VALUATION_LABELS,
   MOVEMENT_TYPES,
 } from '../utils/inventory'
+import { clasificarStock } from '../utils/stockAlerts'
 
 const FILTERS = [
   { id: 'todo',    label: 'Todo' },
-  { id: 'bajo',    label: 'Bajo' },
+  { id: 'pedir',   label: 'Pedir' },
   { id: 'agotado', label: 'Agotado' },
   { id: 'sin_definir', label: 'Sin definir' },
 ]
+
+const STATUS_META = {
+  sin_definir: { label: 'Sin definir', cls: 'status-undef' },
+  agotado:     { label: 'Agotado',     cls: 'status-out' },
+  pedir:       { label: 'Pedir',       cls: 'status-warn' },
+  ok:          { label: 'OK',          cls: 'status-ok' },
+}
 
 const TIPO_BADGE = {
   entrada: { label: 'Entrada', icon: '📥' },
@@ -25,11 +33,8 @@ const TIPO_BADGE = {
 }
 
 function statusOf(p) {
-  if (p.stock == null) return { id: 'sin_definir', label: 'Sin definir', cls: 'status-undef' }
-  if (p.stock === 0) return { id: 'agotado', label: 'Agotado', cls: 'status-out' }
-  const min = p.stockMin ?? 0
-  if (p.stock < min) return { id: 'bajo', label: 'Stock bajo', cls: 'status-low' }
-  return { id: 'ok', label: 'OK', cls: 'status-ok' }
+  const id = clasificarStock(p)
+  return { id, ...STATUS_META[id] }
 }
 
 function formatQty(n, um) {
@@ -211,7 +216,7 @@ export default function Inventory({ onClose, ramoId }) {
       })
       .filter((p) => {
         const s = statusOf(p)
-        if (filter === 'bajo') return s.id === 'bajo'
+        if (filter === 'pedir') return s.id === 'pedir'
         if (filter === 'agotado') return s.id === 'agotado'
         if (filter === 'sin_definir') return s.id === 'sin_definir'
         return true
@@ -221,7 +226,7 @@ export default function Inventory({ onClose, ramoId }) {
 
   const counts = useMemo(() => ({
     todo: products.length,
-    bajo: products.filter((p) => statusOf(p).id === 'bajo').length,
+    pedir: products.filter((p) => statusOf(p).id === 'pedir').length,
     agotado: products.filter((p) => statusOf(p).id === 'agotado').length,
     sin_definir: products.filter((p) => statusOf(p).id === 'sin_definir').length,
   }), [products])

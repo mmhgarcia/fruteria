@@ -231,7 +231,7 @@
   color: #2e7d32;
 }
 
-.status-low {
+.status-warn {
   background: rgba(255, 152, 0, 0.15);
   color: #e65100;
 }

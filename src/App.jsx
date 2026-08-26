@@ -57,7 +57,7 @@ function App() {
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
   const [pinPromptMode, setPinPromptMode] = useState('config')
   const [alertCount, setAlertCount] = useState(0)
-  const [stockAlerts, setStockAlerts] = useState({ agotados: 0, bajos: 0, sinDefinir: 0, total: 0, items: [] })
+  const [stockAlerts, setStockAlerts] = useState({ agotados: 0, pedidos: 0, sinDefinir: 0, total: 0, items: [] })
   const [sesionActiva, setSesionActiva] = useState(() => estaDesbloqueado())
   const [showTasa, setShowTasa] = useState(false)
   const [showSalesReport, setShowSalesReport] = useState(false)
@@ -87,7 +87,7 @@ function App() {
     }
   }
 
-  // Recalcula el resumen de stock (agotados/bajos) para el Header.
+  // Recalcula el resumen de stock (agotados/pedir) para el Header.
   // Usa el catálogo completo en IndexedDB (no filtrado por ramo) para que
   // las alertas sean visibles incluso si el filtro del grid difiere.
   async function refreshStockAlerts() {
