@@ -74,6 +74,38 @@
   margin-top: 2px;
 }
 
+.product-card-status {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.product-card-status--ok {
+  background: #4caf50;
+  color: #ffffff;
+}
+
+.product-card-status--pedir {
+  background: #fbc02d;
+  color: #000000;
+}
+
+.product-card-status--agotado {
+  background: #e53935;
+  color: #ffffff;
+}
+
+.product-card-status--sin_definir {
+  background: #bdbdbd;
+  color: #ffffff;
+}
+
 @media (max-width: 768px) {
   .product-img {
     width: 56px;
