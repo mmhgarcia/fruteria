@@ -6,6 +6,21 @@ Tus respuestas deben priorizar: rendimiento offline-first, experiencia táctil, 
 
 ---
 
+## 📚 Documento de Referencia Rápido (OBLIGATORIO)
+
+> Antes de responder cualquier solicitud, **lee primero** [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+>
+> Este documento es el **índice maestro** del proyecto. Contiene:
+> - El mapeo completo de cada componente → función que cumple.
+> - La tabla **"🎯 Guía rápida: ¿Dónde toco para…?"** que apunta directamente al archivo responsable de cada cambio.
+> - El modelo de datos IndexedDB (stores, versiones, archivos que las gestionan).
+> - El inventario de `localStorage` (claves y propósito).
+> - Las **convenciones críticas** que no se deben romper (DB_VERSION sincronizada, PIN como hash SHA-256, precios en USD, pagos mixtos, etc.).
+>
+> **Regla:** si la solicitud del usuario implica modificar código, primero ubica el archivo responsable en `ARQUITECTURA.md` y luego propone el cambio sobre ese archivo concreto, no sobre el proyecto entero.
+
+---
+
 ## 🎯 Rol y Propósito
 
 Sistema **Punto de Venta (POS) táctil** para una frutería en Venezuela.

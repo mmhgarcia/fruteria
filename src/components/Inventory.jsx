@@ -52,14 +52,18 @@ function MovementForm({ type, products, onSubmit, onClose }) {
     merma:   { title: 'Registrar merma',   icon: '🗑️', showCost: false, showReason: true,  reasonDefault: '',                    qtyLabel: 'Cantidad a descontar' },
     ajuste:  { title: 'Ajustar stock',     icon: '✎',  showCost: false, showReason: true,  reasonDefault: '',                    qtyLabel: 'Cantidad (+/-)' },
   }[type]
-  const [productId, setProductId] = useState(products[0]?.id ?? '')
+  const sortedProducts = useMemo(
+    () => [...products].sort((a, b) => a.name.localeCompare(b.name)),
+    [products]
+  )
+  const [productId, setProductId] = useState(sortedProducts[0]?.id ?? '')
   const [cantidad, setCantidad] = useState('')
   const [costo, setCosto] = useState('')
   const [motivo, setMotivo] = useState(config.reasonDefault)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const selected = products.find((p) => String(p.id) === String(productId))
+  const selected = sortedProducts.find((p) => String(p.id) === String(productId))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -97,7 +101,7 @@ function MovementForm({ type, products, onSubmit, onClose }) {
           <label className="inventory-field">
             <span>Producto</span>
             <select value={productId} onChange={(e) => setProductId(e.target.value)} required>
-              {products.map((p) => (
+              {sortedProducts.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.icon} {p.name} (stock: {formatQty(p.stock, p.um)} {p.um})
                 </option>
