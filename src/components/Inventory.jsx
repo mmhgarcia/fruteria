@@ -310,7 +310,7 @@ export default function Inventory({ onClose, ramoId }) {
                   <th className="num">Stock</th>
                   <th>Estado</th>
                   <th className="num">{VALUATION_LABELS[valuation]?.short ?? 'Costo prom.'}</th>
-                  <th className="num">Mín.</th>
+                  <th className="num">P. Pedido</th>
                 </tr>
               </thead>
               <tbody>
