@@ -42,9 +42,9 @@ export const VALUATION_METHODS = Object.freeze({
 })
 
 export const VALUATION_LABELS = Object.freeze({
-  WEIGHTED_AVG:  { label: 'Promedio Ponderado',  hint: 'Suaviza las variaciones de precio (estándar contable).' },
-  LAST_COST:     { label: 'Último costo',        hint: 'Refleja el precio de la compra más reciente.' },
-  MAX_LAST_AVG:  { label: 'El más alto (último vs promedio)', hint: 'Conservador: nunca acepta un costo inferior al anterior.' },
+  WEIGHTED_AVG:  { label: 'Promedio Ponderado',  short: 'Costo prom.',  hint: 'Suaviza las variaciones de precio (estándar contable).' },
+  LAST_COST:     { label: 'Último costo',        short: 'Último costo', hint: 'Refleja el precio de la compra más reciente.' },
+  MAX_LAST_AVG:  { label: 'El más alto (último vs promedio)', short: 'Costo máx.', hint: 'Conservador: nunca acepta un costo inferior al anterior.' },
 })
 
 const SETTINGS_KEY = 'fruteria-settings'

@@ -5,6 +5,8 @@ import {
   registrarMovimiento,
   getMovimientosRecientes,
   setStockMinimo,
+  getValuationMethod,
+  VALUATION_LABELS,
   MOVEMENT_TYPES,
 } from '../utils/inventory'
 
@@ -172,6 +174,7 @@ export default function Inventory({ onClose, ramoId }) {
   const [loading, setLoading] = useState(true)
   const [editingMin, setEditingMin] = useState(null)
   const [minInput, setMinInput] = useState('')
+  const [valuation, setValuation] = useState(getValuationMethod)
 
   async function refresh() {
     const [prods, movs] = await Promise.all([
@@ -181,6 +184,7 @@ export default function Inventory({ onClose, ramoId }) {
     const list = ramoId ? prods.filter((p) => !p.ramo || p.ramo === ramoId) : prods
     setProducts(list)
     setHistory(movs)
+    setValuation(getValuationMethod())
   }
 
   useEffect(() => {
@@ -305,7 +309,7 @@ export default function Inventory({ onClose, ramoId }) {
                   <th>U/M</th>
                   <th className="num">Stock</th>
                   <th>Estado</th>
-                  <th className="num">Costo prom.</th>
+                  <th className="num">{VALUATION_LABELS[valuation]?.short ?? 'Costo prom.'}</th>
                   <th className="num">Mín.</th>
                 </tr>
               </thead>
