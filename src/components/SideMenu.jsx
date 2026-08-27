@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './SideMenu.css'
 
-export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenBestSelling, onOpenDailyTickets, onOpenLogs, onOpenCategories, onOpenProducts, onOpenInventory }) {
+export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFilterChange, companyName, hasPin, sesionActiva, onLockNow, onOpenTasa, onOpenSalesReport, onOpenBestSelling, onOpenDailyTickets, onOpenInventoryValuation, onOpenLogs, onOpenCategories, onOpenProducts, onOpenInventory }) {
   const CONFIG_OPTION = { id: 'config', label: 'Configuración de Sistema', icon: '⚙️' }
 
   const [reportsOpen, setReportsOpen] = useState(false)
@@ -33,6 +33,7 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
     { id: 'sales', label: 'Reporte de Ventas', icon: '📈', onClick: onOpenSalesReport },
     { id: 'best-selling', label: 'Productos Más Vendidos', icon: '🏆', onClick: onOpenBestSelling },
     { id: 'daily-tickets', label: 'Tickets del Día', icon: '🧾', onClick: onOpenDailyTickets },
+    { id: 'inventory-valuation', label: 'Inventario Valorizado', icon: '💰', onClick: onOpenInventoryValuation },
   ]
 
   useEffect(() => {

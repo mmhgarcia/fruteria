@@ -366,3 +366,79 @@ export async function setStockMinimo(productId, stockMin) {
     getReq.onerror = () => reject(getReq.error)
   })
 }
+
+/**
+ * Construye el reporte de inventario valorizado a partir de la lista de productos.
+ * Usa el método de valoración activo y agrupa por categoría (`product.group`).
+ *
+ * Solo incluye productos con `stock > 0`. Los productos sin `costoPromedio`
+ * registrado se incluyen con costo 0 y se cuentan en `sinCostoCount`.
+ *
+ * @param {Array} products Lista cruda de productos (de getProducts()).
+ * @param {string} [ramoId] Si se indica, filtra a ese ramo.
+ * @returns {{
+ *   method: string,
+ *   methodLabel: string,
+ *   generatedAt: string,
+ *   categories: Array<{ name: string, items: Array, subtotal: number }>,
+ *   totalGeneral: number,
+ *   sinCostoCount: number,
+ *   totalProductos: number,
+ *   totalItems: number,
+ * }}
+ */
+export function getInventoryValuation(products, ramoId) {
+  const method = getValuationMethod()
+  const methodLabel = VALUATION_LABELS[method]?.label ?? method
+
+  const conStock = products.filter((p) => {
+    if (typeof p.stock !== 'number' || p.stock <= 0) return false
+    if (ramoId && p.ramo && p.ramo !== ramoId) return false
+    return true
+  })
+
+  const gruposMap = new Map()
+  let totalGeneral = 0
+  let sinCostoCount = 0
+  let totalItems = 0
+
+  for (const p of conStock) {
+    const tieneCosto = typeof p.costoPromedio === 'number'
+    if (!tieneCosto) sinCostoCount++
+    const costoUnitario = tieneCosto ? p.costoPromedio : 0
+    const valor = p.stock * costoUnitario
+    const grupo = p.group && String(p.group).trim() ? String(p.group) : 'Sin categoría'
+
+    if (!gruposMap.has(grupo)) {
+      gruposMap.set(grupo, { name: grupo, items: [], subtotal: 0 })
+    }
+    const entry = gruposMap.get(grupo)
+    entry.items.push({
+      id: p.id,
+      name: p.name,
+      icon: p.icon || '',
+      stock: p.stock,
+      um: p.um || '',
+      costoUnitario,
+      valor,
+      tieneCosto,
+    })
+    entry.subtotal += valor
+    totalGeneral += valor
+    totalItems++
+  }
+
+  const categories = Array.from(gruposMap.values())
+    .sort((a, b) => a.name.localeCompare(b.name))
+
+  return {
+    method,
+    methodLabel,
+    generatedAt: new Date().toISOString(),
+    categories,
+    totalGeneral,
+    sinCostoCount,
+    totalProductos: conStock.length,
+    totalItems,
+  }
+}

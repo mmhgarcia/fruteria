@@ -1,0 +1,235 @@
+.inventory-valuation-modal {
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.iv-header-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.iv-header-top h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  flex: 1;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.iv-pdf-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.85rem;
+}
+
+.iv-pdf-label {
+  color: var(--text-secondary, #666);
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.iv-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 20px;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #555);
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.iv-meta strong {
+  color: var(--text-primary, #1a1a1a);
+  font-weight: 600;
+}
+
+.iv-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.iv-resumen-item {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.iv-resumen-item.iv-resumen-total {
+  background: #4caf50;
+  color: #fff;
+}
+
+.iv-resumen-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+}
+
+.iv-resumen-total .iv-resumen-label {
+  opacity: 0.95;
+  color: #fff;
+}
+
+.iv-resumen-valor {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.iv-warning {
+  margin: 12px 20px 0;
+  padding: 10px 14px;
+  background: rgba(255, 152, 0, 0.12);
+  color: #b45309;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.iv-cargando,
+.iv-vacio {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--text-secondary, #888);
+  font-style: italic;
+}
+
+.iv-error {
+  margin: 16px 20px;
+  padding: 10px 14px;
+  background: rgba(244, 67, 54, 0.1);
+  color: #c62828;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.iv-lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 20px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.iv-categoria {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.iv-categoria-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(76, 175, 80, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #2e7d32;
+}
+
+.iv-categoria-subtotal {
+  font-variant-numeric: tabular-nums;
+}
+
+.iv-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.iv-item {
+  display: grid;
+  grid-template-columns: 1.5em 1fr auto auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: 0.88rem;
+}
+
+.iv-item:last-child {
+  border-bottom: none;
+}
+
+.iv-item.iv-item-no-cost {
+  background: rgba(255, 152, 0, 0.05);
+}
+
+.iv-item-icon {
+  text-align: center;
+}
+
+.iv-item-name {
+  font-weight: 500;
+  color: var(--text-primary, #1a1a1a);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.iv-item-stock,
+.iv-item-cost,
+.iv-item-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary, #555);
+  white-space: nowrap;
+}
+
+.iv-item-value {
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.iv-grand-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: #4caf50;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-top: 2px solid #388e3c;
+}
+
+.iv-grand-total span:last-child {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  .iv-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .iv-item {
+    grid-template-columns: 1.5em 1fr auto;
+    gap: 6px;
+  }
+
+  .iv-item-cost,
+  .iv-item-stock {
+    display: none;
+  }
+}

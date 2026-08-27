@@ -16,6 +16,7 @@ import TasaBcv from './features/TasaBcv/components/TasaBcv'
 import SalesReportModal from './components/SalesReportModal'
 import BestSellingProductsModal from './components/BestSellingProductsModal'
 import DailyTicketsModal from './components/DailyTicketsModal'
+import InventoryValuationModal from './components/InventoryValuationModal'
 import LogsViewerModal from './components/LogsViewerModal'
 import Categories from './components/Categories'
 import Products from './components/Products'
@@ -63,6 +64,7 @@ function App() {
   const [showSalesReport, setShowSalesReport] = useState(false)
   const [showBestSelling, setShowBestSelling] = useState(false)
   const [showDailyTickets, setShowDailyTickets] = useState(false)
+  const [showInventoryValuation, setShowInventoryValuation] = useState(false)
   const [showLogs, setShowLogs] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
@@ -386,6 +388,7 @@ function App() {
         onOpenSalesReport={() => setShowSalesReport(true)}
         onOpenBestSelling={() => setShowBestSelling(true)}
         onOpenDailyTickets={() => setShowDailyTickets(true)}
+        onOpenInventoryValuation={() => setShowInventoryValuation(true)}
         onOpenLogs={() => setShowLogs(true)}
         onOpenCategories={() => setShowCategories(true)}
         onOpenProducts={() => setShowProducts(true)}
@@ -507,6 +510,14 @@ function App() {
           companyName={settings.companyName}
           tasa={tasa}
           onClose={() => setShowDailyTickets(false)}
+        />
+      )}
+
+      {showInventoryValuation && (
+        <InventoryValuationModal
+          companyName={settings.companyName}
+          ramoId={settings.ramoId}
+          onClose={() => setShowInventoryValuation(false)}
         />
       )}
 

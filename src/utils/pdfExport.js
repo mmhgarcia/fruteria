@@ -381,3 +381,194 @@ export async function compartirBestSellingPDF(opts) {
 
   descargarBlob(blob, filename)
 }
+
+// ═══════════════════════════════════════════════════════════
+// 💰 Inventario Valorizado
+// ═══════════════════════════════════════════════════════════
+
+function nombreArchivoInventoryValuation() {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `inventario-valorizado-${y}${m}${day}.pdf`
+}
+
+function generarInventoryValuationPDF({ companyName, valuation }) {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const margin = 14
+  const { methodLabel, generatedAt, categories, totalGeneral, totalProductos, sinCostoCount } = valuation
+
+  // ── Header ──
+  doc.setFillColor(...VERDE)
+  doc.rect(0, 0, pageWidth, 34, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text((companyName || 'Frutería POS').toUpperCase(), margin, 11)
+  doc.text(
+    `Fecha de Emisión: ${new Date().toLocaleString('es-VE')}`,
+    pageWidth - margin,
+    11,
+    { align: 'right' }
+  )
+  doc.setFontSize(20)
+  doc.setFont('helvetica', 'bold')
+  doc.text('INVENTARIO VALORIZADO', margin, 22)
+  doc.setFontSize(10)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Método: ${methodLabel}`, margin, 29)
+  doc.text(
+    `Generado: ${new Date(generatedAt).toLocaleString('es-VE')}`,
+    pageWidth - margin,
+    29,
+    { align: 'right' }
+  )
+
+  // ── Tarjetas de resumen ──
+  const cards = [
+    { label: 'Categorías', value: String(categories.length) },
+    { label: 'Productos', value: String(totalProductos) },
+    { label: 'Valor total', value: `$${formatCurrency(totalGeneral)}` },
+  ]
+  const cardW = (pageWidth - margin * 2 - 12) / 3
+  let y = 42
+  cards.forEach((card, i) => {
+    const x = margin + i * (cardW + 6)
+    doc.setFillColor(245, 247, 250)
+    doc.roundedRect(x, y, cardW, 20, 2, 2, 'F')
+    doc.setTextColor(120, 120, 120)
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.text(card.label, x + 4, y + 8)
+    doc.setTextColor(30, 30, 30)
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.text(card.value, x + 4, y + 15)
+  })
+  y += 28
+
+  if (sinCostoCount > 0) {
+    doc.setFillColor(255, 243, 205)
+    doc.setDrawColor(245, 158, 11)
+    doc.setLineWidth(0.4)
+    doc.roundedRect(margin, y, pageWidth - margin * 2, 10, 2, 2, 'FD')
+    doc.setTextColor(120, 53, 15)
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.text(
+      `⚠ ${sinCostoCount} producto(s) sin costo registrado (valor $0).`,
+      margin + 4,
+      y + 6.5
+    )
+    y += 14
+  }
+
+  if (categories.length === 0) {
+    doc.setTextColor(120, 120, 120)
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'italic')
+    doc.text('No hay productos con stock registrado.', margin, y + 6)
+  } else {
+    // ── Tabla por categoría ──
+    const body = []
+    for (const cat of categories) {
+      body.push([
+        { content: cat.name, colSpan: 5, styles: { fillColor: [232, 245, 233], textColor: [27, 94, 32], fontStyle: 'bold' } },
+      ])
+      for (const it of cat.items) {
+        body.push([
+          it.icon ? `${it.icon} ${it.name}` : it.name,
+          `${formatQty(it.stock, it.um)} ${it.um}`,
+          it.tieneCosto ? `$${formatCurrency(it.costoUnitario)}` : '—',
+          `$${formatCurrency(it.valor)}`,
+          '',
+        ])
+      }
+      body.push([
+        { content: `Subtotal ${cat.name}`, colSpan: 4, styles: { fillColor: [245, 247, 250], fontStyle: 'bold', halign: 'right' } },
+        { content: `$${formatCurrency(cat.subtotal)}`, styles: { fillColor: [245, 247, 250], fontStyle: 'bold' } },
+      ])
+    }
+
+    autoTable(doc, {
+      startY: y,
+      margin: { left: margin, right: margin },
+      head: [['Producto', 'Stock', 'Costo unit.', 'Valor', '']],
+      body,
+      foot: [[
+        { content: 'TOTAL GENERAL', colSpan: 4, styles: { fillColor: VERDE, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'right' } },
+        { content: `$${formatCurrency(totalGeneral)}`, styles: { fillColor: VERDE, textColor: [255, 255, 255], fontStyle: 'bold' } },
+      ]],
+      headStyles: { fillColor: VERDE, fontSize: 9 },
+      footStyles: { fontSize: 10 },
+      bodyStyles: { fontSize: 9 },
+      columnStyles: {
+        1: { halign: 'right', cellWidth: 22 },
+        2: { halign: 'right', cellWidth: 26 },
+        3: { halign: 'right', cellWidth: 28 },
+        4: { cellWidth: 0 },
+      },
+      didParseCell: (data) => {
+        if (data.section === 'head' && data.column.index > 0 && data.column.index < 4) {
+          data.cell.styles.halign = 'right'
+        }
+      },
+      theme: 'grid',
+    })
+  }
+
+  // ── Footer ──
+  const pages = doc.getNumberOfPages()
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i)
+    doc.setFontSize(8)
+    doc.setTextColor(150, 150, 150)
+    doc.text(
+      `Generado el ${new Date().toLocaleString('es-VE')} — Frutería POS`,
+      margin,
+      doc.internal.pageSize.getHeight() - 8
+    )
+  }
+
+  return doc
+}
+
+export function exportarInventoryValuationPDF(opts) {
+  const doc = generarInventoryValuationPDF(opts)
+  const filename = nombreArchivoInventoryValuation()
+  const blob = doc.output('blob')
+  const url = URL.createObjectURL(blob)
+  const win = window.open(url, '_blank')
+  if (!win) {
+    descargarBlob(blob, filename)
+  }
+}
+
+export function descargarInventoryValuationPDF(opts) {
+  const doc = generarInventoryValuationPDF(opts)
+  descargarBlob(doc.output('blob'), nombreArchivoInventoryValuation())
+}
+
+export async function compartirInventoryValuationPDF(opts) {
+  const doc = generarInventoryValuationPDF(opts)
+  const filename = nombreArchivoInventoryValuation()
+  const blob = doc.output('blob')
+
+  const file = new File([blob], filename, { type: 'application/pdf' })
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: filename,
+        text: 'Inventario valorizado',
+      })
+      return
+    } catch (error) {
+      if (error.name === 'AbortError') return
+    }
+  }
+
+  descargarBlob(blob, filename)
+}
