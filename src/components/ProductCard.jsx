@@ -8,9 +8,14 @@ function formatStockQty(stock, um) {
   return Number(stock).toFixed(1)
 }
 
+function unitLabel(um) {
+  return um === 'unidad' ? 'und' : (um || '')
+}
+
 const STOCK_LABEL = {
-  ok:          (qty, um) => `DISP. ${qty} ${(um || '').toUpperCase()}`,
-  pedir:       (qty, um) => `PEDIR ${qty} ${(um || '').toUpperCase()}`,
+  ok:          (qty, um) => `DISP. ${qty} ${um}`,
+  pedir:       (qty, um) => `ADVERTENCIA · DISP ${qty} ${um}`,
+  reponer:     (qty, um) => `REPONER · DISP ${qty} ${um}`,
   agotado:     () => 'AGOTADO',
   sin_definir: () => 'SIN DEFINIR',
 }
@@ -21,7 +26,7 @@ function ProductCard({ product, cartItem, tasa, onSelect }) {
   const status = clasificarStock(product)
   const stockQty = formatStockQty(product.stock, product.um)
   const statusText = stockQty != null
-    ? STOCK_LABEL[status](stockQty, product.um)
+    ? STOCK_LABEL[status](stockQty, unitLabel(product.um))
     : STOCK_LABEL[status]()
 
   return (

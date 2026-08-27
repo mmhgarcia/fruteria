@@ -9,8 +9,6 @@ function formatQty(n, um) {
 export default function StockAlertModal({ onClose, onGoToInventory, alerta }) {
   if (!alerta) return null
 
-  const agotados = alerta.productos.filter((p) => p.estado === 'agotado')
-  const pedidos = alerta.productos.filter((p) => p.estado === 'pedir')
   const total = alerta.productos.length
 
   return (
@@ -50,7 +48,9 @@ export default function StockAlertModal({ onClose, onGoToInventory, alerta }) {
                   <span className="stock-alert-item-stock">
                     {p.estado === 'agotado'
                       ? `⛔ Agotado`
-                      : `⚠️ Quedan ${formatQty(p.stockNuevo, p.um)}`}
+                      : p.estado === 'reponer'
+                        ? `🟠 Reponer · quedan ${formatQty(p.stockNuevo, p.um)}`
+                        : `⚠️ Advertir · quedan ${formatQty(p.stockNuevo, p.um)}`}
                     {typeof p.stockMin === 'number' && p.stockMin > 0
                       ? ` / min ${formatQty(p.stockMin, p.um)}`
                       : ''}

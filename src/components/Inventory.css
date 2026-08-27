@@ -236,6 +236,11 @@
   color: #e65100;
 }
 
+.status-reponer {
+  background: rgba(249, 115, 22, 0.16);
+  color: #c2410c;
+}
+
 .status-out {
   background: rgba(244, 67, 54, 0.12);
   color: #c62828;

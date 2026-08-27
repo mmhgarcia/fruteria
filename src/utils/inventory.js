@@ -265,7 +265,7 @@ export async function descontarStockVenta(items) {
         const puntoPedido = product.puntoPedido ?? 0
         const estadoPrevio = clasificarStock({ stock: stockActual, stockMin, puntoPedido })
         const estadoNuevo = clasificarStock({ stock: stockNuevo, stockMin, puntoPedido })
-        if (['agotado', 'pedir'].includes(estadoNuevo) && estadoNuevo !== estadoPrevio) {
+        if (['agotado', 'pedir', 'reponer'].includes(estadoNuevo) && estadoNuevo !== estadoPrevio) {
           alertas.push({
             id: item.id,
             name: item.name,

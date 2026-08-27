@@ -116,6 +116,10 @@
   color: #b45309;
 }
 
+.stock-alert-row-reponer .stock-alert-item-stock {
+  color: #c2410c;
+}
+
 .stock-alert-item-stock {
   flex-shrink: 0;
   font-size: 0.8rem;

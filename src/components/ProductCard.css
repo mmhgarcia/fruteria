@@ -92,8 +92,13 @@
 }
 
 .product-card-status--pedir {
-  background: #fbc02d;
-  color: #000000;
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.product-card-status--reponer {
+  background: #f97316;
+  color: #ffffff;
 }
 
 .product-card-status--agotado {
@@ -102,7 +107,7 @@
 }
 
 .product-card-status--sin_definir {
-  background: #bdbdbd;
+  background: #9e9e9e;
   color: #ffffff;
 }
 

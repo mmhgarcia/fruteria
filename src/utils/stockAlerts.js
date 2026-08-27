@@ -1,15 +1,14 @@
 // filepath: src/utils/stockAlerts.js
-// Cómputo de alertas de stock para mostrar en el Header.
-// Convenciones espejo de Inventory.jsx:
-//   - product.stock === null  => "Sin definir" (no alerta)
-//   - product.stock === 0     => AGOTADO
-//   - 0 < stock < (stockMin ?? 0) => PEDIR
-//   - resto                   => OK
+// Cómputo de alertas de stock (semáforo) para mostrar en el Header y las cards.
+// Estados (de mayor a menor stock):
+//   - 'ok'         VERDE   (disponibilidad)   stock > punto de pedido
+//   - 'pedir'      ÁMBAR   (advertencia)      stockMínimo < stock <= puntoPedido
+//   - 'reponer'    NARANJA (reponer)          0 < stock <= stockMínimo
+//   - 'agotado'    ROJO    (agotado)          stock === 0
+//   - 'sin_definir' GRIS   (sin definir)      stock === null
 //
-// Los umbrales se conectan con los campos `stockMin` (stock mínimo) y
-// `puntoPedido` (punto de pedido). El estatus 'pedir' se dispara cuando el
-// stock queda por debajo del mayor de los dos, de modo que avisa lo antes
-// posible.
+// Los umbrales se normalizan con max/min para que el pedido de ingreso
+// (mínimo / punto de pedido) no rompa el semáforo.
 
 /**
  * @typedef {Object} StockAlertSummary
@@ -21,16 +20,36 @@
  */
 
 /**
- * Clasifica un producto individual. Devuelve una de: 'ok' | 'agotado' | 'pedir' | 'sin_definir'.
- * Considera tanto `stockMin` (stock mínimo) como `puntoPedido` (punto de pedido):
- * dispara 'pedir' cuando el stock es menor al mayor de ambos umbrales.
+ * Clasifica un producto individual según el semáforo de stock.
+ * Devuelve una de: 'ok' | 'pedir' | 'reponer' | 'agotado' | 'sin_definir'.
+ *
+ * Con ambos umbrales definidos:
+ *   - 'ok'       si stock > max(min, pp)
+ *   - 'pedir'    si min < stock <= max(...)   (ámbar)
+ *   - 'reponer'  si 0 < stock <= min          (naranja)
+ * Con solo punto de pedido: 'ok' / 'pedir'. Con solo mínimo: 'ok' / 'reponer'.
  * @param {{stock: number|null, stockMin?: number|null, puntoPedido?: number|null}} product
  */
 export function clasificarStock(product) {
   if (product.stock == null) return 'sin_definir'
   if (product.stock === 0) return 'agotado'
-  const umbral = Math.max(product.stockMin ?? 0, product.puntoPedido ?? 0)
-  if (product.stock < umbral) return 'pedir'
+
+  const min = typeof product.stockMin === 'number' && product.stockMin > 0 ? product.stockMin : null
+  const pp = typeof product.puntoPedido === 'number' && product.puntoPedido > 0 ? product.puntoPedido : null
+
+  if (min != null && pp != null) {
+    const bajo = Math.min(min, pp)
+    const alto = Math.max(min, pp)
+    if (product.stock > alto) return 'ok'
+    if (product.stock > bajo) return 'pedir'
+    return 'reponer'
+  }
+  if (pp != null) {
+    return product.stock > pp ? 'ok' : 'pedir'
+  }
+  if (min != null) {
+    return product.stock > min ? 'ok' : 'reponer'
+  }
   return 'ok'
 }
 
@@ -54,9 +73,9 @@ export function computeStockAlerts(products, ramoId) {
     if (cls === 'agotado') {
       agotados += 1
       items.push({ product: p, severity: 'agotado' })
-    } else if (cls === 'pedir') {
+    } else if (cls === 'pedir' || cls === 'reponer') {
       pedidos += 1
-      items.push({ product: p, severity: 'pedir' })
+      items.push({ product: p, severity: cls })
     } else if (cls === 'sin_definir') {
       sinDefinir += 1
     }

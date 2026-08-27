@@ -13,7 +13,8 @@ import { clasificarStock } from '../utils/stockAlerts'
 
 const FILTERS = [
   { id: 'todo',    label: 'Todo' },
-  { id: 'pedir',   label: 'Pedir' },
+  { id: 'pedir',   label: 'Advertir' },
+  { id: 'reponer', label: 'Reponer' },
   { id: 'agotado', label: 'Agotado' },
   { id: 'sin_definir', label: 'Sin definir' },
 ]
@@ -21,7 +22,8 @@ const FILTERS = [
 const STATUS_META = {
   sin_definir: { label: 'Sin definir', cls: 'status-undef' },
   agotado:     { label: 'Agotado',     cls: 'status-out' },
-  pedir:       { label: 'Pedir',       cls: 'status-warn' },
+  reponer:     { label: 'Reponer',     cls: 'status-reponer' },
+  pedir:       { label: 'Advertir',    cls: 'status-warn' },
   ok:          { label: 'OK',          cls: 'status-ok' },
 }
 
@@ -217,6 +219,7 @@ export default function Inventory({ onClose, ramoId }) {
       .filter((p) => {
         const s = statusOf(p)
         if (filter === 'pedir') return s.id === 'pedir'
+        if (filter === 'reponer') return s.id === 'reponer'
         if (filter === 'agotado') return s.id === 'agotado'
         if (filter === 'sin_definir') return s.id === 'sin_definir'
         return true
@@ -227,6 +230,7 @@ export default function Inventory({ onClose, ramoId }) {
   const counts = useMemo(() => ({
     todo: products.length,
     pedir: products.filter((p) => statusOf(p).id === 'pedir').length,
+    reponer: products.filter((p) => statusOf(p).id === 'reponer').length,
     agotado: products.filter((p) => statusOf(p).id === 'agotado').length,
     sin_definir: products.filter((p) => statusOf(p).id === 'sin_definir').length,
   }), [products])
