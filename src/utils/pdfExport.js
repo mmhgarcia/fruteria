@@ -572,18 +572,3 @@ export async function compartirInventoryValuationPDF(opts) {
 
   descargarBlob(blob, filename)
 }
-
-/**
- * Abre el PDF en una pestaña nueva y dispara el diálogo de impresión del navegador.
- * Si el navegador bloquea la apertura, descarga el archivo.
- */
-export function imprimirInventoryValuationPDF(opts) {
-  const doc = generarInventoryValuationPDF(opts)
-  const filename = nombreArchivoInventoryValuation()
-  doc.autoPrint()
-  const blobUrl = doc.output('bloburl')
-  const win = window.open(blobUrl, '_blank')
-  if (!win) {
-    descargarBlob(doc.output('blob'), filename)
-  }
-}

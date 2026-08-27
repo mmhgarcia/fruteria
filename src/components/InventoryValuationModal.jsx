@@ -5,7 +5,6 @@ import { formatCurrency } from '../utils/format'
 import {
   exportarInventoryValuationPDF,
   compartirInventoryValuationPDF,
-  imprimirInventoryValuationPDF,
 } from '../utils/pdfExport'
 import './InventoryValuationModal.css'
 
@@ -60,15 +59,6 @@ export default function InventoryValuationModal({ onClose, companyName, ramoId }
     }
   }
 
-  const handleImprimirPDF = () => {
-    if (!valuation) return
-    try {
-      imprimirInventoryValuationPDF({ companyName, valuation })
-    } catch (err) {
-      console.error('Error al imprimir PDF:', err)
-    }
-  }
-
   const totalCategorias = useMemo(
     () => valuation?.categories.length ?? 0,
     [valuation]
@@ -105,7 +95,6 @@ export default function InventoryValuationModal({ onClose, companyName, ramoId }
               >
                 📤
               </button>
-              <button className="btn-action iv-btn-print" onClick={handleImprimirPDF}>🖨️ IMPRIMIR</button>
             </div>
           )}
         </div>
