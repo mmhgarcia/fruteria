@@ -83,20 +83,20 @@ export default function InventoryValuationModal({ onClose, companyName, ramoId }
           <div className="iv-header-top">
             <span className="modal-icon">💰</span>
             <h2>Inventario Valorizado</h2>
+            {!loading && valuation && (
+              <div className="iv-pdf-actions">
+                <button className="btn-action iv-btn-ver" onClick={handleVerPDF}>👁 VER</button>
+                <button
+                  className="btn-action iv-btn-share"
+                  onClick={handleCompartirPDF}
+                  title="Compartir"
+                  aria-label="Compartir PDF"
+                >
+                  📤
+                </button>
+              </div>
+            )}
           </div>
-          {!loading && valuation && (
-            <div className="iv-pdf-bar">
-              <button className="btn-action iv-btn-ver" onClick={handleVerPDF}>👁 VER</button>
-              <button
-                className="btn-action iv-btn-share"
-                onClick={handleCompartirPDF}
-                title="Compartir"
-                aria-label="Compartir PDF"
-              >
-                📤
-              </button>
-            </div>
-          )}
         </div>
 
         {loading && (

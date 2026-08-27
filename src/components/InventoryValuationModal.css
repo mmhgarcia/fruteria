@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 56px 16px 20px;
+  padding: 14px 56px 14px 20px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -73,22 +73,22 @@
   margin: 0;
   font-size: 1.15rem;
   flex: 1;
+  min-width: 0;
   color: var(--text-primary, #1a1a1a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.iv-pdf-bar {
+.iv-pdf-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 56px 10px 50px;
-  background: rgba(0, 0, 0, 0.03);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  font-size: 0.85rem;
+  gap: 10px;
+  margin-left: auto;
   flex-shrink: 0;
-  flex-wrap: wrap;
 }
 
-.iv-pdf-bar .btn-action {
+.iv-pdf-actions .btn-action {
   padding: 7px 14px;
   border-radius: 8px;
   font-size: 0.8rem;
@@ -334,5 +334,27 @@
   .iv-item-cost,
   .iv-item-stock {
     display: none;
+  }
+
+  .iv-header-top {
+    padding: 12px 52px 12px 14px;
+    gap: 6px;
+  }
+
+  .iv-header-top h2 {
+    font-size: 1rem;
+  }
+
+  .iv-pdf-actions {
+    gap: 6px;
+  }
+
+  .iv-pdf-actions .btn-action {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .iv-btn-share {
+    font-size: 0.9rem;
   }
 }
