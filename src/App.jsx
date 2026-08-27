@@ -542,6 +542,7 @@ function App() {
         <Inventory
           onClose={() => {
             setShowInventory(false)
+            loadProducts()
             refreshStockAlerts()
           }}
           ramoId={settings.ramoId}
