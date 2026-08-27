@@ -266,108 +266,120 @@ export default function Products({ onClose, ramoId, tasa }) {
         {showForm && (
           <div className="products-form-panel products-form-panel-top">
             <form className="products-form" onSubmit={handleSubmit}>
-              <label className="products-field-label">Nombre Producto</label>
-              <input
-                name="name"
-                type="text"
-                placeholder="Nombre del producto"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
+              <div className="products-form-scroll">
+                <div className="products-section">
+                  <div className="products-section-title">Información del producto</div>
 
-              <div className="products-field-grid">
-                <div className="products-field">
-                  <label className="products-field-label">Categoría</label>
-                  <select name="group" value={form.group} onChange={handleChange}>
-                    <option value="">Sin categoría</option>
-                    {categories
-                      .filter((cat) => cat.ramo === ramoId)
-                      .map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.icon} {cat.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-
-                <div className="products-field">
-                  <label className="products-field-label">Unidad Medida</label>
-                  <select name="um" value={form.um} onChange={handleChange}>
-                    <option value="kg">kg</option>
-                    <option value="unidad">unidad</option>
-                  </select>
-                </div>
-
-                <div className="products-field">
-                  <label className="products-field-label">Precio UM ($)</label>
+                  <label className="products-field-label">Nombre Producto</label>
                   <input
-                    name="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    value={form.price}
+                    name="name"
+                    type="text"
+                    placeholder="Nombre del producto"
+                    value={form.name}
                     onChange={handleChange}
                     required
                   />
+
+                  <div className="products-field-grid">
+                    <div className="products-field">
+                      <label className="products-field-label">Categoría</label>
+                      <select name="group" value={form.group} onChange={handleChange}>
+                        <option value="">Sin categoría</option>
+                        {categories
+                          .filter((cat) => cat.ramo === ramoId)
+                          .map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                              {cat.icon} {cat.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="products-field">
+                      <label className="products-field-label">Unidad Medida</label>
+                      <select name="um" value={form.um} onChange={handleChange}>
+                        <option value="kg">kg</option>
+                        <option value="unidad">unidad</option>
+                      </select>
+                    </div>
+
+                    <div className="products-field">
+                      <label className="products-field-label">Precio UM ($)</label>
+                      <input
+                        name="price"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        value={form.price}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="products-field">
+                      <label className="products-field-label">Precio UM (Bs)</label>
+                      <input
+                        name="priceBs"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        value={form.priceBs}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="products-field">
-                  <label className="products-field-label">Precio UM (Bs)</label>
-                  <input
-                    name="priceBs"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    value={form.priceBs}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
+                <div className="products-section">
+                  <div className="products-section-title">Control de existencias</div>
 
-              <div className="products-field-grid">
-                <div className="products-field">
-                  <label className="products-field-label">Stock mínimo</label>
-                  <input
-                    name="stockMin"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0"
-                    value={form.stockMin}
-                    onChange={handleChange}
-                  />
+                  <div className="products-field-grid">
+                    <div className="products-field">
+                      <label className="products-field-label">Stock mínimo</label>
+                      <input
+                        name="stockMin"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0"
+                        value={form.stockMin}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="products-field">
+                      <label className="products-field-label">Punto de pedido</label>
+                      <input
+                        name="puntoPedido"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0"
+                        value={form.puntoPedido}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="products-field">
-                  <label className="products-field-label">Punto de pedido</label>
-                  <input
-                    name="puntoPedido"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0"
-                    value={form.puntoPedido}
-                    onChange={handleChange}
-                  />
+                <div className="products-section">
+                  <div className="products-section-title">Icono</div>
+                  <div className="products-icons">
+                    {ICONS.map((icon) => (
+                      <button
+                        key={icon}
+                        type="button"
+                        className={`products-icon ${form.icon === icon ? 'selected' : ''}`}
+                        onClick={() => setForm((prev) => ({ ...prev, icon }))}
+                      >
+                        {icon}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              <label className="products-field-label">Icono</label>
-              <div className="products-icons">
-                {ICONS.map((icon) => (
-                  <button
-                    key={icon}
-                    type="button"
-                    className={`products-icon ${form.icon === icon ? 'selected' : ''}`}
-                    onClick={() => setForm((prev) => ({ ...prev, icon }))}
-                  >
-                    {icon}
-                  </button>
-                ))}
               </div>
 
               <div className="products-actions">

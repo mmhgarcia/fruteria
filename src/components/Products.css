@@ -246,6 +246,9 @@
   max-height: 75vh;
   overflow-y: auto;
   animation: slideUp 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 @keyframes slideUp {
@@ -260,18 +263,30 @@
 .products-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
+  height: 100%;
+  min-height: 0;
+}
+
+.products-form-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .products-form input,
 .products-form select {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
   padding: 14px;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 1rem;
   background: var(--surface, #ffffff);
   color: var(--text-primary, #1a1a1a);
-  flex: 1;
 }
 
 .products-form-row {
@@ -284,15 +299,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  max-width: 480px;
   width: 100%;
-  margin: 0 auto;
 }
 
 .products-field {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .products-icons {
@@ -322,6 +336,32 @@
 .products-actions {
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
+  padding-top: 14px;
+  margin-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ── Secciones del formulario ── */
+
+.products-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.products-section + .products-section {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.products-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary, #2d6a4f);
+  margin: 2px 0 6px;
 }
 
 .products-btn {
@@ -536,6 +576,7 @@
   max-height: 100%;
   border-radius: 0;
   animation: slideDown 0.25s ease;
+  overflow: hidden;
 }
 
 /* ── Panel de formulario de categorías: anclado arriba, sin scroll ── */
