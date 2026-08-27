@@ -69,6 +69,7 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
       sessionHoras,
       sessionMinutos,
       valuationMethod,
+      mostrarDashboardAlInicio: settings.mostrarDashboardAlInicio ?? true,
     })
     onClose()
   }

@@ -17,6 +17,7 @@ import SalesReportModal from './components/SalesReportModal'
 import BestSellingProductsModal from './components/BestSellingProductsModal'
 import DailyTicketsModal from './components/DailyTicketsModal'
 import InventoryValuationModal from './components/InventoryValuationModal'
+import DashboardModal from './components/DashboardModal'
 import LogsViewerModal from './components/LogsViewerModal'
 import Categories from './components/Categories'
 import Products from './components/Products'
@@ -53,6 +54,7 @@ function App() {
     pin: '',
     sessionHoras: 8,
     sessionMinutos: 0,
+    mostrarDashboardAlInicio: true,
   })
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [pinPromptOpen, setPinPromptOpen] = useState(false)
@@ -69,6 +71,7 @@ function App() {
   const [showCategories, setShowCategories] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
   const [showInventory, setShowInventory] = useState(false)
+  const [showDashboard, setShowDashboard] = useState(false)
 
   // Lee de localStorage cuándo fue la última vez que se marcaron leídas
   const [lastAlertReadAt, setLastAlertReadAt] = useState(
@@ -137,6 +140,10 @@ function App() {
     setSesionActiva(false)
   }
 
+  const handleToggleDashboardInicio = (value) => {
+    setSettings((prev) => ({ ...prev, mostrarDashboardAlInicio: value }))
+  }
+
   // Click en el badge de stock: abre Inventario (con PIN si corresponde).
   const handleStockBadgeClick = () => {
     if (settings.pin && !sesionActiva) {
@@ -178,6 +185,10 @@ function App() {
     loadCategories()
     refreshAlertCount()
     refreshStockAlerts()
+    if ((!settings.pin || sesionActiva) && settings.mostrarDashboardAlInicio !== false) {
+      setShowDashboard(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Aplica los colores del theme al :root del documento
@@ -389,6 +400,7 @@ function App() {
         onOpenBestSelling={() => setShowBestSelling(true)}
         onOpenDailyTickets={() => setShowDailyTickets(true)}
         onOpenInventoryValuation={() => setShowInventoryValuation(true)}
+        onOpenDashboard={() => setShowDashboard(true)}
         onOpenLogs={() => setShowLogs(true)}
         onOpenCategories={() => setShowCategories(true)}
         onOpenProducts={() => setShowProducts(true)}
@@ -518,6 +530,16 @@ function App() {
           companyName={settings.companyName}
           ramoId={settings.ramoId}
           onClose={() => setShowInventoryValuation(false)}
+        />
+      )}
+
+      {showDashboard && (
+        <DashboardModal
+          ramoId={settings.ramoId}
+          companyName={settings.companyName}
+          mostrarAlInicio={settings.mostrarDashboardAlInicio !== false}
+          onToggleInicio={handleToggleDashboardInicio}
+          onClose={() => setShowDashboard(false)}
         />
       )}
 
