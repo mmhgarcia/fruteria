@@ -88,12 +88,6 @@
   flex-wrap: wrap;
 }
 
-.iv-pdf-label {
-  color: var(--text-secondary, #666);
-  font-weight: 600;
-  margin-right: 4px;
-}
-
 .iv-pdf-bar .btn-action {
   padding: 7px 14px;
   border-radius: 8px;

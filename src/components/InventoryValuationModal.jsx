@@ -96,7 +96,6 @@ export default function InventoryValuationModal({ onClose, companyName, ramoId }
           </div>
           {!loading && valuation && (
             <div className="iv-pdf-bar">
-              <span className="iv-pdf-label">PDF:</span>
               <button className="btn-action iv-btn-ver" onClick={handleVerPDF}>👁 VER</button>
               <button
                 className="btn-action iv-btn-share"
