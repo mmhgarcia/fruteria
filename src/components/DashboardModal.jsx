@@ -93,7 +93,7 @@ export default function DashboardModal({ onClose, ramoId, companyName, mostrarAl
               <div className="dashboard-kpis">
                 <div className="dashboard-kpi">
                   <span className="dashboard-kpi-icon">💰</span>
-                  <span className="dashboard-kpi-label">Ventas hoy</span>
+                  <span className="dashboard-kpi-label">Ventas {preset.toLowerCase()}</span>
                   <span className="dashboard-kpi-valor">${formatCurrency(data.kpis.ventasUSD)}</span>
                   <span className="dashboard-kpi-sub">Bs {formatCurrency(data.kpis.ventasBS)}</span>
                 </div>
