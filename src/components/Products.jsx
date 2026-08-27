@@ -12,12 +12,21 @@ const EMPTY_PRODUCT = {
   group: 'frutas',
   um: 'kg',
   price: '',
+  stockMin: '',
+  puntoPedido: '',
   ramo: 'fruteria',
 }
 
 const ICONS = [
   '🍎', '🍊', '🍌', '🍇', '🍓', '🍍', '🍉', '🥭', '🍈', '🍋', '🥑', '🥬', '🍅', '🧅', '🥕', '🥒', '🥔', '🫑', '🧄', '🏷️', '📦'
 ]
+
+// Convierte un valor de formulario a número >= 0; '' / inválido → null.
+function numberOrNull(value) {
+  if (value == null || value === '') return null
+  const n = parseFloat(value)
+  return Number.isFinite(n) && n >= 0 ? n : null
+}
 
 export default function Products({ onClose, ramoId, tasa }) {
   const [products, setProducts] = useState([])
@@ -86,6 +95,9 @@ export default function Products({ onClose, ramoId, tasa }) {
     const product = {
       ...rest,
       price: parseFloat(form.price) || 0,
+      // Campos de stock como número >= 0; vacío o inválido → null (sin definir).
+      stockMin: numberOrNull(form.stockMin),
+      puntoPedido: numberOrNull(form.puntoPedido),
     }
 
     try {
@@ -110,6 +122,8 @@ export default function Products({ onClose, ramoId, tasa }) {
       um: product.um,
       price: product.price.toString(),
       priceBs: tasa > 0 ? Math.round(product.price * tasa * 100) / 100 : '',
+      stockMin: product.stockMin != null ? String(product.stockMin) : '',
+      puntoPedido: product.puntoPedido != null ? String(product.puntoPedido) : '',
       ramo: product.ramo || '',
     })
     setEditingId(product.id)
@@ -310,6 +324,34 @@ export default function Products({ onClose, ramoId, tasa }) {
                     value={form.priceBs}
                     onChange={handleChange}
                     required
+                  />
+                </div>
+              </div>
+
+              <div className="products-field-grid">
+                <div className="products-field">
+                  <label className="products-field-label">Stock mínimo</label>
+                  <input
+                    name="stockMin"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0"
+                    value={form.stockMin}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="products-field">
+                  <label className="products-field-label">Punto de pedido</label>
+                  <input
+                    name="puntoPedido"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0"
+                    value={form.puntoPedido}
+                    onChange={handleChange}
                   />
                 </div>
               </div>

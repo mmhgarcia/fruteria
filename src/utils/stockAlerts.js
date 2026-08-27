@@ -5,6 +5,11 @@
 //   - product.stock === 0     => AGOTADO
 //   - 0 < stock < (stockMin ?? 0) => PEDIR
 //   - resto                   => OK
+//
+// Los umbrales se conectan con los campos `stockMin` (stock mínimo) y
+// `puntoPedido` (punto de pedido). El estatus 'pedir' se dispara cuando el
+// stock queda por debajo del mayor de los dos, de modo que avisa lo antes
+// posible.
 
 /**
  * @typedef {Object} StockAlertSummary
@@ -17,13 +22,15 @@
 
 /**
  * Clasifica un producto individual. Devuelve una de: 'ok' | 'agotado' | 'pedir' | 'sin_definir'.
- * @param {{stock: number|null, stockMin?: number|null}} product
+ * Considera tanto `stockMin` (stock mínimo) como `puntoPedido` (punto de pedido):
+ * dispara 'pedir' cuando el stock es menor al mayor de ambos umbrales.
+ * @param {{stock: number|null, stockMin?: number|null, puntoPedido?: number|null}} product
  */
 export function clasificarStock(product) {
   if (product.stock == null) return 'sin_definir'
   if (product.stock === 0) return 'agotado'
-  const min = product.stockMin ?? 0
-  if (product.stock < min) return 'pedir'
+  const umbral = Math.max(product.stockMin ?? 0, product.puntoPedido ?? 0)
+  if (product.stock < umbral) return 'pedir'
   return 'ok'
 }
 

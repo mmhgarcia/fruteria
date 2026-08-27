@@ -262,8 +262,9 @@ export async function descontarStockVenta(items) {
         // Detectar cruce de umbral: si tras descontar el producto pasó a
         // 'agotado' o 'pedir' y antes no lo estaba, se agrega a las alertas.
         const stockMin = product.stockMin ?? 0
-        const estadoPrevio = clasificarStock({ stock: stockActual, stockMin })
-        const estadoNuevo = clasificarStock({ stock: stockNuevo, stockMin })
+        const puntoPedido = product.puntoPedido ?? 0
+        const estadoPrevio = clasificarStock({ stock: stockActual, stockMin, puntoPedido })
+        const estadoNuevo = clasificarStock({ stock: stockNuevo, stockMin, puntoPedido })
         if (['agotado', 'pedir'].includes(estadoNuevo) && estadoNuevo !== estadoPrevio) {
           alertas.push({
             id: item.id,
