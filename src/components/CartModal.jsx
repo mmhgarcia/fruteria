@@ -87,6 +87,9 @@ function CartModal({ cart, totals, onClose, onRemoveItem, onEditItem, tasa }) {
             onEditItem(editingIdx, qty)
             setEditingIdx(null)
           }}
+          maxQty={
+            typeof editingItem.stock === 'number' ? editingItem.stock : undefined
+          }
         />
       )}
     </>

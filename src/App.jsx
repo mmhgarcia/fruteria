@@ -22,6 +22,7 @@ import LogsViewerModal from './components/LogsViewerModal'
 import Categories from './components/Categories'
 import Products from './components/Products'
 import Inventory from './components/Inventory'
+import StockAlertModal from './components/StockAlertModal'
 import { descontarStockVenta } from './utils/inventory'
 import { computeStockAlerts } from './utils/stockAlerts'
 import { getRamoPorId } from './data/ramos'
@@ -72,6 +73,7 @@ function App() {
   const [showProducts, setShowProducts] = useState(false)
   const [showInventory, setShowInventory] = useState(false)
   const [showDashboard, setShowDashboard] = useState(false)
+  const [alertaStockVenta, setAlertaStockVenta] = useState(null)
 
   // Lee de localStorage cuándo fue la última vez que se marcaron leídas
   const [lastAlertReadAt, setLastAlertReadAt] = useState(
@@ -271,7 +273,13 @@ function App() {
         const newQty = existing.qty + qty
         return prev.map((item) =>
           item.id === product.id
-            ? { ...item, qty: newQty, totalUSD: newQty * item.price }
+            ? {
+                ...item,
+                qty: newQty,
+                totalUSD: newQty * item.price,
+                stock: product.stock ?? item.stock ?? null,
+                stockMin: product.stockMin ?? item.stockMin ?? null,
+              }
             : item
         )
       }
@@ -286,6 +294,8 @@ function App() {
           ramo: product.ramo || '',
           qty,
           totalUSD: qty * product.price,
+          stock: product.stock ?? null,
+          stockMin: product.stockMin ?? null,
         },
       ]
     })
@@ -351,14 +361,32 @@ function App() {
         qty: item.qty,
       }))
       try {
-        const { faltantes } = await descontarStockVenta(itemsParaStock)
+        const { faltantes, alertas } = await descontarStockVenta(itemsParaStock)
         if (faltantes.length > 0) {
           console.warn('Items con stock insuficiente al cobrar:', faltantes)
+        }
+        // Registrar traza consolidada (una sola alerta por venta) cuando hay
+        // productos que cruzaron a 'agotado' o 'pedir' por efecto de esta venta.
+        if (alertas.length > 0) {
+          addLog(LOG_TYPES.ALERT, 'Stock por reponer tras venta', {
+            saleId,
+            productos: alertas.map((a) => ({
+              id: a.id,
+              name: a.name,
+              estado: a.estado,
+              stockNuevo: a.stockNuevo,
+              stockAnterior: a.stockAnterior,
+              stockMin: a.stockMin,
+            })),
+          }).catch(() => {})
         }
         // Refrescar productos en memoria para reflejar el nuevo stock.
         const updatedProducts = await getProducts()
         setProducts(updatedProducts)
         await refreshStockAlerts()
+        if (alertas.length > 0) {
+          setAlertaStockVenta({ saleId, productos: alertas })
+        }
       } catch (stockErr) {
         console.error('Error descontando stock:', stockErr)
       }
@@ -457,6 +485,15 @@ function App() {
             addToCart(selectedProduct, qty)
             setSelectedProduct(null)
           }}
+          maxQty={
+            typeof selectedProduct.stock === 'number'
+              ? Math.max(
+                  0,
+                  selectedProduct.stock -
+                    cart.reduce((s, it) => (it.id === selectedProduct.id ? s + it.qty : s), 0)
+                )
+              : undefined
+          }
         />
       )}
 
@@ -477,6 +514,17 @@ function App() {
           tasa={tasa}
           onClose={() => setPreviewOpen(false)}
           companyName={settings.companyName}
+        />
+      )}
+
+      {alertaStockVenta && (
+        <StockAlertModal
+          alerta={alertaStockVenta}
+          onClose={() => setAlertaStockVenta(null)}
+          onGoToInventory={() => {
+            setAlertaStockVenta(null)
+            setShowInventory(true)
+          }}
         />
       )}
 

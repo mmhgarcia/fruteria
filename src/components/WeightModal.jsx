@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { formatCurrency } from '../utils/format'
+import { formatCurrency, formatQty } from '../utils/format'
 import './WeightModal.css'
 
 const digits = [
@@ -9,7 +9,7 @@ const digits = [
   '.', '0', 'clear'
 ]
 
-function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
+function WeightModal({ product, tasa, onClose, onConfirm, initialQty, maxQty }) {
   const [weight, setWeight] = useState(initialQty ? String(initialQty) : '')
   const isUnit = product.um === 'unidad'
 
@@ -41,8 +41,15 @@ function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
   const totalUSD = qty * product.price
   const totalBS = totalUSD * tasa
 
+  // Límite de stock disponible. `maxQty` llega calculado desde quien abre el
+  // modal (ya descontado lo que haya en el carrito). Si no llega (o es null/
+  // undefined), no se limita (productos sin stock definido).
+  const maxQtyNumber = typeof maxQty === 'number' && maxQty >= 0 ? maxQty : Infinity
+  const overLimit = qty > 0 && qty > maxQtyNumber
+
   const handleConfirm = () => {
     if (qty <= 0) return
+    if (overLimit) return
     onConfirm(qty)
   }
 
@@ -68,6 +75,14 @@ function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
               : ''}
           </div>
         </div>
+
+        {overLimit && (
+          <div className="weight-alert" role="alert">
+            ⚠️ Stock disponible: {formatQty(maxQtyNumber, product.um)} {product.um}.
+            Ingresa una cantidad menor o igual.
+          </div>
+        )}
+
         <div className="numpad">
           {digits.map((d) => {
             const isDot = d === '.'
@@ -92,7 +107,7 @@ function WeightModal({ product, tasa, onClose, onConfirm, initialQty }) {
           <button
             className="btn-confirm"
             onClick={handleConfirm}
-            disabled={qty <= 0}
+            disabled={qty <= 0 || overLimit}
           >
             {initialQty ? 'Actualizar' : 'Agregar al ticket'}
           </button>

@@ -9,6 +9,7 @@
 //    atomicidad.
 
 import { addLog, LOG_TYPES } from './logService.js'
+import { clasificarStock } from './stockAlerts.js'
 
 const DB_NAME = 'fruteria-db'
 const DB_VERSION = 7
@@ -222,11 +223,15 @@ export async function registrarMovimiento({ productId, tipo, cantidad, motivo = 
  * registra un log WARNING con la diferencia.
  *
  * @param {Array<{id:number, qty:number, name?:string}>} items
- * @returns {Promise<{ descontados: Array, faltantes: Array }>}
+ * @returns {Promise<{ descontados: Array, faltantes: Array, alertas: Array }>}
+ *
+ * `alertas` contiene los productos que, a causa de esta venta, cruzaron a
+ * estatus 'agotado' o 'pedir' (antes estaban en 'ok'). Se usa para notificar
+ * al cajero que hay productos por reponer.
  */
 export async function descontarStockVenta(items) {
   if (!Array.isArray(items) || items.length === 0) {
-    return { descontados: [], faltantes: [] }
+    return { descontados: [], faltantes: [], alertas: [] }
   }
   const db = await openDB()
   return new Promise((resolve, reject) => {
@@ -236,6 +241,7 @@ export async function descontarStockVenta(items) {
 
     const descontados = []
     const faltantes = []
+    const alertas = []
     let pending = items.length
 
     items.forEach((item) => {
@@ -252,6 +258,24 @@ export async function descontarStockVenta(items) {
         const aplicar = Math.min(solicitado, stockActual)
         const faltante = solicitado - aplicar
         const stockNuevo = Math.max(0, stockActual - aplicar)
+
+        // Detectar cruce de umbral: si tras descontar el producto pasó a
+        // 'agotado' o 'pedir' y antes no lo estaba, se agrega a las alertas.
+        const stockMin = product.stockMin ?? 0
+        const estadoPrevio = clasificarStock({ stock: stockActual, stockMin })
+        const estadoNuevo = clasificarStock({ stock: stockNuevo, stockMin })
+        if (['agotado', 'pedir'].includes(estadoNuevo) && estadoNuevo !== estadoPrevio) {
+          alertas.push({
+            id: item.id,
+            name: item.name,
+            icon: product.icon || '',
+            um: product.um || '',
+            stockAnterior: stockActual,
+            stockNuevo,
+            stockMin,
+            estado: estadoNuevo,
+          })
+        }
 
         const updated = { ...product, stock: stockNuevo }
         const putReq = productsStore.put(updated)
@@ -289,7 +313,7 @@ export async function descontarStockVenta(items) {
     })
 
     function finish() {
-      resolve({ descontados, faltantes })
+      resolve({ descontados, faltantes, alertas })
     }
     tx.onerror = () => reject(tx.error)
     tx.onabort = () => reject(tx.error)
