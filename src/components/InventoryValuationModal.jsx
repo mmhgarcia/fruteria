@@ -102,7 +102,7 @@ export default function InventoryValuationModal({ onClose, companyName, ramoId }
         )}
 
         {!loading && valuation && (
-          <>
+          <div className="iv-modal-body">
             <div className="iv-meta">
               <span><strong>Método:</strong> {valuation.methodLabel}</span>
               <span><strong>Generado:</strong> {formatFechaCorta(valuation.generatedAt)}</span>
@@ -171,7 +171,7 @@ export default function InventoryValuationModal({ onClose, companyName, ramoId }
                 <span>${formatCurrency(valuation.totalGeneral)}</span>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
