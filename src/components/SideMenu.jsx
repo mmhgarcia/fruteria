@@ -30,7 +30,6 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
   ]
 
   const REPORT_OPTIONS = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊', onClick: onOpenDashboard },
     { id: 'sales', label: 'Reporte de Ventas', icon: '📈', onClick: onOpenSalesReport },
     { id: 'best-selling', label: 'Productos Más Vendidos', icon: '🏆', onClick: onOpenBestSelling },
     { id: 'daily-tickets', label: 'Tickets del Día', icon: '🧾', onClick: onOpenDailyTickets },
@@ -121,6 +120,17 @@ export default function SideMenu({ isOpen, onClose, onOpen, currentFilter, onFil
           )}
           {verAdmin && (
             <>
+              {/* Dashboard */}
+              <button
+                className={`side-menu-option ${currentFilter === 'dashboard' ? 'active' : ''}`}
+                onClick={() => { onClose(); onOpenDashboard(); }}
+              >
+                <span className="side-menu-icon">📊</span>
+                <span className="side-menu-label">Dashboard</span>
+              </button>
+
+              <hr className="side-menu-separator" />
+
               {/* Categorías de producto y catálogo */}
               <button
                 className={`side-menu-option ${currentFilter === 'categorias' ? 'active' : ''}`}
