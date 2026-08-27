@@ -364,6 +364,40 @@
   margin: 2px 0 6px;
 }
 
+/* ── Grid de Control de existencias (etiqueta | valor, sin bordes) ── */
+
+.products-stock-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.6fr) 1.4fr;
+  gap: 12px 14px;
+  align-items: center;
+}
+
+.products-stock-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #5c6b5f;
+}
+
+.products-stock-grid input {
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.products-stock-grid input:focus {
+  outline: 2px solid var(--primary, #2d6a4f);
+  background: var(--surface, #ffffff);
+}
+
+.products-stock-grid .products-stock-readonly {
+  color: var(--text-secondary, #777);
+  font-weight: 600;
+}
+
 .products-btn {
   flex: 1;
   padding: 14px;

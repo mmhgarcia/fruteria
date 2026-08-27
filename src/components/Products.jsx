@@ -14,6 +14,7 @@ const EMPTY_PRODUCT = {
   price: '',
   stockMin: '',
   puntoPedido: '',
+  stockDisp: '',
   ramo: 'fruteria',
 }
 
@@ -26,6 +27,12 @@ function numberOrNull(value) {
   if (value == null || value === '') return null
   const n = parseFloat(value)
   return Number.isFinite(n) && n >= 0 ? n : null
+}
+
+// Formatea el stock disponible para mostrarlo (solo lectura) en la ficha.
+function formatStockDisp(stock, um) {
+  if (stock == null) return ''
+  return um === 'unidad' ? String(Math.round(stock)) : Number(stock).toFixed(1)
 }
 
 export default function Products({ onClose, ramoId, tasa }) {
@@ -91,7 +98,7 @@ export default function Products({ onClose, ramoId, tasa }) {
       alert('Debe seleccionar un Ramo Comercial.')
       return
     }
-    const { priceBs, ...rest } = form
+    const { priceBs, stockDisp, ...rest } = form
     const product = {
       ...rest,
       price: parseFloat(form.price) || 0,
@@ -124,6 +131,7 @@ export default function Products({ onClose, ramoId, tasa }) {
       priceBs: tasa > 0 ? Math.round(product.price * tasa * 100) / 100 : '',
       stockMin: product.stockMin != null ? String(product.stockMin) : '',
       puntoPedido: product.puntoPedido != null ? String(product.puntoPedido) : '',
+      stockDisp: formatStockDisp(product.stock, product.um),
       ramo: product.ramo || '',
     })
     setEditingId(product.id)
@@ -336,32 +344,38 @@ export default function Products({ onClose, ramoId, tasa }) {
                 <div className="products-section">
                   <div className="products-section-title">Control de existencias</div>
 
-                  <div className="products-field-grid">
-                    <div className="products-field">
-                      <label className="products-field-label">Stock mínimo</label>
-                      <input
-                        name="stockMin"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="0"
-                        value={form.stockMin}
-                        onChange={handleChange}
-                      />
-                    </div>
+                  <div className="products-stock-grid">
+                    <label className="products-stock-label">Stock disp.</label>
+                    <input
+                      className="products-stock-readonly"
+                      type="text"
+                      readOnly
+                      tabIndex={-1}
+                      placeholder="—"
+                      value={form.stockDisp}
+                    />
 
-                    <div className="products-field">
-                      <label className="products-field-label">Punto de pedido</label>
-                      <input
-                        name="puntoPedido"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="0"
-                        value={form.puntoPedido}
-                        onChange={handleChange}
-                      />
-                    </div>
+                    <label className="products-stock-label">Punto pedido</label>
+                    <input
+                      name="puntoPedido"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0"
+                      value={form.puntoPedido}
+                      onChange={handleChange}
+                    />
+
+                    <label className="products-stock-label">Stock mínimo</label>
+                    <input
+                      name="stockMin"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0"
+                      value={form.stockMin}
+                      onChange={handleChange}
+                    />
                   </div>
                 </div>
 
