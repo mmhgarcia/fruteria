@@ -1,15 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import { getProducts, getSalesByDateRange } from '../utils/db'
 import { getDashboardData } from '../utils/dashboard'
+import { calcularRango, rangoAIntervalo } from '../utils/dateRange'
 import { formatCurrency } from '../utils/format'
 import './DashboardModal.css'
 
-function rangeHoy() {
-  const ahora = new Date()
-  const inicio = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 0, 0, 0)
-  const fin = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 23, 59, 59, 999)
-  return { inicio, fin }
-}
+const PERIODOS = ['Hoy', 'Semana', 'Mes']
 
 function formatQty(n, um) {
   if (n == null) return '—'
@@ -22,15 +18,17 @@ const MEDALLAS = ['🥇', '🥈', '🥉']
 export default function DashboardModal({ onClose, ramoId, companyName, mostrarAlInicio, onToggleInicio }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [preset, setPreset] = useState('Hoy')
 
   useEffect(() => {
     let cancelled = false
     const cargar = async () => {
       setLoading(true)
-      const { inicio, fin } = rangeHoy()
+      const rango = calcularRango(preset)
+      const { start, end } = rangoAIntervalo(rango.desde, rango.hasta)
       const [products, sales] = await Promise.all([
         getProducts(),
-        getSalesByDateRange(inicio, fin),
+        getSalesByDateRange(start, end),
       ])
       if (!cancelled) {
         setData(getDashboardData(products, sales, ramoId))
@@ -39,7 +37,7 @@ export default function DashboardModal({ onClose, ramoId, companyName, mostrarAl
     }
     cargar()
     return () => { cancelled = true }
-  }, [ramoId])
+  }, [preset, ramoId])
 
   const totalTopUSD = useMemo(
     () => (data?.top ? data.top.reduce((s, p) => s + p.totalUSD, 0) : 0),
@@ -69,8 +67,19 @@ export default function DashboardModal({ onClose, ramoId, companyName, mostrarAl
           <header className="dashboard-header">
             <span className="dashboard-icon">📊</span>
             <div className="dashboard-titulo">
-              <h2>Dashboard del día</h2>
+              <h2>Dashboard</h2>
               <span className="dashboard-fecha">{new Date().toLocaleDateString('es-VE')} · {horaGeneracion}</span>
+            </div>
+            <div className="dashboard-tabs">
+              {PERIODOS.map((p) => (
+                <button
+                  key={p}
+                  className={`dashboard-tab ${preset === p ? 'active' : ''}`}
+                  onClick={() => setPreset(p)}
+                >
+                  {p}
+                </button>
+              ))}
             </div>
           </header>
 
@@ -128,7 +137,7 @@ export default function DashboardModal({ onClose, ramoId, companyName, mostrarAl
 
               {/* Top productos */}
               <section className="dashboard-section">
-                <h3 className="dashboard-section-titulo">🏆 Más vendidos (hoy)</h3>
+                <h3 className="dashboard-section-titulo">🏆 Más vendidos ({preset.toLowerCase()})</h3>
                 {data.top.length === 0 ? (
                   <div className="dashboard-ok">Sin ventas para ranking</div>
                 ) : (

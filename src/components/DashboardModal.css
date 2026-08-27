@@ -67,6 +67,53 @@
   color: var(--text-secondary, #888);
 }
 
+.dashboard-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.dashboard-tab {
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary, #777);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.dashboard-tab:hover {
+  color: var(--text-primary, #1a1a1a);
+}
+
+.dashboard-tab.active {
+  background: #4caf50;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    flex-wrap: wrap;
+    padding-right: 46px;
+  }
+
+  .dashboard-tabs {
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+  }
+}
+
 .dashboard-cargando {
   text-align: center;
   padding: 40px 20px;
