@@ -11,6 +11,7 @@
 - **UI:** React 18 + Vite 5 + JSX.
 - **Persistencia:** **IndexedDB nativo** (DB `fruteria-db` v7) + **localStorage** para estado efímero.
 - **Backend:** Ninguno. Todo el procesamiento es client-side.
+- **Dashboard:** Resumen del día al iniciar la app (configurable), con KPIs, alertas de stock, valor de inventario y top productos.
 - **Reportes:** Exportación PDF con `jsPDF` + `jspdf-autotable`.
 - **Estructura por capas:** `components/` (UI) → `utils/`/`data/` (datos y servicios) → `features/` (módulos autocontenidos).
 
@@ -48,7 +49,7 @@
 
 | Componente | Función |
 |------------|---------|
-| [SideMenu.jsx](../src/components/SideMenu.jsx) | Menú lateral con entrada única a ⚙️ **Configuración**. |
+| [SideMenu.jsx](../src/components/SideMenu.jsx) | Menú lateral de navegación: Dashboard, productos, Inventory, Reportes del Sistema (acordeón), Tasa BCV, Configuración y Visor de Logs. |
 | [SettingsModal.jsx](../src/components/SettingsModal.jsx) | Configuración centralizada: empresa, PIN, tasa, ramos, categorías, productos, reportes, backup, logs, colores. |
 | [RamoSetup.jsx](../src/components/RamoSetup.jsx) | Wizard inicial para asignar el **ramo comercial** cuando la app arranca por primera vez. |
 | [RamoSelector.jsx](../src/components/RamoSelector.jsx) | Dropdown reutilizable de selección de ramo. |
@@ -62,6 +63,8 @@
 | [Categories.jsx](../src/components/Categories.jsx) | CRUD de categorías filtradas por ramo. |
 | [Products.jsx](../src/components/Products.jsx) | CRUD de productos (con campo `ramoId`, `um`, precio USD). |
 | [Inventory.jsx](../src/components/Inventory.jsx) | Gestión de inventario (entradas, mermas, ajustes, stock mínimo, historial). Lee y persiste en IndexedDB. |
+| [StockAlertModal.jsx](../src/components/StockAlertModal.jsx) | Modal de resumen de stock al tocar el badge del Header: agotados, stock bajo y sin definir. Botón «Ir a Inventario». |
+| [InventoryValuationModal.jsx](../src/components/InventoryValuationModal.jsx) | Inventario Valorizado: valor del inventario según método de valoración, con exportación PDF (ver/compartir/descargar). |
 
 #### Reportes y análisis
 
@@ -70,6 +73,7 @@
 | [SalesReportModal.jsx](../src/components/SalesReportModal.jsx) | Resumen de ventas por rango de fechas. |
 | [BestSellingProductsModal.jsx](../src/components/BestSellingProductsModal.jsx) | Ranking de productos más vendidos. |
 | [DailyTicketsModal.jsx](../src/components/DailyTicketsModal.jsx) | Listado de tickets emitidos en el día. |
+| [DashboardModal.jsx](../src/components/DashboardModal.jsx) | Dashboard con KPIs del día (ventas USD/Bs, tickets, ticket promedio), pestañas Hoy/Semana/Mes, alertas de stock, valor del inventario y top productos. |
 | [BackupModal.jsx](../src/components/BackupModal.jsx) | Exportar/importar backup completo (todas las stores IndexedDB). |
 | [LogsViewerModal.jsx](../src/components/LogsViewerModal.jsx) | Visor fullscreen de logs (filtros por tipo, búsqueda, marcar leídas, limpiar). |
 
@@ -82,6 +86,8 @@
 | [db.js](../src/utils/db.js) | CRUD principal IndexedDB. Conexión, `seedProducts`, ventas. | `products`, `sales` |
 | [inventory.js](../src/utils/inventory.js) | Movimientos de stock, descuento por venta, historial. Transaccional con `products` y `stock_movements`. | `products`, `stock_movements` |
 | [stockAlerts.js](../src/utils/stockAlerts.js) | Cómputo de resumen de stock (agotados, bajos, sin definir) para el badge del Header. | — |
+| [dashboard.js](../src/utils/dashboard.js) | `getDashboardData` → KPI del día, alertas de stock, valor de inventario y top productos por ingresos. Reutiliza `stockAlerts.js` y `inventory.js`. | — |
+| [dateRange.js](../src/utils/dateRange.js) | `calcularRango` (presets Hoy/Semana/Mes) y `rangoAIntervalo` para reportes. | — |
 | [categories.js](../src/utils/categories.js) | CRUD de categorías. `seedCategories`, `getCategoriesByRamo`. | `categories` |
 | [ramos.js](../src/utils/ramos.js) | CRUD de ramos comerciales. | `ramos` |
 | [backupService.js](../src/utils/backupService.js) | Export/import de **todas** las stores. Sincronizado con `DB_VERSION`. | todas |
@@ -122,7 +128,7 @@
 
 ---
 
-## 🗄️ Modelo de Datos (IndexedDB `fruteria-db` v6)
+## 🗄️ Modelo de Datos (IndexedDB `fruteria-db` v7)
 
 | Store | Propósito | CRUD desde |
 |-------|-----------|-----------|
@@ -142,7 +148,7 @@
 |-------|-----------|
 | `fruteria-cart` | Items del carrito activo. |
 | `fruteria-tasa` | Tasa USD→Bs activa (def. `36.50`). |
-| `fruteria-settings` | `companyName`, colores, `ramoId`, `pin` (hash), tiempos de sesión, `valuationMethod`. |
+| `fruteria-settings` | `companyName`, colores, `ramoId`, `pin` (hash), tiempos de sesión, `valuationMethod`, `mostrarDashboardAlInicio`. |
 | `fruteria-alert-read-at` | Timestamp ISO de última lectura de alertas. |
 | (sesión) | Timestamp de inicio de sesión para expiración automática. |
 
@@ -165,9 +171,11 @@
 | Cambiar o agregar tipo de log | [logService.js](../src/utils/logService.js), [LogsViewerModal.jsx](../src/components/LogsViewerModal.jsx) |
 | Backup / restaurar datos | [BackupModal.jsx](../src/components/BackupModal.jsx), [backupService.js](../src/utils/backupService.js) |
 | Reportes / PDFs | [SalesReportModal.jsx](../src/components/SalesReportModal.jsx), [pdfExport.js](../src/utils/pdfExport.js) |
+| Dashboard del día (KPIs, top, valor inventario) | [DashboardModal.jsx](../src/components/DashboardModal.jsx), [dashboard.js](../src/utils/dashboard.js), [dateRange.js](../src/utils/dateRange.js) |
+| Resumen de stock al tocar el badge del Header | [StockAlertModal.jsx](../src/components/StockAlertModal.jsx), [stockAlerts.js](../src/utils/stockAlerts.js) |
+| Inventario valorizado (valor del stock) | [InventoryValuationModal.jsx](../src/components/InventoryValuationModal.jsx), [inventory.js](../src/utils/inventory.js) (`getInventoryValuation`) |
 | Colores / tema | [App.jsx](../src/App.jsx) (lee `bgColor`/`textColor`), [SettingsModal.jsx](../src/components/SettingsModal.jsx) |
 | Versión de DB / nuevas stores | [db.js](../src/utils/db.js) **y** [backupService.js](../src/utils/backupService.js) (ambos) |
-| Inventario | [Inventory.jsx](../src/components/Inventory.jsx) |
 
 ---
 
