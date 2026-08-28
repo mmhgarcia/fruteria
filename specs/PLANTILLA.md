@@ -6,6 +6,9 @@
 > **Convención de rutas:** escribir SIEMPRE desde la raíz del repo (ej. `src/utils/db.js`),
 > nunca con `../`. Así las specs se pueden mover de carpeta sin ajustar rutas.
 
+> **REQUISITO DE FINALIZACIÓN:** para que esta spec se considere terminada, debe tener
+> su test implementado y en verde (`npm test`). Suspende su `Done` hasta que pase.
+
 ## 1. Problema (¿por qué?)
 Describe el dolor concreto que esto resuelve, en una o dos frases. Sin tecnicismos.
 
