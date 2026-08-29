@@ -3,7 +3,7 @@ import { formatCurrency } from '../utils/format'
 import { totalPagado, calcularSaldo, calcularVuelto, pagoEsValido } from '../utils/pagos'
 import './PaymentModal.css'
 
-function PaymentModal({ totals, tasa, onClose, onConfirm }) {
+function PaymentModal({ totals, tasa, onClose, onConfirm, submitting = false }) {
   const [pmRef, setPmRef] = useState('')
   const [pmBanco, setPmBanco] = useState('')
   const [pmMonto, setPmMonto] = useState('')
@@ -27,6 +27,7 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
   const saldoDisplay = saldo <= 0 ? 0 : saldo
 
   const handleConfirm = () => {
+    if (submitting) return
     if (!pagoEsValido(totalPagadoCalc, saldo)) {
       if (totalPagadoCalc <= 0) {
         alert('Debes registrar al menos un método de pago.')
@@ -199,15 +200,15 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
             </div>
           )}
           <div className="modal-actions" style={{ marginTop: 12 }}>
-            <button className="btn-cancel" onClick={onClose}>
+            <button className="btn-cancel" onClick={onClose} disabled={submitting}>
               Cancelar
             </button>
             <button
               className="btn-confirm"
               onClick={handleConfirm}
-              disabled={!hasAnyData || saldo > 0}
+              disabled={!hasAnyData || saldo > 0 || submitting}
             >
-              ✅ Grabar
+              {submitting ? '⏳ Grabando…' : '✅ Grabar'}
             </button>
           </div>
         </div>

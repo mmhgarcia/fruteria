@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { getProducts, seedProducts, addSale, updateProduct } from './utils/db'
+import { getProducts, seedProducts, updateProduct } from './utils/db'
 import { getCategories, getCategoriesByRamo, seedCategories, updateCategory } from './utils/categories'
 import Header from './components/Header'
 import ProductGrid from './components/ProductGrid'
@@ -23,7 +23,7 @@ import Categories from './components/Categories'
 import Products from './components/Products'
 import Inventory from './components/Inventory'
 import StockAlertModal from './components/StockAlertModal'
-import { descontarStockVenta } from './utils/inventory'
+import { registrarVentaAtomica } from './utils/inventory'
 import { calcularTotales } from './utils/calcTotals'
 import { computeStockAlerts } from './utils/stockAlerts'
 import { getRamoPorId } from './data/ramos'
@@ -75,6 +75,7 @@ function App() {
   const [showInventory, setShowInventory] = useState(false)
   const [showDashboard, setShowDashboard] = useState(false)
   const [alertaStockVenta, setAlertaStockVenta] = useState(null)
+  const [paymentSubmitting, setPaymentSubmitting] = useState(false)
 
   // Lee de localStorage cuándo fue la última vez que se marcaron leídas
   const [lastAlertReadAt, setLastAlertReadAt] = useState(
@@ -320,6 +321,9 @@ function App() {
   }
 
   const completePayment = async (paymentData) => {
+    if (paymentSubmitting) return
+    setPaymentSubmitting(true)
+
     const sale = {
       date: new Date().toISOString(),
       tasa,
@@ -347,57 +351,64 @@ function App() {
       })),
     }
 
+    const itemsParaStock = cart.map((item) => ({
+      id: item.id,
+      name: item.name,
+      qty: item.qty,
+    }))
+
     try {
-      const saleId = await addSale(sale)
-      console.log('Venta guardada con id:', saleId, sale)
-      // Descontar stock por cada item del carrito. Si falta stock, se descuenta
-      // hasta 0 y se registra un log WARNING con el faltante.
-      const itemsParaStock = cart.map((item) => ({
-        id: item.id,
-        name: item.name,
-        qty: item.qty,
-      }))
-      try {
-        const { faltantes, alertas } = await descontarStockVenta(itemsParaStock)
-        if (faltantes.length > 0) {
-          console.warn('Items con stock insuficiente al cobrar:', faltantes)
-        }
-        // Registrar traza consolidada (una sola alerta por venta) cuando hay
-        // productos que cruzaron a 'agotado' o 'pedir' por efecto de esta venta.
-        if (alertas.length > 0) {
-          addLog(LOG_TYPES.ALERT, 'Stock por reponer tras venta', {
-            saleId,
-            productos: alertas.map((a) => ({
-              id: a.id,
-              name: a.name,
-              estado: a.estado,
-              stockNuevo: a.stockNuevo,
-              stockAnterior: a.stockAnterior,
-              stockMin: a.stockMin,
-            })),
-          }).catch(() => {})
-        }
-        // Refrescar productos en memoria para reflejar el nuevo stock.
-        // Mantener siempre el orden alfabético (regla de UX del POS).
-        const updatedProducts = (await getProducts())
-          .filter((p) => p.ramo === ramoActivo)
-          .sort((a, b) => a.name.localeCompare(b.name))
-        setProducts(updatedProducts)
-        await refreshStockAlerts()
-        if (alertas.length > 0) {
-          setAlertaStockVenta({ saleId, productos: alertas })
-        }
-      } catch (stockErr) {
-        console.error('Error descontando stock:', stockErr)
+      // Venta + descuento de stock en UNA transacción atómica.
+      // Si algo falla, NADA se persiste y el carrito queda intacto.
+      const { saleId, faltantes, alertas } = await registrarVentaAtomica({
+        sale,
+        items: itemsParaStock,
+      })
+
+      // Solo acá (post-oncomplete) tocamos el carrito y mostramos ticket.
+      setLastSale({ ...sale, id: saleId })
+      setCart([])
+      setPaymentOpen(false)
+      setPreviewOpen(true)
+
+      // Refrescar productos en memoria (orden alfabético).
+      const updatedProducts = (await getProducts())
+        .filter((p) => p.ramo === ramoActivo)
+        .sort((a, b) => a.name.localeCompare(b.name))
+      setProducts(updatedProducts)
+      await refreshStockAlerts()
+
+      if (alertas.length > 0) {
+        setAlertaStockVenta({ saleId, productos: alertas })
+      }
+      if (faltantes.length > 0) {
+        console.warn('Items con stock insuficiente al cobrar:', faltantes)
+      }
+
+      // Log de alerta consolidado (best-effort, fuera de la tx).
+      if (alertas.length > 0) {
+        addLog(LOG_TYPES.ALERT, 'Stock por reponer tras venta', {
+          saleId,
+          productos: alertas.map((a) => ({
+            id: a.id,
+            name: a.name,
+            estado: a.estado,
+            stockNuevo: a.stockNuevo,
+            stockAnterior: a.stockAnterior,
+            stockMin: a.stockMin,
+          })),
+        }).catch(() => {})
       }
     } catch (error) {
+      // La tx falló: carrito intacto, sin ticket, sin venta.
       console.error('Error guardando la venta:', error)
+      alert(
+        'No se pudo registrar la venta. Verifica el almacenamiento y reintenta.\n\n' +
+        'El carrito se mantiene para que puedas cobrar de nuevo.'
+      )
+    } finally {
+      setPaymentSubmitting(false)
     }
-
-    setLastSale(sale)
-    setPaymentOpen(false)
-    setPreviewOpen(true)
-    setCart([])
   }
 
   return (
@@ -503,6 +514,7 @@ function App() {
           tasa={tasa}
           onClose={() => setPaymentOpen(false)}
           onConfirm={completePayment}
+          submitting={paymentSubmitting}
         />
       )}
 

@@ -110,6 +110,129 @@ function nextStock(stockActual, tipo, cantidad) {
 }
 
 /**
+ * Registra una venta y descuenta stock de los items en UNA transacción atómica.
+ *
+ * Atomicidad: si CUALQUIER escritura falla (venta, stock, movimiento), la
+ * transacción entera se revierte y NADA queda persistido. El carrito queda
+ * intacto y el llamador puede reintentar.
+ *
+ * - Inserta la venta en `sales`
+ * - Por cada item: lee el producto, calcula el descuento, actualiza `products`
+ *   y registra un movimiento en `stock_movements`
+ * - Detecta cruce de umbral (`agotado`/`pedir`/`reponer`) para emitir alertas
+ * - Si un producto no existe o el stock es insuficiente, descuenta hasta 0 y
+ *   lo marca como faltante (no falla la tx)
+ *
+ * @param {object} params
+ * @param {object} params.sale          Objeto venta (sin id, se genera auto).
+ * @param {Array<{id:number, name?:string, qty:number}>} params.items
+ * @returns {Promise<{saleId:number, descontados:Array, faltantes:Array, alertas:Array}>}
+ */
+export async function registrarVentaAtomica({ sale, items }) {
+  if (!sale) throw new Error('registrarVentaAtomica: sale requerida')
+  if (!Array.isArray(items)) throw new Error('registrarVentaAtomica: items debe ser array')
+
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(
+      ['sales', 'products', 'stock_movements'],
+      'readwrite'
+    )
+    const salesStore = tx.objectStore('sales')
+    const productsStore = tx.objectStore('products')
+    const movementsStore = tx.objectStore('stock_movements')
+
+    const descontados = []
+    const faltantes = []
+    const alertas = []
+    let saleId = null
+    let settled = false
+
+    // (1) Insertar la venta
+    const saleReq = salesStore.add(sale)
+    saleReq.onsuccess = () => { saleId = saleReq.result }
+    saleReq.onerror = () => reject(saleReq.error)
+
+    // (2) Por cada item: descuento de stock + movimiento
+    items.forEach((item) => {
+      const getReq = productsStore.get(item.id)
+      getReq.onsuccess = () => {
+        const product = getReq.result
+        if (!product) {
+          faltantes.push({ ...item, motivo: 'producto_no_existe' })
+          return
+        }
+
+        const stockActual = typeof product.stock === 'number' ? product.stock : 0
+        const solicitado = Number(item.qty) || 0
+        const aplicar = Math.min(solicitado, stockActual)
+        const faltante = solicitado - aplicar
+        const stockNuevo = Math.max(0, stockActual - aplicar)
+
+        // Cruce de umbral → alerta consolidada
+        const stockMin = product.stockMin ?? 0
+        const puntoPedido = product.puntoPedido ?? 0
+        const estadoPrevio = clasificarStock({ stock: stockActual, stockMin, puntoPedido })
+        const estadoNuevo = clasificarStock({ stock: stockNuevo, stockMin, puntoPedido })
+        if (['agotado', 'pedir', 'reponer'].includes(estadoNuevo) && estadoNuevo !== estadoPrevio) {
+          alertas.push({
+            id: item.id,
+            name: item.name,
+            icon: product.icon || '',
+            um: product.um || '',
+            stockAnterior: stockActual,
+            stockNuevo,
+            stockMin,
+            estado: estadoNuevo,
+          })
+        }
+
+        const updated = { ...product, stock: stockNuevo }
+        const putReq = productsStore.put(updated)
+        putReq.onsuccess = () => {
+          const movement = {
+            productId: item.id,
+            tipo: MOVEMENT_TYPES.VENTA,
+            cantidad: aplicar,
+            stockAnterior: stockActual,
+            stockNuevo,
+            motivo: 'Venta',
+            ref: { saleId },
+            timestamp: new Date().toISOString(),
+          }
+          const addReq = movementsStore.add(movement)
+          addReq.onsuccess = () => {
+            descontados.push({ ...item, stockAnterior: stockActual, stockNuevo })
+            if (faltante > 0) {
+              faltantes.push({ ...item, faltante })
+            }
+          }
+          addReq.onerror = () => reject(addReq.error)
+        }
+        putReq.onerror = () => reject(putReq.error)
+      }
+      getReq.onerror = () => reject(getReq.error)
+    })
+
+    tx.oncomplete = () => {
+      if (settled) return
+      settled = true
+      resolve({ saleId, descontados, faltantes, alertas })
+    }
+    tx.onerror = () => {
+      if (settled) return
+      settled = true
+      reject(tx.error)
+    }
+    tx.onabort = () => {
+      if (settled) return
+      settled = true
+      reject(tx.error)
+    }
+  })
+}
+
+/**
  * Aplica un movimiento de stock: actualiza el producto y registra el historial
  * en una sola transacción.
  *
