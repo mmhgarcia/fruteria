@@ -10,9 +10,8 @@
 
 import { addLog, LOG_TYPES } from './logService.js'
 import { clasificarStock } from './stockAlerts.js'
+import { openDB } from './db.js'
 
-const DB_NAME = 'fruteria-db'
-const DB_VERSION = 7
 const PRODUCTS_STORE = 'products'
 const MOVEMENTS_STORE = 'stock_movements'
 
@@ -98,23 +97,6 @@ export function calcularCostoEntrada(costoAnterior, stockPrevio, cantidadEntrada
 
   // WEIGHTED_AVG (default).
   return promedioPonderado
-}
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result
-      if (!db.objectStoreNames.contains(PRODUCTS_STORE)) {
-        db.createObjectStore(PRODUCTS_STORE, { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains(MOVEMENTS_STORE)) {
-        db.createObjectStore(MOVEMENTS_STORE, { keyPath: 'id', autoIncrement: true })
-      }
-    }
-  })
 }
 
 function nextStock(stockActual, tipo, cantidad) {

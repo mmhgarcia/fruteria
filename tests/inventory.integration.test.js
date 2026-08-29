@@ -15,6 +15,25 @@ import { descontarStockVenta } from '../src/utils/inventory'
 
 const store = (db, name) => db.transaction(name, 'readwrite').objectStore(name)
 
+function createAllStores(db) {
+  if (!db.objectStoreNames.contains('products')) db.createObjectStore('products', { keyPath: 'id', autoIncrement: true })
+  if (!db.objectStoreNames.contains('categories')) db.createObjectStore('categories', { keyPath: 'id' })
+  if (!db.objectStoreNames.contains('historico_tasas')) db.createObjectStore('historico_tasas', { keyPath: 'id', autoIncrement: true })
+  if (!db.objectStoreNames.contains('sales')) db.createObjectStore('sales', { keyPath: 'id', autoIncrement: true })
+  if (!db.objectStoreNames.contains('ramos')) db.createObjectStore('ramos', { keyPath: 'id' })
+  if (!db.objectStoreNames.contains('logs')) db.createObjectStore('logs', { keyPath: 'id', autoIncrement: true })
+  if (!db.objectStoreNames.contains('stock_movements')) db.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true })
+}
+
+function openTestDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('fruteria-db', 7)
+    req.onupgradeneeded = () => createAllStores(req.result)
+    req.onsuccess = () => resolve(req.result)
+    req.onerror = () => reject(req.error)
+  })
+}
+
 function putProduct(db, product) {
   return new Promise((resolve, reject) => {
     const req = store(db, 'products').put(product)
@@ -43,16 +62,7 @@ describe('descontarStockVenta (integración con IndexedDB)', () => {
   let db
 
   it('descuenta stock de una venta normal y registra el movimiento', async () => {
-    db = await new Promise((resolve, reject) => {
-      const req = indexedDB.open('fruteria-db', 7)
-      req.onupgradeneeded = () => {
-        const d = req.result
-        if (!d.objectStoreNames.contains('products')) d.createObjectStore('products', { keyPath: 'id', autoIncrement: true })
-        if (!d.objectStoreNames.contains('stock_movements')) d.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true })
-      }
-      req.onsuccess = () => resolve(req.result)
-      req.onerror = () => reject(req.error)
-    })
+    db = await openTestDB()
 
     await putProduct(db, { id: 1, name: 'Manzana', stock: 10, stockMin: 2 })
 
@@ -71,16 +81,7 @@ describe('descontarStockVenta (integración con IndexedDB)', () => {
   })
 
   it('no baja el stock de 0 y reporta el faltante', async () => {
-    db = await new Promise((resolve, reject) => {
-      const req = indexedDB.open('fruteria-db', 7)
-      req.onupgradeneeded = () => {
-        const d = req.result
-        if (!d.objectStoreNames.contains('products')) d.createObjectStore('products', { keyPath: 'id', autoIncrement: true })
-        if (!d.objectStoreNames.contains('stock_movements')) d.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true })
-      }
-      req.onsuccess = () => resolve(req.result)
-      req.onerror = () => reject(req.error)
-    })
+    db = await openTestDB()
 
     await putProduct(db, { id: 1, name: 'Manzana', stock: 3, stockMin: 2 })
 

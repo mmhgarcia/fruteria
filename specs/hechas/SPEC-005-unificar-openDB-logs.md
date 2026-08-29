@@ -48,4 +48,22 @@ Resultado crítico: `logService.js:19` lanza `VersionError` cuando la DB ya est�
 - [x] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
 - [ ] Aprobada / en implementación
-- [ ] Done
+- [x] Done
+
+## 10. Reporte de implementación
+
+> Nota para futuros cambios: este reporte queda en la documentación como referencia de lo que se hizo y por qué.
+
+### Reporte ejecutivo — SPEC-005
+
+**Objetivo:** Unificar el acceso a la base de datos y reparar la funcionalidad de logs, que estaba completamente rota.
+
+**Diagnóstico:** Existían 4 versiones distintas y contradictorias de cómo se abría la base de datos. La más grave: los logs abrían la base con una versión antigua ("6"), mientras el resto del sistema ya usaba la versión "7". Eso hacía que **todos los logs fallaran siempre**, y dejaba el sistema frágil ante cualquier cambio futuro.
+
+**Solución aplicada:** Centralicé el acceso a la base de datos en un solo punto único y compartido. Todos los módulos (productos, inventario, respaldos, logs) ahora usan esa misma conexión, que se ajusta sola a la estructura necesaria. Eliminé las 4 copias duplicadas y el error en los logs.
+
+**Verificación:**
+- Los 22 tests automatizados del proyecto pasan correctamente.
+- La aplicación compila sin errores.
+
+**Estado:** Funcionalidad reparada y base más robusta. Resta una validación manual de los flujos de negocio (ventas, inventario, respaldos y logs) antes de cerrar la entrega. No se ha hecho commit; los cambios están listos para ello.

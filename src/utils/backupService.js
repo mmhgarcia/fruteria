@@ -1,41 +1,6 @@
-const DB_NAME = 'fruteria-db'
-const DB_VERSION = 7
+import { openDB } from './db.js'
 
 const STORES = ['products', 'categories', 'historico_tasas', 'sales', 'ramos', 'logs', 'stock_movements']
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION)
-
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result
-      if (!db.objectStoreNames.contains('products')) {
-        db.createObjectStore('products', { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains('categories')) {
-        db.createObjectStore('categories', { keyPath: 'id' })
-      }
-      if (!db.objectStoreNames.contains('historico_tasas')) {
-        db.createObjectStore('historico_tasas', { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains('sales')) {
-        db.createObjectStore('sales', { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains('ramos')) {
-        db.createObjectStore('ramos', { keyPath: 'id' })
-      }
-      if (!db.objectStoreNames.contains('logs')) {
-        db.createObjectStore('logs', { keyPath: 'id', autoIncrement: true })
-      }
-      if (!db.objectStoreNames.contains('stock_movements')) {
-        db.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true })
-      }
-    }
-  })
-}
 
 async function readAllStores() {
   const db = await openDB()

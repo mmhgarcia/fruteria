@@ -15,7 +15,7 @@ al inicio para tener red de seguridad antes de los refactors de dinero/stock.
 | Orden | Spec | Prioridad | Tema | Estado | Nota de ejecución |
 |-------|------|-----------|------|--------|-------------------|
 | — | SPEC-003 | P0 | Testing del flujo de cobro | ✅ Done | Red de seguridad lista; protege refactors de 004/008/009 |
-| 2 | SPEC-005 | P0 | Unificar openDB + logs rotos | En definición | Causa raíz; desbloquea logs; base técnica |
+| 2 | SPEC-005 | P0 | Unificar openDB + logs rotos | ✅ Done | Causa raíz; desbloquea logs; base técnica |
 | 3 | SPEC-006 | P0 | Backup atómico | En definición | Independiente; protege datos |
 | 4 | SPEC-004 | P0 | Cobro seguro | En definición | Crítico de dinero; depende buenos logs |
 | 5 | SPEC-007 | P1 | Seguridad PIN/sesión | En definición | Independiente O como apertura del paquete P1 |

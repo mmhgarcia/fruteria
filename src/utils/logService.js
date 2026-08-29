@@ -1,3 +1,5 @@
+import { openDB } from './db.js'
+
 const LOG_STORE = 'logs'
 
 /**
@@ -9,25 +11,6 @@ export const LOG_TYPES = {
   ERROR: 'ERROR',
   FATAL: 'FATAL',
   ALERT: 'ALERT',
-}
-
-/**
- * Abre la base de datos IndexedDB
- */
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('fruteria-db', 6)
-
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result
-      if (!db.objectStoreNames.contains(LOG_STORE)) {
-        db.createObjectStore(LOG_STORE, { keyPath: 'id', autoIncrement: true })
-      }
-    }
-  })
 }
 
 /**
