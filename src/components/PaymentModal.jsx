@@ -18,17 +18,17 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
     day: '2-digit', month: '2-digit', year: '2-digit'
   })
 
-  const totalPagado = useMemo(
+  const totalPagadoCalc = useMemo(
     () => totalPagado({ pagomovilMonto: pmMonto, puntoMonto, divisaUSD, efectivoBS }, tasa),
     [pmMonto, puntoMonto, divisaUSD, efectivoBS, tasa]
   )
 
-  const saldo = calcularSaldo(totals.totalBS, totalPagado)
+  const saldo = calcularSaldo(totals.totalBS, totalPagadoCalc)
   const saldoDisplay = saldo <= 0 ? 0 : saldo
 
   const handleConfirm = () => {
-    if (!pagoEsValido(totalPagado, saldo)) {
-      if (totalPagado <= 0) {
+    if (!pagoEsValido(totalPagadoCalc, saldo)) {
+      if (totalPagadoCalc <= 0) {
         alert('Debes registrar al menos un método de pago.')
         return
       }
@@ -48,12 +48,12 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
       puntoMonto: parseFloat(puntoMonto) || 0,
       divisaUSD: parseFloat(divisaUSD) || 0,
       efectivoBS: parseFloat(efectivoBS) || 0,
-      totalPagado,
+      totalPagado: totalPagadoCalc,
       vuelto,
     })
   }
 
-  const hasAnyData = totalPagado > 0
+  const hasAnyData = totalPagadoCalc > 0
 
   return (
     <div className="modal-overlay active overlay-payment" onClick={onClose}>

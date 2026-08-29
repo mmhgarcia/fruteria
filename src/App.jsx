@@ -378,7 +378,10 @@ function App() {
           }).catch(() => {})
         }
         // Refrescar productos en memoria para reflejar el nuevo stock.
-        const updatedProducts = await getProducts()
+        // Mantener siempre el orden alfabético (regla de UX del POS).
+        const updatedProducts = (await getProducts())
+          .filter((p) => p.ramo === ramoActivo)
+          .sort((a, b) => a.name.localeCompare(b.name))
         setProducts(updatedProducts)
         await refreshStockAlerts()
         if (alertas.length > 0) {

@@ -188,7 +188,8 @@ export default function Inventory({ onClose, ramoId }) {
       getProducts(),
       getMovimientosRecientes(300),
     ])
-    const list = ramoId ? prods.filter((p) => !p.ramo || p.ramo === ramoId) : prods
+    const list = (ramoId ? prods.filter((p) => !p.ramo || p.ramo === ramoId) : prods)
+      .sort((a, b) => a.name.localeCompare(b.name))
     setProducts(list)
     setHistory(movs)
     setValuation(getValuationMethod())
