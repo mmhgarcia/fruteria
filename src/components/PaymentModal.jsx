@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { formatCurrency } from '../utils/format'
+import { totalPagado, calcularSaldo, calcularVuelto, pagoEsValido } from '../utils/pagos'
 import './PaymentModal.css'
 
 function PaymentModal({ totals, tasa, onClose, onConfirm }) {
@@ -17,27 +18,27 @@ function PaymentModal({ totals, tasa, onClose, onConfirm }) {
     day: '2-digit', month: '2-digit', year: '2-digit'
   })
 
-  const totalPagado = useMemo(() => {
-    const pm = parseFloat(pmMonto) || 0
-    const pt = parseFloat(puntoMonto) || 0
-    const dv = (parseFloat(divisaUSD) || 0) * tasa
-    const ef = parseFloat(efectivoBS) || 0
-    return pm + pt + dv + ef
-  }, [pmMonto, puntoMonto, divisaUSD, efectivoBS, tasa])
+  const totalPagado = useMemo(
+    () => totalPagado({ pagomovilMonto: pmMonto, puntoMonto, divisaUSD, efectivoBS }, tasa),
+    [pmMonto, puntoMonto, divisaUSD, efectivoBS, tasa]
+  )
 
-  const saldo = Math.round((totals.totalBS - totalPagado) * 100) / 100
+  const saldo = calcularSaldo(totals.totalBS, totalPagado)
   const saldoDisplay = saldo <= 0 ? 0 : saldo
 
   const handleConfirm = () => {
-    if (totalPagado <= 0) {
-      alert('Debes registrar al menos un método de pago.')
+    if (!pagoEsValido(totalPagado, saldo)) {
+      if (totalPagado <= 0) {
+        alert('Debes registrar al menos un método de pago.')
+        return
+      }
+      if (saldo > 0) {
+        alert(`Faltan Bs ${formatCurrency(saldo)} para completar el pago.`)
+        return
+      }
       return
     }
-    if (saldo > 0) {
-      alert(`Faltan Bs ${formatCurrency(saldo)} para completar el pago.`)
-      return
-    }
-    const vuelto = saldo < 0 ? Math.abs(saldo) : 0
+    const vuelto = calcularVuelto(saldo)
     onConfirm({
       pagomovilRef: pmRef,
       pagomovilBanco: pmBanco,
