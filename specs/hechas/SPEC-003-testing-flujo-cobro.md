@@ -59,5 +59,5 @@ Tener una batería de pruebas automatizadas sobre lo más crítico — el cobro 
 ## 9. Estado
 - [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [x] Aprobada / en implementación
-- [ ] Done
+- [ ] Aprobada / en implementación
+- [x] Done

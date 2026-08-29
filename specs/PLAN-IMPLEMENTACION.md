@@ -14,7 +14,7 @@ al inicio para tener red de seguridad antes de los refactors de dinero/stock.
 
 | Orden | Spec | Prioridad | Tema | Estado | Nota de ejecución |
 |-------|------|-----------|------|--------|-------------------|
-| 1 | SPEC-003 | P0 | Testing del flujo de cobro | En implementación | Adelantar para proteger refactors de 004/008/009 |
+| — | SPEC-003 | P0 | Testing del flujo de cobro | ✅ Done | Red de seguridad lista; protege refactors de 004/008/009 |
 
 | 2 | SPEC-005 | P0 | Unificar openDB + logs rotos | En definición | Causa raíz; desbloquea logs; base técnica |
 
@@ -42,7 +42,7 @@ Decisiones de negocio pendientes (§5) |
 ## Secuencia sugerida
 
 **Fase A — Fundaciones (P0)**
-1. SPEC-003 (testing) → red de seguridad.
+1. ~~SPEC-003 (testing)~~ ✅ Done — red de seguridad lista.
 2. SPEC-005 (unificar DB + logs) → desbloquea raíz técnica.
 3. SPEC-006 (backup atómico) → protege datos.
 4. SPEC-004 (cobro seguro) → crítico de dinero, con tests ya en su lugar.
@@ -74,10 +74,16 @@ Decisiones de negocio pendientes (§5) |
 
 Antes de dar una issue por terminada:
 - [ ] Criterios de aceptación verificados (sección 6 de la spec).
-- [ ] **Test correspondiente implementado y en verde (`npm test` pasa).
-
-** REGLA GENERAL — obligatorio.
+- [ ] **Test correspondiente implementado y en verde (`npm test` pasa).** — REGLA GENERAL, obligatorio.
 - [ ] Decisiones abiertas resueltas y documentadas.
 - [ ] Regresión manual del flujo afectado.
 - [ ] `CHANGELOG.md` / `ARQUITECTURA.md` actualizados.
 - [ ] Movida a `hechas/`.
+
+---
+
+## Completadas
+
+| Spec | Tema | Fecha | Nota |
+|------|------|-------|------|
+| SPEC-003 | Testing del flujo de cobro | 2026-08-28 | Vitest + fake-indexeddb; 20 tests en verde; merge a main |
