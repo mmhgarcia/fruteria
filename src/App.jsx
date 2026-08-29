@@ -24,6 +24,7 @@ import Products from './components/Products'
 import Inventory from './components/Inventory'
 import StockAlertModal from './components/StockAlertModal'
 import { descontarStockVenta } from './utils/inventory'
+import { calcularTotales } from './utils/calcTotals'
 import { computeStockAlerts } from './utils/stockAlerts'
 import { getRamoPorId } from './data/ramos'
 import { getLogs, addLog, LOG_TYPES } from './utils/logService'
@@ -260,11 +261,7 @@ function App() {
     return result
   }, [currentFilter, searchTerm, products])
 
-  const totals = useMemo(() => {
-    const totalUSD = cart.reduce((sum, item) => sum + item.totalUSD, 0)
-    const totalBS = totalUSD * tasa
-    return { totalUSD, totalBS, count: cart.length }
-  }, [cart, tasa])
+  const totals = useMemo(() => calcularTotales(cart, tasa), [cart, tasa])
 
   const addToCart = (product, qty) => {
     setCart((prev) => {

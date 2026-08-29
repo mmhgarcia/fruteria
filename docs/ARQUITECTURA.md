@@ -93,6 +93,8 @@
 | [backupService.js](../src/utils/backupService.js) | Export/import de **todas** las stores. Sincronizado con `DB_VERSION`. | todas |
 | [logService.js](../src/utils/logService.js) | Sistema de logs `INFO`, `WARNING`, `ERROR`, `FATAL`, `ALERT`. | `logs` |
 | [format.js](../src/utils/format.js) | `formatCurrency` (Bs/USD, locale Venezuela), `formatQty` (kg/unidad). | — |
+| [calcTotals.js](../src/utils/calcTotals.js) | `calcularTotales` → totales del carrito (`totalUSD`, `totalBS`, `count`). Lógica pura, testeable. | — |
+| [pagos.js](../src/utils/pagos.js) | Lógica pura de pagos mixtos: `totalPagado`, `calcularSaldo`, `calcularVuelto`, `pagoEsValido`, `redondear2`. | — |
 | [hash.js](../src/utils/hash.js) | `hashPin` → SHA-256 (64 chars hex). PIN nunca en texto plano. | — |
 | [session.js](../src/utils/session.js) | Sesión con expiración por tiempo (`crearSesion`, `estaDesbloqueado`, `bloquearSesion`). | — |
 | [pdfExport.js](../src/utils/pdfExport.js) | Generación de PDFs con `jsPDF` + `jspdf-autotable`. | — |

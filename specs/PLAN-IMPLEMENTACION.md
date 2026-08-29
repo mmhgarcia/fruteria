@@ -14,16 +14,27 @@ al inicio para tener red de seguridad antes de los refactors de dinero/stock.
 
 | Orden | Spec | Prioridad | Tema | Estado | Nota de ejecución |
 |-------|------|-----------|------|--------|-------------------|
-| 1 | SPEC-003 | P0 | Testing del flujo de cobro | En definición | Adelantar para proteger refactors de 004/008/009 |
+| 1 | SPEC-003 | P0 | Testing del flujo de cobro | En implementación | Adelantar para proteger refactors de 004/008/009 |
+
 | 2 | SPEC-005 | P0 | Unificar openDB + logs rotos | En definición | Causa raíz; desbloquea logs; base técnica |
+
 | 3 | SPEC-006 | P0 | Backup atómico | En definición | Independiente; protege datos |
+
 | 4 | SPEC-004 | P0 | Cobro seguro | En definición | Crítico de dinero; depende buenos logs |
+
 | 5 | SPEC-007 | P1 | Seguridad PIN/sesión | En definición | Independiente O como apertura del paquete P1 |
+
 | 6 | SPEC-008 | P1 | Dinero y stock consistente | En definición | Requiere tests (003) antes |
-| 7 | SPEC-009 | P1 | Validación stock en carrito | En definición | Decisiones de negocio pendientes (§5) |
+
+| 7 | SPEC-009 | P1 | Validación stock en carrito | En definición | 
+Decisiones de negocio pendientes (§5) |
+
 | 8 | SPEC-010 | P2 | Limpieza código muerto | En definición | Hacer después de 005 (evitar choques) |
+
 | 9 | SPEC-011 | P2 | Hook useLocalStorage | En definición | Independiente; acompaña 008/009 |
+
 | — | SPEC-001 | — | Backup automático (posnube) | En definición (pausada) | En espera de decisión de respaldo externo |
+
 | — | SPEC-002 | — | Uniformidad de tema | En definición | Diseño/pulido, no urgente; se puede hacer en paralelo |
 
 ---
@@ -63,7 +74,9 @@ al inicio para tener red de seguridad antes de los refactors de dinero/stock.
 
 Antes de dar una issue por terminada:
 - [ ] Criterios de aceptación verificados (sección 6 de la spec).
-- [ ] **Test correspondiente implementado y en verde (`npm test` pasa).** REGLA GENERAL — obligatorio.
+- [ ] **Test correspondiente implementado y en verde (`npm test` pasa).
+
+** REGLA GENERAL — obligatorio.
 - [ ] Decisiones abiertas resueltas y documentadas.
 - [ ] Regresión manual del flujo afectado.
 - [ ] `CHANGELOG.md` / `ARQUITECTURA.md` actualizados.

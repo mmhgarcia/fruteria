@@ -29,11 +29,11 @@ Tener una batería de pruebas automatizadas sobre lo más crítico — el cobro 
 - ❌ Mock del flujo completo de pagos con librería nueva de acceso al navegador.
 
 ## 5. Decisiones / preguntas abiertas (lo que falta definir para aprobar)
-- [ ] **¿Runner:** Vitest o Jest? (Vitest es el natural para Vite; casi sin config.)
-- [ ] **¿Background de IndexedDB:** usar `fake-indexeddb` (librería pequeña) o mocks manuales de `db.js`?
-- [ ] **¿Tests de integración del descuento de stock** (con IndexedDB real) o **solo unitarios** de la función pura de descuento? (Depende de cuánto se refactorice.)
-- [ ] **¿Se extrae primero la lógica a helpers y luego se testea, o se testea sobre el código actual?** (Recomendado: extraer primero; es lo que da testabilidad real.)
-- [ ] **¿Qué casos de cobro priorizar:** el flujo feliz (1 producto, pago exacto) o también pagos mixtos con vuelto?
+- [x] **Runner Vitest** (nativo de Vite). RESUELTO 2026-08-28.
+- [x] **IndexedDB en tests con `fake-indexeddb`** (in-memory). RESUELTO 2026-08-28.
+- [x] **Alcance: unit de lógica pura + integración con IndexedDB** (se elige fake-indexeddb y extraer primero → apunta a integración). RESUELTO 2026-08-28.
+- [x] **Extraer primero la lógica a helpers testables**, luego testear. RESUELTO 2026-08-28.
+- [x] **Cubrir flujo feliz + pagos mixtos con vuelto.** RESUELTO 2026-08-28.
 
 ## 6. Criterios de aceptación (¿cómo sé que quedó bien?)
 1. `npm test` corre y pasa sin errores.
@@ -57,7 +57,7 @@ Tener una batería de pruebas automatizadas sobre lo más crítico — el cobro 
 - **No tocar el comportamiento visual.** Priorizar lógica; si se extrae mal, puede haber regresiones en el cobro. Validar con tests + revisión del flujo.
 
 ## 9. Estado
-- [x] En definición (se puede crear/tocar; aún no se implementa)
+- [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [ ] Aprobada / en implementación
+- [x] Aprobada / en implementación
 - [ ] Done

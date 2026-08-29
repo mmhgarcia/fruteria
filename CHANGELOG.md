@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 
+### Technical
+- Testing del flujo de cobro: setup de **Vitest + fake-indexeddb**, script `npm test`.
+- Lógica pura extraída a `src/utils/calcTotals.js` (totales carrito) y `src/utils/pagos.js` (pagos mixtos, saldo, vuelto), usadas por `App.jsx` y `PaymentModal.jsx`.
+- Tests unitarios (totales, pagos) y de integración (descuento de stock) en `tests/`.
+
 ### Añadido
 - **Método de valoración de inventario configurable** 📊🎛️
   - Nueva card dedicada **GESTIÓN DE INVENTARIO** en Configuración → Método de valoración.
