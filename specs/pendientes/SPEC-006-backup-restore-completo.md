@@ -93,9 +93,38 @@ Mientras un ítem de esta sección no esté resuelto, la spec NO se implementa. 
 - **Deriva sobre SPEC-001:** esta spec resuelve la decisión abierta de SPEC-001 ("dónde vive el respaldo externo") mediante el **share sheet** (Drive/WhatsApp). Revisar SPEC-001 para no duplicar trabajo una vez se reanude su parte de automatización.
 - El registro `backup_registry` debe distinguir backups guardados en el dispositivo (`storage: local`) de los compartidos (`storage: shared`), que no dejan archivo en el dispositivo.
 
+### Deuda técnica / seguimiento (NO crítico — no bloquea el objetivo)
+
+- **F5 nativo (Capacitor):** guardado local real (`@capacitor/filesystem` + `pickFolder`), picker nativo (`@capacitor-community/file-picker`) y `@capacitor/share`/`filesystem` nativos. En PWA/navegador ya funciona (descarga + Web Share API). Requiere instalar plugins y `cap sync`. **Relevante solo si la app se distribuye como nativa iOS**, donde `navigator.share` con archivos y la descarga de blob son limitados.
+- **F4 — Programación y retención:** auto-backup en eventos clave (cierre de caja, cambios masivos, update) + retención rotativa (7 diarios / 4 semanales / 1 mensual) y limpieza de registros/archivos. Ver SPEC-001 para no duplicar la parte de automatización.
+- **Migración `schemaVersion` v1→v2:** hoy `SCHEMA_VERSION = 1`; no hay versión anterior que migrar. Cuando se agregue un v2, añadir el test de migración hacia adelante (criterio #10).
+- **Barra de progreso** al restaurar (cosmético).
+
 ## 9. Estado
 
 - [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [x] Aprobada / en implementación — **F1 (Fundamentos) completado** y **80/20 de UX (preview + PIN + compartir + historial/revertir) implementado y testeado** (`npm test` → 59 tests en verde). Quedan: guardado local nativo (`@capacitor/filesystem`), picker nativo, `@capacitor/share`/file-picker (F5), auto-backup/retención (F4) y barra de progreso.
+- [ ] Aprobada / en implementación
+- [x] Done — **objetivo crítico cumplido**: backup completo (datos + configuración), validate/preview/import con replace atómico, checksum, snapshot previo + revertir, compartir off-device, historial accionable y reset de PIN a `000000`. Tests en verde (`npm test` → 59). Detalles no críticos quedan como **deuda técnica** (ver §8).
+
+## 10. Reporte de implementación
+
+> Nota para futuros cambios: este reporte queda en la documentación como referencia de lo que se hizo y por qué.
+
+### Reporte ejecutivo — SPEC-006
+
+**Objetivo:** hacer el respaldo confiable y completo, para que el comerciante pueda resguardar, transportar y restaurar todo su negocio (datos + configuración) de forma segura, comprensible y reversible, sin pérdida total de datos.
+
+**Diagnóstico:** el backup solo exportaba IndexedDB y restauraba store por store en transacciones separadas (parcialmente borrable), sin configuración, sin integridad, sin vista previa y sin reversión.
+
+**Solución aplicada (F1 + 80/20 de UX):**
+- Catálogo declarativo de fuentes (`backupSchema`) que cubre IndexedDB **y** `localStorage`, excluyendo el estado transitorio (carrito, sesión, bloqueo PIN).
+- Formato envelope auto-descriptivo + checksum SHA-256; `validateBackup` rechaza corruptos sin tocar datos.
+- `create/validate/preview/import`: restauración `replace` en **una sola transacción multi-store** (all-or-nothing), con **snapshot previo automático** para revertir y **reset de PIN a `000000`**.
+- `backup_registry` + nomenclatura `fruteria-pos_<fecha>_<hora>_<alcance>_<modo>.json` + auditoría INFO en `logService`.
+- UX: vista previa de impactos + confirmación por PIN, botón **Compartir/enviar** (Web Share API) y **historial accionable** con restaurar/revertir.
+
+**Verificación:** `npm test` → 59 tests en verde; `npm run build` OK. Commits `4aa5bdc` (F1) y `14bd2a0` (80/20 de UX).
+
+**Estado:** protección crítica completa y testeada. La spec se cierra como **Done**; los detalles no críticos quedan anotados como deuda técnica (§8).
 - [ ] Done
