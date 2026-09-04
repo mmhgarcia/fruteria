@@ -25,20 +25,20 @@ Que el comerciante pueda **resguardar, transportar y restaurar** todo su negocio
 
 ## 3. Alcance (¿qué se hace?) — checklist
 
-- [ ] **Inventario completo** — catálogo declarativo `backupSchema` con fuentes `indexedDB` (products, categories, historico_tasas, sales, ramos, logs, stock_movements) + `localStorage` (fruteria-settings, fruteria-tasa, fruteria-alert-read-at). Excluye `fruteria-cart` (estado transitorio).
-- [ ] **Formato envelope** — archivo único `.json` con `{ app, schemaVersion, createdAt, generator, checksum, data }`, auto-descriptivo y migrable a futuro.
-- [ ] **Checksum SHA-256** del payload → detecta corrupción/manipulación.
-- [ ] **`validateBackup(file)`** — parse + valida schema + checksum; rechaza corruptos con mensaje claro.
-- [ ] **`previewBackup(file)`** — dry-run que simula la importación y reporta impactos (añadir/actualizar/reemplazar) **sin tocar datos**.
-- [ ] **`importBackup(file)`** — aplica **`replace`** (reemplazo total) en **una sola transacción `readwrite` multi-store** (all-or-nothing). El modo `merge` queda pospuesto para multi-móvil.
-- [ ] **Backup previo automático** antes de restaurar → permite revertir (idempotente, sin duplicar ventas ni romper totales al repetirse).
-- [ ] **Registro `backup_registry`** — cada respaldo crea una entrada (fecha/hora, nombre, alcance, tamaño, recuento por tienda, ubicación, modo) que alimenta el Historial.
-- [ ] **Nomenclatura de archivos** — `fruteria-pos_<fecha>_<hora>_<alcance>_<modo>.json` (ISO + 24h → ordena cronológicamente, minúsculas/`_` sin espacios).
-- [ ] **Auditoría** — cada respaldo emite evento **INFO** en `logService`.
+- [x] **Inventario completo** — catálogo declarativo `backupSchema` con fuentes `indexedDB` (products, categories, historico_tasas, sales, ramos, logs, stock_movements) + `localStorage` (fruteria-settings, fruteria-tasa, fruteria-alert-read-at). Excluye `fruteria-cart` (estado transitorio).
+- [x] **Formato envelope** — archivo único `.json` con `{ app, schemaVersion, createdAt, generator, checksum, data }`, auto-descriptivo y migrable a futuro.
+- [x] **Checksum SHA-256** del payload → detecta corrupción/manipulación.
+- [x] **`validateBackup(file)`** — parse + valida schema + checksum; rechaza corruptos con mensaje claro.
+- [x] **`previewBackup(file)`** — dry-run que simula la importación y reporta impactos (añadir/actualizar/reemplazar) **sin tocar datos**.
+- [x] **`importBackup(file)`** — aplica **`replace`** (reemplazo total) en **una sola transacción `readwrite` multi-store** (all-or-nothing). El modo `merge` queda pospuesto para multi-móvil.
+- [x] **Backup previo automático** antes de restaurar → permite revertir (idempotente, sin duplicar ventas ni romper totales al repetirse).
+- [x] **Registro `backup_registry`** — cada respaldo crea una entrada (fecha/hora, nombre, alcance, tamaño, recuento por tienda, ubicación, modo) que alimenta el Historial.
+- [x] **Nomenclatura de archivos** — `fruteria-pos_<fecha>_<hora>_<alcance>_<modo>.json` (ISO + 24h → ordena cronológicamente, minúsculas/`_` sin espacios).
+- [x] **Auditoría** — cada respaldo emite evento **INFO** en `logService`.
 - [ ] **Exportar — guardado local por defecto** — escribe el `.json` con `@capacitor/filesystem`, con picker de carpeta (`@capacitor-community/filesystem` → `pickFolder()`). Funciona offline.
 - [ ] **Exportar — botón "Compartir / enviar"** — `@capacitor/share` (`Share.share({ files })`) abre el share sheet (Drive, WhatsApp, Gmail) como **copia de redundancia off-device**. Nunca obligatorio.
 - [ ] **Restaurar — selección de archivo** — file picker (`@capacitor-community/file-picker`) o desde el Historial.
-- [ ] **Restaurar — preview + confirmación** — dry-run visible, elección de modo, confirmación por **PIN de administrador**, barra de progreso.
+- [ ] **Restaurar — preview + confirmación** — dry-run visible, elección de modo, confirmación por **PIN de administrador**, barra de progreso. (Preview ya implementado en F1; falta UX + PIN + progreso.)
 - [ ] **Historial accionable** — lista en orden descendente por fecha/hora, con `Restaurar` desde ahí y `Revertir` a la versión previa.
 - [ ] **Programación y retención** — auto-backup en eventos clave (cierre de caja, cambios masivos, update de app) y retención rotativa (últimos 7 diarios + 4 semanales + 1 mensual) con limpieza de registros y archivos.
 
@@ -95,7 +95,7 @@ Mientras un ítem de esta sección no esté resuelto, la spec NO se implementa. 
 
 ## 9. Estado
 
-- [x] En definición (se puede crear/tocar; aún no se implementa)
+- [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [ ] Aprobada / en implementación
+- [x] Aprobada / en implementación — **F1 (Fundamentos) completado**: `backupSchema`, envelope + checksum, `create/validate/preview/import` (replace atómico), `backup_registry`, nomenclatura, auditoría y cobertura de `localStorage`. Tests en verde (`npm test`). Quedan F2 (UX), F3 (seguridad/revertir), F4 (programación) y F5 (Capacitor).
 - [ ] Done

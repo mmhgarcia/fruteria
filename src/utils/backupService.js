@@ -1,97 +1,348 @@
-import { openDB } from './db.js'
+// filepath: src/utils/backupService.js
+// Servicio central de backup/restore (SPEC-006).
+// Catálogo único de fuentes: BACKUP_SOURCES de ../backup/backupSchema.js.
+// Formato envelope + checksum SHA-256 en ../backup/envelope.js.
+// Restauración `replace` en UNA transacción readwrite multi-store (all-or-nothing).
 
-const STORES = ['products', 'categories', 'historico_tasas', 'sales', 'ramos', 'logs', 'stock_movements']
+import { openDB, addBackupRecord } from './db.js'
+import { addLog, LOG_TYPES } from './logService.js'
+import { hashPin } from './hash.js'
+import { BUSINESS_STORES, PERSISTENT_LOCAL_STORAGE_KEYS } from '../backup/backupSchema.js'
+import {
+  buildEnvelope,
+  validateBackup as validateEnvelope,
+  validateBackupSources,
+} from '../backup/envelope.js'
 
-async function readAllStores() {
-  const db = await openDB()
-  const result = {}
+export const SCOPE_COMPLETO = 'completo'
+export const SCOPE_SOLO_DATOS = 'solo_datos'
+export const MODE_MANUAL = 'manual'
+export const MODE_AUTOMATICO = 'automatico'
 
-  for (const storeName of STORES) {
-    if (!db.objectStoreNames.contains(storeName)) {
-      result[storeName] = []
-      continue
-    }
-    const tx = db.transaction(storeName, 'readonly')
-    const store = tx.objectStore(storeName)
-    const request = store.getAll()
-    result[storeName] = await new Promise((resolve, reject) => {
-      request.onsuccess = () => resolve(request.result)
-      request.onerror = () => reject(request.error)
-    })
-  }
+const DEFAULT_PIN = '000000'
+const SMALL_PAYLOAD_LIMIT = 5 * 1024 * 1024 // 5MB
 
-  return result
+function pad(n, len = 2) {
+  return String(n).padStart(len, '0')
 }
 
-async function clearStore(db, storeName) {
-  if (!db.objectStoreNames.contains(storeName)) return
-  const tx = db.transaction(storeName, 'readwrite')
-  const store = tx.objectStore(storeName)
-  const request = store.clear()
+function parseJSONOrRaw(raw) {
+  if (raw === null || raw === undefined) return undefined
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return raw
+  }
+}
+
+function serializeLocalValue(value) {
+  return typeof value === 'string' ? value : JSON.stringify(value)
+}
+
+export function buildBackupId(date = new Date()) {
+  const y = date.getFullYear()
+  const mo = pad(date.getMonth() + 1)
+  const d = pad(date.getDate())
+  const h = pad(date.getHours())
+  const mi = pad(date.getMinutes())
+  const s = pad(date.getSeconds())
+  return `bk_${y}${mo}${d}_${h}${mi}${s}`
+}
+
+export function buildBackupFilename({ scope = SCOPE_COMPLETO, mode = MODE_MANUAL, date = new Date() } = {}) {
+  const fecha = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+  const hora = `${pad(date.getHours())}${pad(date.getMinutes())}`
+  return `fruteria-pos_${fecha}_${hora}_${scope}_${mode}.json`
+}
+
+export function buildStoreCounts(data) {
+  const counts = {}
+  for (const store of BUSINESS_STORES) {
+    counts[store] = (data.indexedDB?.[store] || []).length
+  }
+  return counts
+}
+
+function readStoreAll(db, storeName) {
+  if (!db.objectStoreNames.contains(storeName)) return Promise.resolve([])
   return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve()
-    request.onerror = () => reject(request.error)
+    const tx = db.transaction(storeName, 'readonly')
+    const store = tx.objectStore(storeName)
+    const req = store.getAll()
+    req.onsuccess = () => resolve(req.result || [])
+    req.onerror = () => reject(req.error)
   })
 }
 
-async function writeStore(db, storeName, records) {
-  if (!db.objectStoreNames.contains(storeName)) return
-  const tx = db.transaction(storeName, 'readwrite')
-  const store = tx.objectStore(storeName)
+async function readBusinessData() {
+  const db = await openDB()
+  const indexedDB = {}
+  for (const store of BUSINESS_STORES) {
+    indexedDB[store] = await readStoreAll(db, store)
+  }
+  return indexedDB
+}
 
-  for (const record of records) {
-    await new Promise((resolve, reject) => {
-      const request = store.put(record)
-      request.onsuccess = () => resolve()
-      request.onerror = () => reject(request.error)
-    })
+function readPersistentLocalStorage() {
+  const local = {}
+  if (typeof localStorage === 'undefined') return local
+  for (const key of PERSISTENT_LOCAL_STORAGE_KEYS) {
+    const raw = localStorage.getItem(key)
+    if (raw !== null) local[key] = parseJSONOrRaw(raw)
+  }
+  return local
+}
+
+/**
+ * Crea un backup completo (datos + configuración) sin tocar disco ni registro.
+ * Devuelve el envelope, metadata y el payload crudo.
+ */
+export async function createBackup({ scope = SCOPE_COMPLETO, mode = MODE_MANUAL, date = new Date() } = {}) {
+  const indexedDB = await readBusinessData()
+  const local = scope === SCOPE_COMPLETO ? readPersistentLocalStorage() : {}
+  const data = { indexedDB, localStorage: local }
+
+  const createdAt = date.toISOString()
+  const backup = await buildEnvelope(data, { createdAt })
+  const filename = buildBackupFilename({ scope, mode, date })
+  const sizeBytes = new Blob([JSON.stringify(data)]).size
+
+  const storeCounts = buildStoreCounts(data)
+  const record = {
+    id: buildBackupId(date),
+    createdAt,
+    filename,
+    scope,
+    sizeBytes,
+    storeCounts,
+    storage: 'local',
+    mode,
+  }
+
+  return { backup, data, filename, createdAt, sizeBytes, storeCounts, record }
+}
+
+/**
+ * Lee un archivo/objeto de backup y lo valida (envelope + checksum + fuentes).
+ * Devuelve { valid, errors, backup }. Nunca lanza.
+ */
+export async function validateBackup(file) {
+  let backup
+  try {
+    if (typeof file === 'string') {
+      backup = JSON.parse(file)
+    } else if (file && typeof file.text === 'function') {
+      backup = JSON.parse(await file.text())
+    } else if (file && typeof file === 'object') {
+      backup = file
+    } else {
+      return { valid: false, errors: ['No se pudo leer el respaldo'], backup: null }
+    }
+  } catch {
+    return { valid: false, errors: ['El archivo no es un JSON válido'], backup: null }
+  }
+
+  const env = await validateEnvelope(backup)
+  if (!env.valid) return { valid: false, errors: env.errors, backup }
+
+  const src = validateBackupSources(env.data)
+  if (!src.valid) return { valid: false, errors: src.errors, backup }
+
+  return { valid: true, errors: [], backup }
+}
+
+function buildStoreImpact(store, current, incoming) {
+  const currentIds = new Set(current.map((r) => r.id))
+  const incomingIds = new Set(incoming.map((r) => r.id))
+  return {
+    store,
+    currentCount: current.length,
+    incomingCount: incoming.length,
+    added: incoming.filter((r) => !currentIds.has(r.id)).length,
+    updated: incoming.filter((r) => currentIds.has(r.id)).length,
+    removed: current.filter((r) => !incomingIds.has(r.id)).length,
   }
 }
 
-export async function exportBackup() {
-  const data = await readAllStores()
-  const backup = {
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    data,
+function buildLocalStorageImpact(local) {
+  const keys = Object.keys(local || {})
+  return {
+    keys,
+    count: keys.length,
+    note: keys.length
+      ? 'Se reemplazará la configuración local del dispositivo'
+      : 'No se tocará la configuración local del dispositivo',
+  }
+}
+
+/**
+ * Dry-run: simula la importación y reporta impactos (añadir/actualizar/reemplazar)
+ * SIN tocar datos. Devuelve { valid, impacts, localStorage, summary }.
+ */
+export async function previewBackup(file) {
+  const { valid, errors, backup } = await validateBackup(file)
+  if (!valid) return { valid: false, errors }
+
+  const data = backup.data
+  const db = await openDB()
+  const impacts = []
+  for (const store of BUSINESS_STORES) {
+    const incoming = data.indexedDB?.[store] || []
+    const current = await readStoreAll(db, store)
+    impacts.push(buildStoreImpact(store, current, incoming))
   }
 
-  const dataStr = JSON.stringify(backup, null, 2)
-  const blob = new Blob([dataStr], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
+  const localStorageImpact = buildLocalStorageImpact(data.localStorage)
+  const summary = {
+    mode: 'replace',
+    storeCounts: buildStoreCounts(data),
+    localStorageKeys: Object.keys(data.localStorage || {}),
+  }
 
+  return { valid: true, impacts, localStorage: localStorageImpact, summary }
+}
+
+/**
+ * Aplica `replace` (reemplazo total) en UNA transacción readwrite multi-store.
+ * Si cualquier escritura falla, la transacción se revierte y nada cambia.
+ */
+function applyReplace(data) {
+  return openDB().then((db) => {
+    const storeNames = BUSINESS_STORES.filter((s) => db.objectStoreNames.contains(s))
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeNames, 'readwrite')
+      let settled = false
+
+      tx.oncomplete = () => {
+        if (settled) return
+        settled = true
+        resolve()
+      }
+      tx.onerror = () => {
+        if (settled) return
+        settled = true
+        reject(tx.error)
+      }
+      tx.onabort = () => {
+        if (settled) return
+        settled = true
+        reject(tx.error)
+      }
+
+      for (const storeName of storeNames) {
+        const store = tx.objectStore(storeName)
+        store.clear()
+        const records = data.indexedDB?.[storeName] || []
+        for (const record of records) {
+          store.put(record)
+        }
+      }
+    })
+  })
+}
+
+async function restoreLocalStorage(local) {
+  if (typeof localStorage === 'undefined') return
+  for (const key of Object.keys(local)) {
+    localStorage.setItem(key, serializeLocalValue(local[key]))
+  }
+  // Tras restaurar configuración, el PIN siempre vuelve al valor de fábrica (000000),
+  // para no arrastrar un PIN viejo del backup ni dejar a nadie bloqueado.
+  const settingsRaw = localStorage.getItem('fruteria-settings')
+  if (settingsRaw) {
+    try {
+      const settings = JSON.parse(settingsRaw)
+      settings.pin = await hashPin(DEFAULT_PIN)
+      localStorage.setItem('fruteria-settings', JSON.stringify(settings))
+    } catch (_) {
+      // No bloqueamos la restauración por un fallo en el reset del PIN.
+    }
+  }
+}
+
+/**
+ * Restaura un backup (modo `replace`).
+ * - Valida el archivo (rechaza corruptos sin tocar datos).
+ * - Crea un snapshot automático previo (para poder revertir) y lo registra.
+ * - Aplica `replace` atómicamente (all-or-nothing).
+ * - Restaura configuración si el backup es `completo` y resetea el PIN a 000000.
+ * - Emite evento INFO de auditoría.
+ */
+export async function importBackup(file, options = {}) {
+  const { mode = 'replace' } = options
+  const { valid, errors, backup } = await validateBackup(file)
+  if (!valid) throw new Error(errors.join('; '))
+  if (mode !== 'replace') throw new Error(`Modo de restauración "${mode}" no soportado`)
+
+  const pre = await createBackup({ scope: SCOPE_COMPLETO, mode: MODE_AUTOMATICO })
+  const preRecord = { ...pre.record }
+  if (pre.sizeBytes <= SMALL_PAYLOAD_LIMIT) preRecord.payload = pre.data
+
+  await addBackupRecord(preRecord)
+
+  await applyReplace(backup.data)
+
+  const restoredConfig = backup.data.localStorage && Object.keys(backup.data.localStorage).length > 0
+  if (restoredConfig) {
+    await restoreLocalStorage(backup.data.localStorage)
+  }
+
+  try {
+    await addLog(LOG_TYPES.INFO, 'Backup restaurado', {
+      filename: preRecord.filename,
+      scope: preRecord.scope,
+      sizeBytes: preRecord.sizeBytes,
+      mode: 'replace',
+    })
+  } catch (_) {
+    // Auditoría es best-effort.
+  }
+
+  return {
+    success: true,
+    mode: 'replace',
+    count: Object.values(backup.data.indexedDB).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0),
+    storeCounts: buildStoreCounts(backup.data),
+    restoredConfig,
+    preRestoreRecordId: preRecord.id,
+  }
+}
+
+/**
+ * Exportar + descargar (vía navegador). Mantiene compatibilidad con BackupModal.
+ * Registra el respaldo en backup_registry y emite auditoría INFO.
+ */
+export async function exportBackup(options = {}) {
+  const result = await createBackup(options)
+  await addBackupRecord(result.record)
+
+  try {
+    await addLog(LOG_TYPES.INFO, 'Backup creado', {
+      filename: result.filename,
+      scope: result.scope,
+      sizeBytes: result.sizeBytes,
+      mode: result.mode,
+    })
+  } catch (_) {
+    // Auditoría es best-effort.
+  }
+
+  downloadBackup(result.backup, result.filename)
+  return { success: true, filename: result.filename, sizeBytes: result.sizeBytes }
+}
+
+/**
+ * Descarga un backup en el navegador (blob + enlace temporal).
+ */
+export function downloadBackup(backup, filename) {
+  if (typeof document === 'undefined') return
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `fruteria_backup_${new Date().toISOString().split('T')[0]}.json`
+  link.download = filename
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
-
-  return { success: true }
-}
-
-export async function importBackup(file, options = {}) {
-  const { clearBeforeImport = true } = options
-  const text = await file.text()
-  const backup = JSON.parse(text)
-
-  if (!backup || !backup.data) {
-    throw new Error('Archivo de backup inválido')
-  }
-
-  const db = await openDB()
-
-  if (clearBeforeImport) {
-    for (const storeName of STORES) {
-      await clearStore(db, storeName)
-    }
-  }
-
-  for (const storeName of STORES) {
-    const records = backup.data[storeName] || []
-    await writeStore(db, storeName, records)
-  }
-
-  return { success: true, count: Object.values(backup.data).flat().length }
 }

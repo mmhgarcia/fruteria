@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import 'fake-indexeddb/auto'
 
 import { addLog, getLogs, clearLogs, LOG_TYPES } from '../src/utils/logService'
+import { DB_VERSION } from '../src/utils/db'
 
 const STORES = ['products', 'categories', 'historico_tasas', 'sales', 'ramos', 'logs', 'stock_movements']
 
@@ -11,11 +12,14 @@ function createAllStores(db) {
       db.createObjectStore(name, { keyPath: 'id', autoIncrement: true })
     }
   }
+  if (!db.objectStoreNames.contains('backup_registry')) {
+    db.createObjectStore('backup_registry', { keyPath: 'id' })
+  }
 }
 
 function openDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('fruteria-db', 7)
+    const req = indexedDB.open('fruteria-db', DB_VERSION)
     req.onupgradeneeded = () => createAllStores(req.result)
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error)

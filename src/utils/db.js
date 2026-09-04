@@ -1,11 +1,12 @@
 const DB_NAME = 'fruteria-db'
-const DB_VERSION = 7
+export const DB_VERSION = 8
 const STORE_NAME = 'products'
 const TASA_STORE_NAME = 'historico_tasas'
 const SALES_STORE_NAME = 'sales'
 const RAMOS_STORE_NAME = 'ramos'
 const LOG_STORE_NAME = 'logs'
 const STOCK_MOVEMENTS_STORE_NAME = 'stock_movements'
+const BACKUP_REGISTRY_STORE_NAME = 'backup_registry'
 
 const REQUIRED_STORES = [
   STORE_NAME,
@@ -15,6 +16,7 @@ const REQUIRED_STORES = [
   RAMOS_STORE_NAME,
   LOG_STORE_NAME,
   STOCK_MOVEMENTS_STORE_NAME,
+  BACKUP_REGISTRY_STORE_NAME,
 ]
 
 function createMissingStores(db) {
@@ -38,6 +40,9 @@ function createMissingStores(db) {
   }
   if (!db.objectStoreNames.contains(STOCK_MOVEMENTS_STORE_NAME)) {
     db.createObjectStore(STOCK_MOVEMENTS_STORE_NAME, { keyPath: 'id', autoIncrement: true })
+  }
+  if (!db.objectStoreNames.contains(BACKUP_REGISTRY_STORE_NAME)) {
+    db.createObjectStore(BACKUP_REGISTRY_STORE_NAME, { keyPath: 'id' })
   }
 }
 
@@ -204,6 +209,41 @@ export async function deleteSale(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(SALES_STORE_NAME, 'readwrite')
     const store = tx.objectStore(SALES_STORE_NAME)
+    const request = store.delete(id)
+    request.onsuccess = () => resolve()
+    request.onerror = () => reject(request.error)
+  })
+}
+
+// ── Registro de respaldos (backup_registry) ──
+
+export async function addBackupRecord(record) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(BACKUP_REGISTRY_STORE_NAME, 'readwrite')
+    const store = tx.objectStore(BACKUP_REGISTRY_STORE_NAME)
+    const request = store.put(record)
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function getBackupRecords() {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(BACKUP_REGISTRY_STORE_NAME, 'readonly')
+    const store = tx.objectStore(BACKUP_REGISTRY_STORE_NAME)
+    const request = store.getAll()
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export async function deleteBackupRecord(id) {
+  const db = await openDB()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(BACKUP_REGISTRY_STORE_NAME, 'readwrite')
+    const store = tx.objectStore(BACKUP_REGISTRY_STORE_NAME)
     const request = store.delete(id)
     request.onsuccess = () => resolve()
     request.onerror = () => reject(request.error)

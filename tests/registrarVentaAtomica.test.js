@@ -25,6 +25,7 @@ vi.mock('../src/utils/db', async () => {
 // Imports DESPUÉS del mock.
 const dbReal = await vi.importActual('../src/utils/db')
 const { registrarVentaAtomica } = await import('../src/utils/inventory')
+const { DB_VERSION } = dbReal
 
 const STORES = ['products', 'categories', 'historico_tasas', 'sales', 'ramos', 'logs', 'stock_movements']
 
@@ -34,11 +35,14 @@ function createAllStores(db) {
       db.createObjectStore(name, { keyPath: 'id', autoIncrement: true })
     }
   }
+  if (!db.objectStoreNames.contains('backup_registry')) {
+    db.createObjectStore('backup_registry', { keyPath: 'id' })
+  }
 }
 
 function openTestDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('fruteria-db', 7)
+    const req = indexedDB.open('fruteria-db', DB_VERSION)
     req.onupgradeneeded = () => createAllStores(req.result)
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error)

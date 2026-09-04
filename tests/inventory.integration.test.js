@@ -12,6 +12,7 @@ vi.mock('../src/utils/logService', () => ({
 }))
 
 import { descontarStockVenta } from '../src/utils/inventory'
+import { DB_VERSION } from '../src/utils/db'
 
 const store = (db, name) => db.transaction(name, 'readwrite').objectStore(name)
 
@@ -23,11 +24,12 @@ function createAllStores(db) {
   if (!db.objectStoreNames.contains('ramos')) db.createObjectStore('ramos', { keyPath: 'id' })
   if (!db.objectStoreNames.contains('logs')) db.createObjectStore('logs', { keyPath: 'id', autoIncrement: true })
   if (!db.objectStoreNames.contains('stock_movements')) db.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true })
+  if (!db.objectStoreNames.contains('backup_registry')) db.createObjectStore('backup_registry', { keyPath: 'id' })
 }
 
 function openTestDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('fruteria-db', 7)
+    const req = indexedDB.open('fruteria-db', DB_VERSION)
     req.onupgradeneeded = () => createAllStores(req.result)
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error)
