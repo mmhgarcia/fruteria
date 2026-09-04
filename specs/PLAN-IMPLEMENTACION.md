@@ -16,7 +16,7 @@ al inicio para tener red de seguridad antes de los refactors de dinero/stock.
 |-------|------|-----------|------|--------|-------------------|
 | — | SPEC-003 | P0 | Testing del flujo de cobro | ✅ Done | Red de seguridad lista; protege refactors de 004/008/009 |
 | 2 | SPEC-005 | P0 | Unificar openDB + logs rotos | ✅ Done | Causa raíz; desbloquea logs; base técnica |
-| 3 | SPEC-006 | P0 | Backup atómico | En definición | Independiente; protege datos |
+| 3 | SPEC-006 | P0 | Backup/Restore completo y atómico | En definición | Protege datos; resuelve la decisión de ubicación del respaldo externo de SPEC-001 (share sheet) |
 | 4 | SPEC-004 | P0 | Cobro seguro | ✅ Done | Tx atómica venta+stock; anti-doble-clic; tests en verde |
 | 5 | SPEC-007 | P1 | Seguridad PIN/sesión | En definición | Independiente O como apertura del paquete P1 |
 | 6 | SPEC-008 | P1 | Dinero y stock consistente | En definición | Requiere tests (003) antes |
@@ -33,7 +33,7 @@ al inicio para tener red de seguridad antes de los refactors de dinero/stock.
 **Fase A — Fundaciones (P0)**
 1. ~~SPEC-003 (testing)~~ ✅ Done — red de seguridad lista.
 2. ~~SPEC-005 (unificar DB + logs)~~ ✅ Done — raíz técnica resuelta.
-3. SPEC-006 (backup atómico) → protege datos.
+3. SPEC-006 (backup/restore completo y atómico) → protege datos.
 4. ~~SPEC-004 (cobro seguro)~~ ✅ Done — tx atómica + anti-doble-clic, tests en verde.
 **Fase B — Alto impacto (P1)**
 5. SPEC-007 (seguridad PIN/sesión).
