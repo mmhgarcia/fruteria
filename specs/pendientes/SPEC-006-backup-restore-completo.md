@@ -35,11 +35,11 @@ Que el comerciante pueda **resguardar, transportar y restaurar** todo su negocio
 - [x] **Registro `backup_registry`** — cada respaldo crea una entrada (fecha/hora, nombre, alcance, tamaño, recuento por tienda, ubicación, modo) que alimenta el Historial.
 - [x] **Nomenclatura de archivos** — `fruteria-pos_<fecha>_<hora>_<alcance>_<modo>.json` (ISO + 24h → ordena cronológicamente, minúsculas/`_` sin espacios).
 - [x] **Auditoría** — cada respaldo emite evento **INFO** en `logService`.
-- [ ] **Exportar — guardado local por defecto** — escribe el `.json` con `@capacitor/filesystem`, con picker de carpeta (`@capacitor-community/filesystem` → `pickFolder()`). Funciona offline.
-- [ ] **Exportar — botón "Compartir / enviar"** — `@capacitor/share` (`Share.share({ files })`) abre el share sheet (Drive, WhatsApp, Gmail) como **copia de redundancia off-device**. Nunca obligatorio.
-- [ ] **Restaurar — selección de archivo** — file picker (`@capacitor-community/file-picker`) o desde el Historial.
-- [ ] **Restaurar — preview + confirmación** — dry-run visible, elección de modo, confirmación por **PIN de administrador**, barra de progreso. (Preview ya implementado en F1; falta UX + PIN + progreso.)
-- [ ] **Historial accionable** — lista en orden descendente por fecha/hora, con `Restaurar` desde ahí y `Revertir` a la versión previa.
+- [ ] **Exportar — guardado local por defecto** — escribe el `.json` con `@capacitor/filesystem`, con picker de carpeta (`@capacitor-community/filesystem` → `pickFolder()`). Funciona offline. (Pendiente F5 nativo; en PWA/navegador cae a descarga.)
+- [x] **Exportar — botón "Compartir / enviar"** — share sheet (Drive, WhatsApp, Gmail) como **copia de redundancia off-device**. Implementado con **Web Share API** (`navigator.share({ files })`) + fallback a descarga; `@capacitor/share` nativo queda pendiente. Nunca obligatorio.
+- [ ] **Restaurar — selección de archivo** — file picker (`@capacitor-community/file-picker`) o desde el Historial. El input de archivo del navegador funciona; el picker nativo queda pendiente F5.
+- [x] **Restaurar — preview + confirmación** — dry-run visible (tabla de impactos), confirmación por **PIN de administrador** (`PinPrompt`) y aviso de reset de PIN a `000000`. Falta barra de progreso (cosmético).
+- [x] **Historial accionable** — lista en orden descendente por fecha/hora, con `Restaurar` desde ahí (si el respaldo quedó guardado con payload) y `Revertir` al estado previo (snapshot `automatico`).
 - [ ] **Programación y retención** — auto-backup en eventos clave (cierre de caja, cambios masivos, update de app) y retención rotativa (últimos 7 diarios + 4 semanales + 1 mensual) con limpieza de registros y archivos.
 
 ## 4. Fuera de alcance (lo que NO se hace ahora)
@@ -97,5 +97,5 @@ Mientras un ítem de esta sección no esté resuelto, la spec NO se implementa. 
 
 - [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [x] Aprobada / en implementación — **F1 (Fundamentos) completado**: `backupSchema`, envelope + checksum, `create/validate/preview/import` (replace atómico), `backup_registry`, nomenclatura, auditoría y cobertura de `localStorage`. Tests en verde (`npm test`). Quedan F2 (UX), F3 (seguridad/revertir), F4 (programación) y F5 (Capacitor).
+- [x] Aprobada / en implementación — **F1 (Fundamentos) completado** y **80/20 de UX (preview + PIN + compartir + historial/revertir) implementado y testeado** (`npm test` → 59 tests en verde). Quedan: guardado local nativo (`@capacitor/filesystem`), picker nativo, `@capacitor/share`/file-picker (F5), auto-backup/retención (F4) y barra de progreso.
 - [ ] Done

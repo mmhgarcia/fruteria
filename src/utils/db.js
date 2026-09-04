@@ -222,9 +222,10 @@ export async function addBackupRecord(record) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(BACKUP_REGISTRY_STORE_NAME, 'readwrite')
     const store = tx.objectStore(BACKUP_REGISTRY_STORE_NAME)
-    const request = store.put(record)
-    request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
+    store.put(record)
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+    tx.onabort = () => reject(tx.error)
   })
 }
 
@@ -244,8 +245,9 @@ export async function deleteBackupRecord(id) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(BACKUP_REGISTRY_STORE_NAME, 'readwrite')
     const store = tx.objectStore(BACKUP_REGISTRY_STORE_NAME)
-    const request = store.delete(id)
-    request.onsuccess = () => resolve()
-    request.onerror = () => reject(request.error)
+    store.delete(id)
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+    tx.onabort = () => reject(tx.error)
   })
 }

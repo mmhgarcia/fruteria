@@ -331,6 +331,7 @@ export default function SettingsModal({ settings, onSave, onClose, onRefreshBack
 
         {showBackup && (
           <BackupModal
+            settings={settings}
             onClose={() => setShowBackup(false)}
             onImportComplete={() => {
               setShowBackup(false)

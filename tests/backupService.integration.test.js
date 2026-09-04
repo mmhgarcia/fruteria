@@ -9,12 +9,14 @@ vi.mock('../src/utils/logService', () => ({
   addLog: vi.fn().mockResolvedValue({}),
 }))
 
-import { openDB, DB_VERSION, getBackupRecords } from '../src/utils/db'
+import { openDB, DB_VERSION, getBackupRecords, addBackupRecord } from '../src/utils/db'
 import {
   createBackup,
   validateBackup,
   previewBackup,
   importBackup,
+  exportBackup,
+  restoreFromRecord,
   buildBackupFilename,
   buildBackupId,
   SCOPE_COMPLETO,
@@ -68,9 +70,25 @@ async function clearAllStores(db) {
   await Promise.all(
     ALL_STORES.map((name) => new Promise((resolve, reject) => {
       if (!db.objectStoreNames.contains(name)) return resolve()
-      const req = store(db, name).clear()
-      req.onsuccess = () => resolve()
-      req.onerror = () => reject(req.error)
+      const tx = db.transaction(name, 'readwrite')
+      tx.objectStore(name).clear()
+      tx.oncomplete = () => resolve()
+      tx.onerror = () => reject(tx.error)
+      tx.onabort = () => reject(tx.error)
+    }))
+  )
+}
+
+async function clearBusinessStores(db) {
+  const business = ALL_STORES.filter((n) => n !== 'backup_registry')
+  await Promise.all(
+    business.map((name) => new Promise((resolve, reject) => {
+      if (!db.objectStoreNames.contains(name)) return resolve()
+      const tx = db.transaction(name, 'readwrite')
+      tx.objectStore(name).clear()
+      tx.oncomplete = () => resolve()
+      tx.onerror = () => reject(tx.error)
+      tx.onabort = () => reject(tx.error)
     }))
   )
 }
@@ -235,6 +253,40 @@ describe('backupService (ciclo create → validate → preview → import)', () 
     const settings = JSON.parse(localStorage.getItem('fruteria-settings'))
     expect(settings.companyName).toBe('Otro negocio')
     expect(settings.pin).toBe('hashactual')
+  })
+
+  it('exportBackup registra el respaldo con payload y restoreFromRecord lo restaura', async () => {
+    await seedSource()
+    const exported = await exportBackup()
+
+    const records = await getBackupRecords()
+    const record = records.find((r) => r.filename === exported.filename)
+    expect(record).toBeTruthy()
+    expect(record.payload).toBeTruthy()
+    expect(record.payload.indexedDB.products).toHaveLength(2)
+
+    // Destino "sucio": limpiamos los datos de negocio y agregamos un dato viejo.
+    await clearBusinessStores(db)
+    await put(db, 'products', { id: 50, name: 'Basura', stock: 1 })
+
+    const result = await restoreFromRecord(record.id)
+    expect(result.success).toBe(true)
+
+    const products = await getAll(db, 'products')
+    expect(products).toHaveLength(2)
+    expect(products.map((p) => p.id).sort()).toEqual([1, 2])
+
+    // Se creó un nuevo snapshot previo para poder volver a revertir.
+    const snapshots = (await getBackupRecords()).filter((r) => r.mode === MODE_AUTOMATICO)
+    expect(snapshots.length).toBeGreaterThan(0)
+
+    const settings = JSON.parse(localStorage.getItem('fruteria-settings'))
+    expect(settings.pin).toBe(await hashPin('000000'))
+  })
+
+  it('restoreFromRecord rechaza un registro sin payload (archivo no guardado)', async () => {
+    await addBackupRecord({ id: 'bk_sin_payload', filename: 'x.json', createdAt: '2026-09-04T08:00:00.000Z' })
+    await expect(restoreFromRecord('bk_sin_payload')).rejects.toThrow(/seleccione el archivo/)
   })
 
   it('importBackup rechaza un archivo corrupto y deja los datos intactos', async () => {

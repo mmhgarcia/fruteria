@@ -4,7 +4,7 @@
 // Formato envelope + checksum SHA-256 en ../backup/envelope.js.
 // Restauración `replace` en UNA transacción readwrite multi-store (all-or-nothing).
 
-import { openDB, addBackupRecord } from './db.js'
+import { openDB, addBackupRecord, getBackupRecords } from './db.js'
 import { addLog, LOG_TYPES } from './logService.js'
 import { hashPin } from './hash.js'
 import { BUSINESS_STORES, PERSISTENT_LOCAL_STORAGE_KEYS } from '../backup/backupSchema.js'
@@ -273,18 +273,40 @@ export async function importBackup(file, options = {}) {
   const { valid, errors, backup } = await validateBackup(file)
   if (!valid) throw new Error(errors.join('; '))
   if (mode !== 'replace') throw new Error(`Modo de restauración "${mode}" no soportado`)
+  return applyData(backup.data)
+}
 
+/**
+ * Restaura desde un respaldo guardado en el registro (historial).
+ * Necesita que el registro conserve el `payload` (backups pequeños).
+ * Usa `revert` cuando el registro es un snapshot previo (mode 'automatico').
+ */
+export async function restoreFromRecord(recordId) {
+  const records = await getBackupRecords()
+  const record = records.find((r) => r.id === recordId)
+  if (!record) throw new Error('Registro de backup no encontrado')
+  if (!record.payload) {
+    throw new Error('El respaldo no tiene datos guardados en el dispositivo; seleccione el archivo manualmente')
+  }
+  return applyData(record.payload, { fromRecordId: recordId })
+}
+
+/**
+ * Aplica un payload `data` de backup con `replace` atómico, snapshot previo,
+ * configuración y auditoría. Es el núcleo compartido por importBackup/restoreFromRecord.
+ */
+async function applyData(data, { fromRecordId = null } = {}) {
   const pre = await createBackup({ scope: SCOPE_COMPLETO, mode: MODE_AUTOMATICO })
   const preRecord = { ...pre.record }
   if (pre.sizeBytes <= SMALL_PAYLOAD_LIMIT) preRecord.payload = pre.data
 
   await addBackupRecord(preRecord)
 
-  await applyReplace(backup.data)
+  await applyReplace(data)
 
-  const restoredConfig = backup.data.localStorage && Object.keys(backup.data.localStorage).length > 0
+  const restoredConfig = data.localStorage && Object.keys(data.localStorage).length > 0
   if (restoredConfig) {
-    await restoreLocalStorage(backup.data.localStorage)
+    await restoreLocalStorage(data.localStorage)
   }
 
   try {
@@ -293,6 +315,7 @@ export async function importBackup(file, options = {}) {
       scope: preRecord.scope,
       sizeBytes: preRecord.sizeBytes,
       mode: 'replace',
+      fromRecordId,
     })
   } catch (_) {
     // Auditoría es best-effort.
@@ -301,8 +324,8 @@ export async function importBackup(file, options = {}) {
   return {
     success: true,
     mode: 'replace',
-    count: Object.values(backup.data.indexedDB).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0),
-    storeCounts: buildStoreCounts(backup.data),
+    count: Object.values(data.indexedDB).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0),
+    storeCounts: buildStoreCounts(data),
     restoredConfig,
     preRestoreRecordId: preRecord.id,
   }
@@ -314,7 +337,9 @@ export async function importBackup(file, options = {}) {
  */
 export async function exportBackup(options = {}) {
   const result = await createBackup(options)
-  await addBackupRecord(result.record)
+  const record = { ...result.record }
+  if (result.sizeBytes <= SMALL_PAYLOAD_LIMIT) record.payload = result.data
+  await addBackupRecord(record)
 
   try {
     await addLog(LOG_TYPES.INFO, 'Backup creado', {
@@ -345,4 +370,55 @@ export function downloadBackup(backup, filename) {
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
+}
+
+/**
+ * Construye un File del backup (para compartir con el share sheet).
+ */
+export function buildBackupFile(backup, filename) {
+  if (typeof File === 'undefined') return null
+  return new File([JSON.stringify(backup, null, 2)], filename, { type: 'application/json' })
+}
+
+/**
+ * Compartir el backup fuera del dispositivo (copia de redundancia).
+ * Usa la Web Share API cuando está disponible (PWA/móvil); si no, cae a descarga.
+ * Registra el respaldo en backup_registry y emite auditoría INFO.
+ */
+export async function shareBackup(options = {}) {
+  const result = await createBackup(options)
+  const record = { ...result.record }
+  if (result.sizeBytes <= SMALL_PAYLOAD_LIMIT) record.payload = result.data
+  await addBackupRecord(record)
+
+  try {
+    await addLog(LOG_TYPES.INFO, 'Backup compartido', {
+      filename: result.filename,
+      scope: result.scope,
+      sizeBytes: result.sizeBytes,
+      mode: result.mode,
+    })
+  } catch (_) {
+    // Auditoría es best-effort.
+  }
+
+  const file = buildBackupFile(result.backup, result.filename)
+  const shared = file ? await tryShareFile(file) : false
+  if (!shared) {
+    downloadBackup(result.backup, result.filename)
+  }
+
+  return { success: true, shared, filename: result.filename, sizeBytes: result.sizeBytes }
+}
+
+async function tryShareFile(file) {
+  if (typeof navigator === 'undefined' || typeof navigator.share !== 'function') return false
+  try {
+    if (navigator.canShare && !navigator.canShare({ files: [file] })) return false
+    await navigator.share({ files: [file], title: 'Backup Frutería POS' })
+    return true
+  } catch (_) {
+    // Usuario canceló o el share falló → se cae a descarga.
+    return false
+  }
 }
