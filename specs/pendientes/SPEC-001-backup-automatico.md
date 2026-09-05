@@ -46,11 +46,30 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 
 ## 8. Riesgos / notas
 - **Decisión clave:** el snapshot local protege contra borrado accidental/corrupción, pero **NO** contra pérdida del dispositivo. El respaldo externo (share sheet, SPEC-006) sigue siendo la protección real; ambos coexisten. Avisar en la UI que el respaldo local no reemplaza el archivo externo.
-- **PWA sin background:** el disparo ocurre al **abrir la app** (se compara la hora configurada vs. el último snapshot del día). No hay "a las HH:MM exactas".
+- **PWA sin background:** el disparo ocurre al **abrir la app** (se revisa si falta el respaldo del día previo). No hay "a las HH:MM exactas".
 - Retención de **4**: al crear el 5º snapshot se elimina el más antiguo (ventana rodante). Al reusar `backup_registry`, distinguir los automáticos (`mode: 'automatico'`) de los manuales/shared para no borrarlos en la rotación.
 
 ## 9. Estado
 - [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [x] Aprobada / en implementación — **Fase 0 resuelta** y **motor automático implementado** (`createAutomaticSnapshot`, `hasAutoBackupFor`, `cleanupAutoSnapshots` (retención 4), `runAutoBackupIfDue` disparado al abrir la app en `App.jsx`). La hora configurable quedó **descartada** (el disparo diario al abrir la app la hace innecesaria). Tests en verde (`npm test` → 67). Queda la parte de **UI** (último snapshot + restaurar, aviso de viejo).
-- [ ] Done
+- [ ] Aprobada / en implementación
+- [x] Done
+
+## 10. Reporte de implementación
+
+> Nota para futuros cambios: este reporte queda en la documentación como referencia de lo que se hizo y por qué.
+
+### Reporte ejecutivo — SPEC-001
+
+**Objetivo:** que la app respalde por sí sola (backup automático), sin que el usuario tenga que acordarse, y permita recuperar desde esa copia local.
+
+**Solución aplicada:**
+- **Motor** en `backupService.js`: `createAutomaticSnapshot`, `hasAutoBackupFor`, `cleanupAutoSnapshots` (retención de **4**, ventana rodante), `runAutoBackupIfDue`.
+- **Disparo diario** al abrir la app (`App.jsx`): si **falta el respaldo del día previo** → crea el snapshot y lo registra con `periodDate` (el día que cubre); si existe → ignora (no duplica). PWA sin background, por eso se evalúa al abrir.
+- **Retención de 4** y **log `INFO`** en cada backup automático. Reusa `backup_registry` de SPEC-006 (sin store nueva ni bump de `DB_VERSION`).
+- **UI:** indicador **"RESPALDO EN PROCESO..."** con barra animada superior; en BackupModal se muestra **"Último respaldo automático"**, badge **"⚠️ hace N días"** si está viejo, y **Restaurar desde snapshot local**.
+- **Decisión descartada:** la **hora configurable** de ejecución — el disparo diario al abrir la app la hace innecesaria.
+
+**Verificación:** `npm test` → **68 tests en verde**; `npm run build` OK. Commits en rama `backup-auto`: `2486a2f`, `a67bd35`, `09bc566`, `a1e17c1`.
+
+**Estado:** funcionalidad completa. La spec se cierra como **Done**.
