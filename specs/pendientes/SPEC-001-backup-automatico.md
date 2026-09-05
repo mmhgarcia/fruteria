@@ -13,8 +13,7 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 ## 3. Alcance (¿qué se hace?) — checklist
 - [x] Crear snapshots automáticos **reusando el motor de SPEC-006** (`backupService.createBackup` + store `backup_registry`). No se crea una store nueva. (Hecho: `createAutomaticSnapshot`.)
 - [x] Conservar un **historial rotativo de 4** copias automáticas (ventana rodante: al crear la 5ª se elimina la más antigua). (Hecho: `cleanupAutoSnapshots`.)
-- [x] Disparar snapshot **una vez al día** a la **hora configurada** (se evalúa al abrir la app; PWA sin tareas en background). (Hecho: `runAutoBackupIfDue` en `App.jsx` al cargar.)
-- [ ] **Configuración del Sistema:** permitir definir la **hora de ejecución (HH:MM)** del backup automático (guardada en `fruteria-settings`).
+- [x] Disparar snapshot **una vez al día** (se evalúa al abrir la app; PWA sin tareas en background). (Hecho: `runAutoBackupIfDue` en `App.jsx` al cargar.)
 - [ ] Mostrar en el modal de Backup (SPEC-006) el **último snapshot** y permitir **restaurar desde un snapshot local**.
 - [ ] **Aviso visual** si el snapshot es viejo (ej. badge "último respaldo hace N días").
 - [x] Registrar un **log `INFO`** cuando se crea un backup automático.
@@ -28,13 +27,13 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 - ❌ Detección de pérdida de dispositivo / notificaciones push.
 
 ## 5. Decisiones / preguntas abiertas (lo que falta definir para aprobar)
-- [x] **(resuelto) Frecuencia del snapshot.** Una vez al **día**. Al ser PWA (sin background), se evalúa al **abrir la app**: si ya pasó la hora configurada y hoy aún no se respaldó → se crea el snapshot.
-- [x] **(resuelto) Hora de ejecución configurable.** En **Configuración del Sistema** el admin define la **hora (HH:MM)**; se guarda en `fruteria-settings` (`backupAutoTime`).
+- [x] **(resuelto) Frecuencia del snapshot.** Una vez al **día**, al **abrir la app**: si falta el respaldo del día previo → se crea el snapshot (no requiere una hora exacta).
+- [x] **(resuelto) Hora de ejecución configurable.** **DESCARTADA**: el disparo diario al abrir la app ya cubre el caso; no se requiere configurar una hora.
 - [x] **(resuelto) Historial rotativo.** Conservar los **4 últimos** respaldos automáticos y **reiniciar el ciclo** (ventana rodante: al crear el 5º se elimina el más antiguo).
 
 ## 6. Criterios de aceptación (¿cómo sé que quedó bien?)
 1. Abro la app después de varios días → se crea un snapshot automático (log `INFO` y "último respaldo" se actualiza).
-2. Realizo una venta → el snapshot se actualiza (según regla definida) sin congelar ni cerrar la app.
+2. Abro la app y ya existe el respaldo del día previo → no se duplica el snapshot.
 3. En Configuración → Backup veo "Último respaldo: fecha/hora" y el historial de copias.
 4. Selecciono un snapshot y "Restaurar" → los datos vuelven al estado de esa copia.
 5. Tras muchas copias, el historial se mantiene en el máximo definido (rotación funciona).
@@ -53,5 +52,5 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 ## 9. Estado
 - [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [x] Aprobada / en implementación — **Fase 0 resuelta** y **motor automático implementado** (`createAutomaticSnapshot`, `hasAutoBackupFor`, `cleanupAutoSnapshots` (retención 4), `runAutoBackupIfDue` disparado al abrir la app en `App.jsx`). Tests en verde (`npm test` → 67). Queda la parte de **UI/config** (hora configurable, último snapshot + restaurar, aviso de viejo).
+- [x] Aprobada / en implementación — **Fase 0 resuelta** y **motor automático implementado** (`createAutomaticSnapshot`, `hasAutoBackupFor`, `cleanupAutoSnapshots` (retención 4), `runAutoBackupIfDue` disparado al abrir la app en `App.jsx`). La hora configurable quedó **descartada** (el disparo diario al abrir la app la hace innecesaria). Tests en verde (`npm test` → 67). Queda la parte de **UI** (último snapshot + restaurar, aviso de viejo).
 - [ ] Done
