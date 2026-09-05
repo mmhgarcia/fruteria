@@ -12,8 +12,9 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 
 ## 3. Alcance (¿qué se hace?) — checklist
 - [ ] Crear snapshots automáticos **reusando el motor de SPEC-006** (`backupService.createBackup` + store `backup_registry`). No se crea una store nueva.
-- [ ] Conservar un **historial rotativo** (ej. últimas 10 copias) para no llenar el almacenamiento (limpieza de registros viejos).
-- [ ] Disparar snapshot en momentos útiles: **al abrir la app** (si pasaron X días desde el último) y tras **confirmar una venta** (limitado para no saturar; ej. máx. 1 por hora).
+- [ ] Conservar un **historial rotativo de 4** copias automáticas (ventana rodante: al crear la 5ª se elimina la más antigua).
+- [ ] Disparar snapshot **una vez al día** a la **hora configurada** (se evalúa al abrir la app; PWA sin tareas en background).
+- [ ] **Configuración del Sistema:** permitir definir la **hora de ejecución (HH:MM)** del backup automático (guardada en `fruteria-settings`).
 - [ ] Mostrar en el modal de Backup (SPEC-006) el **último snapshot** y permitir **restaurar desde un snapshot local**.
 - [ ] **Aviso visual** si el snapshot es viejo (ej. badge "último respaldo hace N días").
 - [ ] Registrar un **log `INFO`** cuando se crea/restaura un backup automático.
@@ -27,8 +28,9 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 - ❌ Detección de pérdida de dispositivo / notificaciones push.
 
 ## 5. Decisiones / preguntas abiertas (lo que falta definir para aprobar)
-- [ ] **Frecuencia del snapshot:** ¿al abrir si pasó >=1 día, + 1/hora tras ventas, o solo al confirmar cada venta? (Recomendado: al abrir si pasó >=1 día + máx. 1/hora tras ventas.)
-- [ ] **Historial rotativo:** ¿cuántas copias conservar (ej. 10)?
+- [x] **(resuelto) Frecuencia del snapshot.** Una vez al **día**. Al ser PWA (sin background), se evalúa al **abrir la app**: si ya pasó la hora configurada y hoy aún no se respaldó → se crea el snapshot.
+- [x] **(resuelto) Hora de ejecución configurable.** En **Configuración del Sistema** el admin define la **hora (HH:MM)**; se guarda en `fruteria-settings` (`backupAutoTime`).
+- [x] **(resuelto) Historial rotativo.** Conservar los **4 últimos** respaldos automáticos y **reiniciar el ciclo** (ventana rodante: al crear el 5º se elimina el más antiguo).
 
 ## 6. Criterios de aceptación (¿cómo sé que quedó bien?)
 1. Abro la app después de varios días → se crea un snapshot automático (log `INFO` y "último respaldo" se actualiza).
@@ -45,11 +47,11 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 
 ## 8. Riesgos / notas
 - **Decisión clave:** el snapshot local protege contra borrado accidental/corrupción, pero **NO** contra pérdida del dispositivo. El respaldo externo (share sheet, SPEC-006) sigue siendo la protección real; ambos coexisten. Avisar en la UI que el respaldo local no reemplaza el archivo externo.
-- El snapshot no debe descargar mucho peso por venta: definir umbral (ej. máx. 1 por hora o solo al cierre).
-- Al reusar `backup_registry`, cuidar de no mezclar snapshots automáticos con los backups manuales/shared (distinguir por `mode: 'automatico'`).
+- **PWA sin background:** el disparo ocurre al **abrir la app** (se compara la hora configurada vs. el último snapshot del día). No hay "a las HH:MM exactas".
+- Retención de **4**: al crear el 5º snapshot se elimina el más antiguo (ventana rodante). Al reusar `backup_registry`, distinguir los automáticos (`mode: 'automatico'`) de los manuales/shared para no borrarlos en la rotación.
 
 ## 9. Estado
-- [x] En definición (se puede crear/tocar; aún no se implementa)
+- [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [ ] Aprobada / en implementación
+- [x] Aprobada / en implementación — **Fase 0 resuelta** (frecuencia diaria, hora configurable, retención 4). Comienza implementación.
 - [ ] Done
