@@ -16,7 +16,7 @@
 ## 3. Alcance (¿qué se hace?) — checklist
 - [ ] Crear un helper central de **redondeo monetario** (ej. `redondearMoneda`, o trabajar en centavos enteros) y aplicarlo en origen (costo promedio, sumatorias, `totalBS`, `totalPagado`, `saldo`).
 - [ ] Blindar `formatCurrency`/`formatQty`: aceptar solo números finitos, devolver '—' o '0' para NaN/undefined en vez de crashear.
-- [ ] Permitir **ajuste a la baja** en inventario: aceptar cantidad negativa para `AJUSTE`, o signo separado del valor.
+- [x] Permitir **ajuste a la baja** en inventario: aceptar cantidad negativa para `AJUSTE`, o signo separado del valor. (Hecho: `registrarMovimiento` acepta `cantidad < 0` solo para `AJUSTE`; UI de Inventario y signo en historial ajustados.)
 - [ ] Corregir `descontarStockVenta` y `nextStock` para tratar `stock === null` como sin límite (o estado "sin definir") y no como 0.
 - [ ] Unificar la lógica de descuento de stock (eliminar la duplicación entre `nextStock` y `descontarStockVenta`).
 

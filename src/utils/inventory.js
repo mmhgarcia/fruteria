@@ -248,7 +248,9 @@ export async function registrarVentaAtomica({ sale, items }) {
  */
 export async function registrarMovimiento({ productId, tipo, cantidad, motivo = '', costoUnitario = null, ref = null }) {
   if (!productId) throw new Error('registrarMovimiento: productId requerido')
-  if (!cantidad || cantidad <= 0) throw new Error('registrarMovimiento: cantidad debe ser > 0')
+  cantidad = Number(cantidad)
+  if (!Number.isFinite(cantidad) || cantidad === 0) throw new Error('registrarMovimiento: cantidad inválida')
+  if (tipo !== MOVEMENT_TYPES.AJUSTE && cantidad < 0) throw new Error('registrarMovimiento: cantidad debe ser > 0')
   if (!Object.values(MOVEMENT_TYPES).includes(tipo)) {
     throw new Error(`registrarMovimiento: tipo inválido "${tipo}"`)
   }

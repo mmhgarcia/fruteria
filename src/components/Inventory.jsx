@@ -79,8 +79,9 @@ function MovementForm({ type, products, onSubmit, onClose }) {
     setError('')
     if (!productId || !cantidad) return
     const c = parseFloat(cantidad)
-    if (!c || c <= 0) {
-      setError('La cantidad debe ser mayor a 0')
+    const esAjuste = type === 'ajuste'
+    if (!c || (!esAjuste && c < 0)) {
+      setError(esAjuste ? 'La cantidad no puede ser 0' : 'La cantidad debe ser mayor a 0')
       return
     }
     setSubmitting(true)
@@ -381,12 +382,15 @@ export default function Inventory({ onClose, ramoId }) {
                 )}
                 {historyDecorated.map((m) => {
                   const badge = TIPO_BADGE[m.tipo] || { label: m.tipo, icon: '·' }
-                  const sign = m.tipo === 'entrada' ? '+' : '−'
+                  const sign = m.tipo === 'ajuste'
+                    ? (m.cantidad >= 0 ? '+' : '−')
+                    : (m.tipo === 'entrada' ? '+' : '−')
+                  const displayQty = Math.abs(m.cantidad)
                   return (
                     <li key={m.id} className={`inventory-history-item history-${m.tipo}`}>
                       <span className="history-badge">{badge.icon} {badge.label}</span>
                       <span className="history-product">{m.productIcon} {m.productName}</span>
-                      <span className="history-qty">{sign}{formatQty(m.cantidad, m.productUm)} {m.productUm}</span>
+                      <span className="history-qty">{sign}{formatQty(displayQty, m.productUm)} {m.productUm}</span>
                       <span className="history-motivo">{m.motivo || '—'}</span>
                       <span className="history-time">{formatDateTime(m.timestamp)}</span>
                     </li>

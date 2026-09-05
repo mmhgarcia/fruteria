@@ -11,7 +11,7 @@ vi.mock('../src/utils/logService', () => ({
   addLog: vi.fn().mockResolvedValue({}),
 }))
 
-import { descontarStockVenta } from '../src/utils/inventory'
+import { descontarStockVenta, registrarMovimiento, MOVEMENT_TYPES } from '../src/utils/inventory'
 import { DB_VERSION } from '../src/utils/db'
 
 const store = (db, name) => db.transaction(name, 'readwrite').objectStore(name)
@@ -99,5 +99,65 @@ describe('descontarStockVenta (integración con IndexedDB)', () => {
   it('devuelve vacío sin items', async () => {
     const res = await descontarStockVenta([])
     expect(res).toEqual({ descontados: [], faltantes: [], alertas: [] })
+  })
+})
+
+describe('registrarMovimiento (ajuste a la baja)', () => {
+  let db
+
+  beforeEach(async () => {
+    db = await openTestDB()
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(['products', 'stock_movements'], 'readwrite')
+      tx.objectStore('products').clear()
+      tx.objectStore('stock_movements').clear()
+      tx.oncomplete = () => resolve()
+      tx.onerror = () => reject(tx.error)
+      tx.onabort = () => reject(tx.error)
+    })
+  })
+
+  it('permite un ajuste negativo (corregir a la baja) y refleja el signo', async () => {
+    db = await openTestDB()
+    await putProduct(db, { id: 1, name: 'Manzana', stock: 10 })
+
+    const res = await registrarMovimiento({ productId: 1, tipo: MOVEMENT_TYPES.AJUSTE, cantidad: -3, motivo: 'Conteo físico' })
+
+    const products = await getProducts(db)
+    expect(products.find((p) => p.id === 1).stock).toBe(7)
+
+    const movimientos = await getMovimientos(db)
+    expect(movimientos).toHaveLength(1)
+    expect(movimientos[0].tipo).toBe('ajuste')
+    expect(movimientos[0].cantidad).toBe(-3)
+    expect(res.movement.cantidad).toBe(-3)
+    expect(res.product.stock).toBe(7)
+  })
+
+  it('permite un ajuste positivo (sumar) con signo +', async () => {
+    db = await openTestDB()
+    await putProduct(db, { id: 1, name: 'Manzana', stock: 5 })
+
+    const res = await registrarMovimiento({ productId: 1, tipo: MOVEMENT_TYPES.AJUSTE, cantidad: 4, motivo: 'Conteo físico' })
+
+    const products = await getProducts(db)
+    expect(products.find((p) => p.id === 1).stock).toBe(9)
+    expect(res.movement.cantidad).toBe(4)
+  })
+
+  it('rechaza un ajuste con cantidad 0', async () => {
+    db = await openTestDB()
+    await putProduct(db, { id: 1, name: 'Manzana', stock: 10 })
+    await expect(registrarMovimiento({ productId: 1, tipo: MOVEMENT_TYPES.AJUSTE, cantidad: 0 }))
+      .rejects.toThrow(/cantidad/)
+  })
+
+  it('rechaza cantidad negativa para merma y entrada (solo ajuste lo permite)', async () => {
+    db = await openTestDB()
+    await putProduct(db, { id: 1, name: 'Manzana', stock: 10 })
+    await expect(registrarMovimiento({ productId: 1, tipo: MOVEMENT_TYPES.MERMA, cantidad: -2 }))
+      .rejects.toThrow(/cantidad/)
+    await expect(registrarMovimiento({ productId: 1, tipo: MOVEMENT_TYPES.ENTRADA, cantidad: -2 }))
+      .rejects.toThrow(/cantidad/)
   })
 })
