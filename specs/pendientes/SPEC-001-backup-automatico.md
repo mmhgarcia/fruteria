@@ -14,8 +14,8 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 - [x] Crear snapshots automáticos **reusando el motor de SPEC-006** (`backupService.createBackup` + store `backup_registry`). No se crea una store nueva. (Hecho: `createAutomaticSnapshot`.)
 - [x] Conservar un **historial rotativo de 4** copias automáticas (ventana rodante: al crear la 5ª se elimina la más antigua). (Hecho: `cleanupAutoSnapshots`.)
 - [x] Disparar snapshot **una vez al día** (se evalúa al abrir la app; PWA sin tareas en background). (Hecho: `runAutoBackupIfDue` en `App.jsx` al cargar.)
-- [ ] Mostrar en el modal de Backup (SPEC-006) el **último snapshot** y permitir **restaurar desde un snapshot local**.
-- [ ] **Aviso visual** si el snapshot es viejo (ej. badge "último respaldo hace N días").
+- [x] Mostrar en el modal de Backup (SPEC-006) el **último snapshot** y permitir **restaurar desde un snapshot local**. (Hecho: "Último respaldo automático" + botón Restaurar en el historial.)
+- [x] **Aviso visual** si el snapshot es viejo (ej. badge "último respaldo hace N días"). (Hecho: badge ámbar "⚠️ hace N días".)
 - [x] Registrar un **log `INFO`** cuando se crea un backup automático.
 - [x] El export/import manual actual (SPEC-006) se mantiene sin cambios.
 

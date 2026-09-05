@@ -139,6 +139,11 @@ export default function BackupModal({ settings = {}, onClose, onImportComplete }
     await handleRestoreRecord(snapshot.id)
   }
 
+  const lastAuto = history.find((r) => r.mode === 'automatico')
+  const lastAutoDays = lastAuto
+    ? Math.max(0, Math.floor((Date.now() - new Date(lastAuto.createdAt).getTime()) / 86400000))
+    : null
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="products-modal" onClick={(e) => e.stopPropagation()}>
@@ -255,6 +260,33 @@ export default function BackupModal({ settings = {}, onClose, onImportComplete }
             )}
 
             <div style={{ marginTop: '20px' }}>
+              <div style={{ marginBottom: '8px' }}>
+                <strong>Último respaldo automático:</strong>{' '}
+                {lastAuto ? (
+                  <>
+                    {new Date(lastAuto.createdAt).toLocaleString()}
+                    {lastAutoDays >= 1 && (
+                      <span
+                        style={{
+                          marginLeft: '8px',
+                          display: 'inline-block',
+                          padding: '2px 8px',
+                          borderRadius: '999px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          background: '#fff3cd',
+                          color: '#8a6d1a',
+                        }}
+                      >
+                        ⚠️ hace {lastAutoDays} día{lastAutoDays === 1 ? '' : 's'}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span style={{ opacity: 0.7 }}>Sin respaldo automático registrado.</span>
+                )}
+              </div>
+
               <h3 style={{ marginBottom: '8px' }}>📜 Historial de respaldos</h3>
               {history.length === 0 ? (
                 <p>Sin respaldos registrados aún.</p>
