@@ -19,6 +19,50 @@
   color: var(--text-secondary, #666);
 }
 
+/* Barra de respaldo automático en proceso (SPEC-001) */
+.backup-progress-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  background: var(--header-bg, #2e7d32);
+  color: var(--header-text, #fff);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.backup-progress-text {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.backup-progress-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+.backup-progress-fill {
+  display: block;
+  height: 100%;
+  width: 40%;
+  border-radius: 999px;
+  background: var(--header-text, #fff);
+  animation: backup-progress-slide 1.2s ease-in-out infinite;
+}
+
+@keyframes backup-progress-slide {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(150%); }
+  100% { transform: translateX(-100%); }
+}
+
 @media (max-width: 768px) {
   .main {
     flex-direction: column;

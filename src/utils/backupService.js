@@ -496,13 +496,15 @@ export async function cleanupAutoSnapshots(max = AUTO_BACKUP_RETENTION) {
 
 /**
  * Al cargar la app: si aún no hay respaldo para el día previo, crea uno automáticamente.
+ * `onStart` se invoca justo antes de ejecutar el snapshot (para mostrar el indicador de progreso).
  * Devuelve { didRun, periodDate }.
  */
-export async function runAutoBackupIfDue({ date = new Date() } = {}) {
+export async function runAutoBackupIfDue({ date = new Date(), onStart = () => {} } = {}) {
   const periodDate = previousDayDateKey(date)
   if (await hasAutoBackupFor(periodDate)) {
     return { didRun: false, periodDate }
   }
+  onStart()
   await createAutomaticSnapshot({ periodDate })
   return { didRun: true, periodDate }
 }

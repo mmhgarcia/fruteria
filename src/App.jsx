@@ -42,6 +42,7 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [lastSale, setLastSale] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [backupInProgress, setBackupInProgress] = useState(false)
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
@@ -191,7 +192,11 @@ function App() {
     refreshAlertCount()
     refreshStockAlerts()
     // Backup automático (SPEC-001): si falta el respaldo del día previo, lo crea. Best-effort.
-    runAutoBackupIfDue().catch(() => {})
+    runAutoBackupIfDue({
+      onStart: () => setBackupInProgress(true),
+    })
+      .catch(() => {})
+      .finally(() => setBackupInProgress(false))
     if ((!settings.pin || sesionActiva) && settings.mostrarDashboardAlInicio !== false) {
       setShowDashboard(true)
     }
@@ -416,6 +421,14 @@ function App() {
 
   return (
     <div className="app">
+      {backupInProgress && (
+        <div className="backup-progress-bar" role="status" aria-live="polite">
+          <span className="backup-progress-text">RESPALDO EN PROCESO...</span>
+          <span className="backup-progress-track" aria-hidden="true">
+            <span className="backup-progress-fill" />
+          </span>
+        </div>
+      )}
       {!settings.ramoId && (
         <RamoSetup onSelect={handleRamoSeleccionado} />
       )}

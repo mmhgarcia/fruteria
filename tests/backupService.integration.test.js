@@ -367,6 +367,22 @@ describe('backup automático (SPEC-001)', () => {
     expect(await hasAutoBackupFor('2026-09-03')).toBe(false)
   })
 
+  it('runAutoBackupIfDue invoca onStart solo cuando ejecuta el respaldo', async () => {
+    await seedSource()
+    const now = new Date(2026, 8, 5, 10, 0, 0)
+
+    const starts1 = []
+    const res1 = await runAutoBackupIfDue({ date: now, onStart: () => starts1.push(true) })
+    expect(res1.didRun).toBe(true)
+    expect(starts1).toHaveLength(1)
+
+    // Ya existe el respaldo del día previo → no ejecuta, no invoca onStart.
+    const starts2 = []
+    const res2 = await runAutoBackupIfDue({ date: now, onStart: () => starts2.push(true) })
+    expect(res2.didRun).toBe(false)
+    expect(starts2).toHaveLength(0)
+  })
+
   it('cleanupAutoSnapshots conserva solo los 4 últimos y no borra manuales/shared', async () => {
     for (let i = 1; i <= 6; i++) {
       await addBackupRecord({
