@@ -19,6 +19,13 @@ import {
   restoreFromRecord,
   buildBackupFilename,
   buildBackupId,
+  todayDateKey,
+  previousDayDateKey,
+  createAutomaticSnapshot,
+  hasAutoBackupFor,
+  cleanupAutoSnapshots,
+  runAutoBackupIfDue,
+  AUTO_BACKUP_RETENTION,
   SCOPE_COMPLETO,
   SCOPE_SOLO_DATOS,
   MODE_MANUAL,
@@ -306,5 +313,81 @@ describe('backupService (ciclo create → validate → preview → import)', () 
     expect(buildBackupFilename({ scope: SCOPE_SOLO_DATOS, mode: MODE_AUTOMATICO, date: TEST_DATE }))
       .toBe('fruteria-pos_2026-09-04_0815_solo_datos_automatico.json')
     expect(buildBackupId(TEST_DATE)).toBe('bk_20260904_081500')
+  })
+})
+
+describe('backup automático (SPEC-001)', () => {
+  let db
+
+  beforeEach(async () => {
+    vi.stubGlobal('localStorage', createLocalStorageMock())
+    db = await openTestDB()
+    await clearAllStores(db)
+    localStorage.clear()
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  async function seedSource() {
+    await put(db, 'products', { id: 1, name: 'Manzana', stock: 10 })
+    localStorage.setItem('fruteria-settings', JSON.stringify({ companyName: 'Mi Negocio', pin: 'viejohash' }))
+  }
+
+  it('todayDateKey y previousDayDateKey devuelven la fecha local y el día previo', () => {
+    const d = new Date(2026, 8, 5, 10, 0, 0)
+    expect(todayDateKey(d)).toBe('2026-09-05')
+    expect(previousDayDateKey(d)).toBe('2026-09-04')
+  })
+
+  it('runAutoBackupIfDue crea un respaldo cuando falta el del día previo', async () => {
+    await seedSource()
+    const now = new Date(2026, 8, 5, 10, 0, 0)
+
+    const res = await runAutoBackupIfDue({ date: now })
+    expect(res.didRun).toBe(true)
+    expect(res.periodDate).toBe('2026-09-04')
+
+    const records = await getBackupRecords()
+    const auto = records.find((r) => r.mode === MODE_AUTOMATICO && r.periodDate === '2026-09-04')
+    expect(auto).toBeTruthy()
+    expect(auto.scope).toBe(SCOPE_COMPLETO)
+    expect(auto.payload).toBeTruthy()
+
+    // Al abrir de nuevo el mismo día, ya hay log del día previo → no repite.
+    const again = await runAutoBackupIfDue({ date: now })
+    expect(again.didRun).toBe(false)
+  })
+
+  it('hasAutoBackupFor detecta si ya existe el respaldo del día previo', async () => {
+    expect(await hasAutoBackupFor('2026-09-04')).toBe(false)
+    await createAutomaticSnapshot({ periodDate: '2026-09-04' })
+    expect(await hasAutoBackupFor('2026-09-04')).toBe(true)
+    expect(await hasAutoBackupFor('2026-09-03')).toBe(false)
+  })
+
+  it('cleanupAutoSnapshots conserva solo los 4 últimos y no borra manuales/shared', async () => {
+    for (let i = 1; i <= 6; i++) {
+      await addBackupRecord({
+        id: `bk_auto_${i}`,
+        mode: MODE_AUTOMATICO,
+        periodDate: `2026-08-${String(i).padStart(2, '0')}`,
+        createdAt: `2026-08-${String(i).padStart(2, '0')}T08:00:00.000Z`,
+      })
+    }
+    await addBackupRecord({ id: 'bk_manual', mode: MODE_MANUAL, createdAt: '2026-09-01T00:00:00.000Z' })
+    await addBackupRecord({ id: 'bk_shared', mode: MODE_MANUAL, storage: 'shared', createdAt: '2026-09-02T00:00:00.000Z' })
+
+    const removed = await cleanupAutoSnapshots(AUTO_BACKUP_RETENTION)
+    expect(removed).toBe(2)
+
+    const records = await getBackupRecords()
+    const autos = records.filter((r) => r.mode === MODE_AUTOMATICO)
+    expect(autos).toHaveLength(AUTO_BACKUP_RETENTION)
+    // Conserva los 4 más recientes (2026-08-03 a 08-06).
+    expect(autos.map((r) => r.periodDate).sort()).toEqual(['2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06'])
+    expect(records.find((r) => r.id === 'bk_manual')).toBeTruthy()
+    expect(records.find((r) => r.id === 'bk_shared')).toBeTruthy()
   })
 })

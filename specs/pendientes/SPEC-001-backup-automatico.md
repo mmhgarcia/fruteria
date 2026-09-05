@@ -11,14 +11,14 @@ El backup hoy es 100% manual (SPEC-006): el admin debe entrar a Configuración �
 La app guarda automáticamente **snapshots locales** de los datos sin que el usuario tenga que acordarse, y permite **recuperar** desde esa copia. El export/import manual (SPEC-006) sigue existiendo para guardar fuera del dispositivo.
 
 ## 3. Alcance (¿qué se hace?) — checklist
-- [ ] Crear snapshots automáticos **reusando el motor de SPEC-006** (`backupService.createBackup` + store `backup_registry`). No se crea una store nueva.
-- [ ] Conservar un **historial rotativo de 4** copias automáticas (ventana rodante: al crear la 5ª se elimina la más antigua).
-- [ ] Disparar snapshot **una vez al día** a la **hora configurada** (se evalúa al abrir la app; PWA sin tareas en background).
+- [x] Crear snapshots automáticos **reusando el motor de SPEC-006** (`backupService.createBackup` + store `backup_registry`). No se crea una store nueva. (Hecho: `createAutomaticSnapshot`.)
+- [x] Conservar un **historial rotativo de 4** copias automáticas (ventana rodante: al crear la 5ª se elimina la más antigua). (Hecho: `cleanupAutoSnapshots`.)
+- [x] Disparar snapshot **una vez al día** a la **hora configurada** (se evalúa al abrir la app; PWA sin tareas en background). (Hecho: `runAutoBackupIfDue` en `App.jsx` al cargar.)
 - [ ] **Configuración del Sistema:** permitir definir la **hora de ejecución (HH:MM)** del backup automático (guardada en `fruteria-settings`).
 - [ ] Mostrar en el modal de Backup (SPEC-006) el **último snapshot** y permitir **restaurar desde un snapshot local**.
 - [ ] **Aviso visual** si el snapshot es viejo (ej. badge "último respaldo hace N días").
-- [ ] Registrar un **log `INFO`** cuando se crea/restaura un backup automático.
-- [ ] El export/import manual actual (SPEC-006) se mantiene sin cambios.
+- [x] Registrar un **log `INFO`** cuando se crea un backup automático.
+- [x] El export/import manual actual (SPEC-006) se mantiene sin cambios.
 
 ## 4. Fuera de alcance (lo que NO se hace ahora)
 - ❌ Subir a la nube / sincronización remota **por cuenta del negocio** (el respaldo externo ya se resuelve con el share sheet de SPEC-006).
@@ -53,5 +53,5 @@ La app guarda automáticamente **snapshots locales** de los datos sin que el usu
 ## 9. Estado
 - [ ] En definición (se puede crear/tocar; aún no se implementa)
 - [ ] Totalmente definida — pendiente de aprobar
-- [x] Aprobada / en implementación — **Fase 0 resuelta** (frecuencia diaria, hora configurable, retención 4). Comienza implementación.
+- [x] Aprobada / en implementación — **Fase 0 resuelta** y **motor automático implementado** (`createAutomaticSnapshot`, `hasAutoBackupFor`, `cleanupAutoSnapshots` (retención 4), `runAutoBackupIfDue` disparado al abrir la app en `App.jsx`). Tests en verde (`npm test` → 67). Queda la parte de **UI/config** (hora configurable, último snapshot + restaurar, aviso de viejo).
 - [ ] Done

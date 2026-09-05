@@ -29,6 +29,7 @@ import { computeStockAlerts } from './utils/stockAlerts'
 import { getRamoPorId } from './data/ramos'
 import { getLogs, addLog, LOG_TYPES } from './utils/logService'
 import { estaDesbloqueado, crearSesion, bloquearSesion } from './utils/session'
+import { runAutoBackupIfDue } from './utils/backupService'
 import './App.css'
 
 function App() {
@@ -189,6 +190,8 @@ function App() {
     loadCategories()
     refreshAlertCount()
     refreshStockAlerts()
+    // Backup automático (SPEC-001): si falta el respaldo del día previo, lo crea. Best-effort.
+    runAutoBackupIfDue().catch(() => {})
     if ((!settings.pin || sesionActiva) && settings.mostrarDashboardAlInicio !== false) {
       setShowDashboard(true)
     }

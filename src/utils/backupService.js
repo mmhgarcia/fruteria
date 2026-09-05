@@ -4,7 +4,7 @@
 // Formato envelope + checksum SHA-256 en ../backup/envelope.js.
 // Restauración `replace` en UNA transacción readwrite multi-store (all-or-nothing).
 
-import { openDB, addBackupRecord, getBackupRecords } from './db.js'
+import { openDB, addBackupRecord, getBackupRecords, deleteBackupRecord } from './db.js'
 import { addLog, LOG_TYPES } from './logService.js'
 import { hashPin } from './hash.js'
 import { BUSINESS_STORES, PERSISTENT_LOCAL_STORAGE_KEYS } from '../backup/backupSchema.js'
@@ -421,4 +421,88 @@ async function tryShareFile(file) {
     // Usuario canceló o el share falló → se cae a descarga.
     return false
   }
+}
+
+// ── Backup automático (SPEC-001) ──
+// El respaldo automático cubre el DÍA PREVIO (no el actual): se dispara al abrir la app
+// y solo si aún no hay un respaldo registrado para el día previo. Retención: 4 últimos.
+
+export const AUTO_BACKUP_RETENTION = 4
+
+/**
+ * Clave de fecha local en formato 'YYYY-MM-DD'.
+ */
+export function todayDateKey(date = new Date()) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+
+/**
+ * Clave de fecha del día anterior al dado.
+ */
+export function previousDayDateKey(date = new Date()) {
+  const d = new Date(date)
+  d.setDate(d.getDate() - 1)
+  return todayDateKey(d)
+}
+
+/**
+ * Crea un snapshot automático que cubre `periodDate` (por defecto, el día previo).
+ * Lo registra en backup_registry con `mode: 'automatico'` y `periodDate`, y aplica la retención.
+ */
+export async function createAutomaticSnapshot({ periodDate = previousDayDateKey() } = {}) {
+  const result = await createBackup({ scope: SCOPE_COMPLETO, mode: MODE_AUTOMATICO })
+  const record = { ...result.record, periodDate }
+  if (result.sizeBytes <= SMALL_PAYLOAD_LIMIT) record.payload = result.data
+  await addBackupRecord(record)
+  await cleanupAutoSnapshots(AUTO_BACKUP_RETENTION)
+
+  try {
+    await addLog(LOG_TYPES.INFO, 'Backup automático creado', {
+      periodDate,
+      filename: result.filename,
+      sizeBytes: result.sizeBytes,
+      mode: MODE_AUTOMATICO,
+    })
+  } catch (_) {
+    // Auditoría es best-effort.
+  }
+
+  return { ...result, record }
+}
+
+/**
+ * Indica si ya existe un respaldo automático que cubra `periodDate`.
+ */
+export async function hasAutoBackupFor(periodDate) {
+  const records = await getBackupRecords()
+  return records.some((r) => r.mode === MODE_AUTOMATICO && r.periodDate === periodDate)
+}
+
+/**
+ * Mantiene solo los `max` respaldos automáticos más recientes (ventana rodante).
+ * No toca los backups manuales ni los compartidos. Devuelve cuántos borró.
+ */
+export async function cleanupAutoSnapshots(max = AUTO_BACKUP_RETENTION) {
+  const records = await getBackupRecords()
+  const autos = records
+    .filter((r) => r.mode === MODE_AUTOMATICO)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  const toDelete = autos.slice(max)
+  for (const r of toDelete) {
+    await deleteBackupRecord(r.id)
+  }
+  return toDelete.length
+}
+
+/**
+ * Al cargar la app: si aún no hay respaldo para el día previo, crea uno automáticamente.
+ * Devuelve { didRun, periodDate }.
+ */
+export async function runAutoBackupIfDue({ date = new Date() } = {}) {
+  const periodDate = previousDayDateKey(date)
+  if (await hasAutoBackupFor(periodDate)) {
+    return { didRun: false, periodDate }
+  }
+  await createAutomaticSnapshot({ periodDate })
+  return { didRun: true, periodDate }
 }
